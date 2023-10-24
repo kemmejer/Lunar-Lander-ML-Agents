@@ -1,0 +1,3 @@
+torch~=1.13.1 -f https://download.pytorch.org/whl/torch_stable.html
+-e "Dependencies/ml-agents-envs"
+-e "Dependencies/ml-agents"

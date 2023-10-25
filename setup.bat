@@ -5,4 +5,5 @@ python -m venv .venv
 python -m pip install --upgrade pip && ^
 pip install torch~=1.13.1 -f https://download.pytorch.org/whl/torch_stable.html && ^
 pip install -e "Dependencies/ml-agents-envs" && ^
-pip install -e "Dependencies/ml-agents"
+pip install -e "Dependencies/ml-agents" && ^
+deactivate

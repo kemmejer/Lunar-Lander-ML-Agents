@@ -18,4 +18,4 @@ MonoBehaviour:
     mass: 1
     drag: 0
     angularDrag: 0
-    gravityScale: 1
+    gravityScale: 0.03

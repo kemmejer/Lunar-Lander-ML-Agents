@@ -13,8 +13,16 @@ public class ShipParameterSO : ScriptableObject
         public float gravityScale;
     }
 
+    [Serializable]
+    public class ControlParameter
+    {
+        public float rotationSpeed;
+        public float thrustAmount;
+    }
+
     public float fuel;
     public float fuelConsumption;
 
     public ShipPhysics physics;
+    public ControlParameter controlParameter;
 }

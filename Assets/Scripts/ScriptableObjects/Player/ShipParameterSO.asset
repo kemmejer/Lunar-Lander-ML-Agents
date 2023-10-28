@@ -19,3 +19,6 @@ MonoBehaviour:
     drag: 0
     angularDrag: 0
     gravityScale: 0.03
+  controlParameter:
+    rotationSpeed: 1
+    thrustAmount: 1

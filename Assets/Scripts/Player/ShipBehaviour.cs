@@ -5,7 +5,8 @@ using UnityEngine;
 public class ShipBehaviour : MonoBehaviour
 {
 
-    [SerializeField] private ShipParameterSO shipParameter;
+    [SerializeField] private ShipParameterSO _shipParameter;
+    [SerializeField] private GameObject _shipThruster;
 
     private Rigidbody2D _rigidBody;
 
@@ -14,6 +15,7 @@ public class ShipBehaviour : MonoBehaviour
     {
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
         UpdateShipPhysics();
+        _shipThruster.SetActive(false);
     }
 
     // Update is called once per frame
@@ -24,7 +26,7 @@ public class ShipBehaviour : MonoBehaviour
 
     public void RotateRight()
     {
-        gameObject.transform.Rotate(0.0f, 0.0f, -shipParameter.controlParameter.rotationSpeed);
+        gameObject.transform.Rotate(0.0f, 0.0f, -_shipParameter.controlParameter.rotationSpeed);
 
         var rotation = gameObject.transform.localEulerAngles;
         var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
@@ -34,7 +36,7 @@ public class ShipBehaviour : MonoBehaviour
 
     public void RotateLeft()
     {
-        gameObject.transform.Rotate(0.0f, 0.0f, shipParameter.controlParameter.rotationSpeed);
+        gameObject.transform.Rotate(0.0f, 0.0f, _shipParameter.controlParameter.rotationSpeed);
 
         var rotation = gameObject.transform.localEulerAngles;
         var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
@@ -44,12 +46,18 @@ public class ShipBehaviour : MonoBehaviour
 
     public void Thrust()
     {
-        _rigidBody.AddForce(transform.up * shipParameter.controlParameter.thrustAmount, ForceMode2D.Force);
+        _rigidBody.AddForce(transform.up * _shipParameter.controlParameter.thrustAmount, ForceMode2D.Force);
+        _shipThruster.SetActive(true);
+    }
+
+    public void StopThrust()
+    {
+        _shipThruster.SetActive(false);
     }
 
     private void UpdateShipPhysics()
     {
-        var shipPhysics = shipParameter.physics;
+        var shipPhysics = _shipParameter.physics;
 
         _rigidBody.mass = shipPhysics.mass;
         _rigidBody.drag = shipPhysics.drag;

@@ -9,7 +9,7 @@ public class PlayerInput : MonoBehaviour
 {
     public ShipBehaviour Player;
 
-    private InputActions inputActions;
+    private InputActions _inputActions;
 
     private bool _isThrusting;
     private bool _isRotatingRight;
@@ -18,11 +18,11 @@ public class PlayerInput : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        inputActions = new InputActions();
-        inputActions.Enable();
+        _inputActions = new InputActions();
+        _inputActions.Enable();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_isThrusting)
             Thrust();
@@ -38,8 +38,13 @@ public class PlayerInput : MonoBehaviour
     {
         switch (context.phase)
         {
-            case InputActionPhase.Started: _isThrusting = true; break;
-            case InputActionPhase.Canceled: _isThrusting = false; break;
+            case InputActionPhase.Started:
+                _isThrusting = true;
+                break;
+            case InputActionPhase.Canceled:
+                _isThrusting = false;
+                StopThrust();
+                break;
         }
     }
 
@@ -64,6 +69,11 @@ public class PlayerInput : MonoBehaviour
     private void Thrust()
     {
         Player.Thrust();
+    }
+
+    private void StopThrust()
+    {
+        Player.StopThrust();
     }
 
     private void RotateRight()

@@ -7,6 +7,7 @@ public class ShipBehaviour : MonoBehaviour
     [SerializeField] private ShipParameterSO _shipParameter;
     [SerializeField] private GameObject _shipThruster;
     [SerializeField] private GameObject _fuelBar;
+    [SerializeField] private GameObject _velocityIndicator;
 
     private Rigidbody2D _rigidBody;
 
@@ -22,6 +23,11 @@ public class ShipBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    private void FixedUpdate()
+    {
+        UpdateVelocityIndicator();
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -100,6 +106,16 @@ public class ShipBehaviour : MonoBehaviour
         var scale = _fuelBar.transform.localScale;
         var xScale = _shipParameter.fuel.remainingFuel / _shipParameter.fuel.maxFuel;
         _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);
+    }
+
+    private void UpdateVelocityIndicator()
+    {
+        bool isVelocityOk = GetVelocity().magnitude < _shipParameter.landing.maxVelocity;
+
+        if (isVelocityOk)
+            _velocityIndicator.GetComponent<Renderer>().material.color = Color.green;
+        else
+            _velocityIndicator.GetComponent<Renderer>().material.color = Color.red;
     }
 
     private void ResetFuel()

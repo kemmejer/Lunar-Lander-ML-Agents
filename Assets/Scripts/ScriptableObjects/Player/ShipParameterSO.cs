@@ -36,9 +36,10 @@ public class ShipParameterSO : ScriptableObject
         }
     }
 
+    [Serializable]
     public class Landing
     {
-        public float maxSpeed;
+        public float maxVelocity;
         public float maxAngle;
     }
 

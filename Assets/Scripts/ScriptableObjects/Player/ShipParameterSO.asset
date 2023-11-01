@@ -22,5 +22,8 @@ MonoBehaviour:
     thrustAmount: 1
   fuel:
     maxFuel: 1000
-    remainingFuel: 0
+    remainingFuel: 60
     fuelConsumption: 1
+  landing:
+    maxVelocity: 0.8
+    maxAngle: 5

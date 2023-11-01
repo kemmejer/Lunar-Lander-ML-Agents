@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9fd6d538dd9aef46a3bc134c42605b0, type: 3}
   m_Name: ShipParameterSO
   m_EditorClassIdentifier: 
-  fuel: 0
-  fuelConsumption: 0
   physics:
     mass: 1
     drag: 0
@@ -22,3 +20,7 @@ MonoBehaviour:
   controlParameter:
     rotationSpeed: 1
     thrustAmount: 1
+  fuel:
+    maxFuel: 1000
+    remainingFuel: 0
+    fuelConsumption: 1

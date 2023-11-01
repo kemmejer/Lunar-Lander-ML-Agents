@@ -20,9 +20,30 @@ public class ShipParameterSO : ScriptableObject
         public float thrustAmount;
     }
 
-    public float fuel;
-    public float fuelConsumption;
+    [Serializable]
+    public class Fuel
+    {
+        public float maxFuel;
+        public float remainingFuel;
+        public float fuelConsumption;
+
+        public void UseFuel()
+        {
+            remainingFuel -= fuelConsumption;
+
+            if(remainingFuel < 0)
+                remainingFuel = 0;
+        }
+    }
+
+    public class Landing
+    {
+        public float maxSpeed;
+        public float maxAngle;
+    }
 
     public ShipPhysics physics;
     public ControlParameter controlParameter;
+    public Fuel fuel;
+    public Landing landing;
 }

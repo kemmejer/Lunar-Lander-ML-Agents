@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class ShipBehaviour : MonoBehaviour
 {
-    [SerializeField] private ShipParameterSO _shipParameter;
     [SerializeField] private GameObject _shipThruster;
     [SerializeField] private GameObject _fuelBar;
     [SerializeField] private GameObject _velocityIndicator;
 
+    private ShipParameterSO _shipParameter;
     private Rigidbody2D _rigidBody;
 
     // Start is called before the first frame update
     void Start()
     {
+        _shipParameter = ShipParameterSO.GetInstanceCopy();
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
         UpdateShipPhysics();
         _shipThruster.SetActive(false);
@@ -23,11 +24,19 @@ public class ShipBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var scale = _fuelBar.transform.localScale;
+        var xScale = _shipParameter.fuel.remainingFuel / _shipParameter.fuel.maxFuel;
+        _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         UpdateVelocityIndicator();
+    }
+
+    private void OnBecameInvisible()
+    {
+        DestroyShip();
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -85,9 +94,13 @@ public class ShipBehaviour : MonoBehaviour
         _shipThruster.SetActive(false);
     }
 
-    private void DestroyShip()
+    private void DestroyShip(bool explode = true)
     {
-        AnimationSystem.animationSystem.PlayExplosionAt(GetPosition());
+        if (explode)
+            AnimationSystem.animationSystem.PlayExplosionAt(GetPosition());
+
+        Destroy(_shipParameter);
+        Destroy(gameObject);
     }
 
     private void UpdateShipPhysics()
@@ -103,6 +116,7 @@ public class ShipBehaviour : MonoBehaviour
     private void UseFuel()
     {
         _shipParameter.fuel.UseFuel();
+
         var scale = _fuelBar.transform.localScale;
         var xScale = _shipParameter.fuel.remainingFuel / _shipParameter.fuel.maxFuel;
         _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);

@@ -1,9 +1,28 @@
 using System;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ShipParameterSO", menuName = "ScriptableObjects/ShipParameterSO")]
 public class ShipParameterSO : ScriptableObject
 {
+    private static ShipParameterSO _shipParameterSO;
+
+    public static ShipParameterSO GetInstance()
+    {
+        if (_shipParameterSO == null)
+            _shipParameterSO = Instantiate(AssetDatabase.LoadAssetAtPath<ShipParameterSO>("Assets/Scripts/ScriptableObjects/Player/ShipParameterSO.asset"));
+
+        return _shipParameterSO;
+    }
+
+    public static ShipParameterSO GetInstanceCopy()
+    {
+        return Instantiate(GetInstance());
+    }
+
     [Serializable]
     public class ShipPhysics
     {

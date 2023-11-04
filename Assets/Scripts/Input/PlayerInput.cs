@@ -7,9 +7,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
-    public ShipBehaviour Player;
-
+    private ShipBehaviour _player;
     private InputActions _inputActions;
+
+    private static PlayerInput _playerInput;
 
     private bool _isThrusting;
     private bool _isRotatingRight;
@@ -20,6 +21,7 @@ public class PlayerInput : MonoBehaviour
     {
         _inputActions = new InputActions();
         _inputActions.Enable();
+        _playerInput = gameObject.GetComponent<PlayerInput>();
     }
 
     private void FixedUpdate()
@@ -32,6 +34,21 @@ public class PlayerInput : MonoBehaviour
 
         if (_isRotatingLeft)
             RotateLeft();
+    }
+
+    public static PlayerInput GetInstance()
+    {
+        return _playerInput;
+    }
+
+    public void SetPlayer(ShipBehaviour player)
+    {
+        _player = player;
+    }
+
+    public void RemovePlayer()
+    {
+        _player = null;
     }
 
     public void OnThrust(InputAction.CallbackContext context)
@@ -68,21 +85,25 @@ public class PlayerInput : MonoBehaviour
 
     private void Thrust()
     {
-        Player.Thrust();
+        if (_player)
+            _player.Thrust();
     }
 
     private void StopThrust()
     {
-        Player.StopThrust();
+        if (_player)
+            _player.StopThrust();
     }
 
     private void RotateRight()
     {
-        Player.RotateRight();
+        if (_player)
+            _player.RotateRight();
     }
 
     private void RotateLeft()
     {
-        Player.RotateLeft();
+        if (_player)
+            _player.RotateLeft();
     }
 }

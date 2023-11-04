@@ -22,7 +22,10 @@ public class TrailManager : MonoBehaviour
 
     public void MoveTrailToTrailManager(GameObject trail)
     {
-        trail.transform.parent = gameObject.transform;
+        if (!trail.gameObject.activeInHierarchy)
+            return;
+
+        trail.transform.SetParent(gameObject.transform);
         _trails.Add(trail);
     }
 

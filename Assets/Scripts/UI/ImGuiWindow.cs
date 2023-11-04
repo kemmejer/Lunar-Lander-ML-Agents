@@ -22,6 +22,7 @@ public class StaticSample : MonoBehaviour
     // Your code belongs here! Like ImGui.Begin... etc.
     private void OnLayout(UImGui.UImGui uimgui)
     {
+        PlayerShipHeader(uimgui);
         ShipParameterHeader(uimgui);
     }
 
@@ -40,6 +41,17 @@ public class StaticSample : MonoBehaviour
         UImGuiUtility.Layout -= OnLayout;
         UImGuiUtility.OnInitialize -= OnInitialize;
         UImGuiUtility.OnDeinitialize -= OnDeinitialize;
+    }
+
+    private void PlayerShipHeader(UImGui.UImGui uimgui)
+    {
+        if (ImGui.CollapsingHeader("Player Ship"))
+        {
+            if(ImGui.Button("Spawn Player Ship"))
+            {
+                PlayerSpawnerBehaviour.GetInstance().SpawnShip(true);
+            }
+        }
     }
 
     private void ShipParameterHeader(UImGui.UImGui uimgui)

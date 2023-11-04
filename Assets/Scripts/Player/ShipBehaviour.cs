@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipBehaviour : MonoBehaviour
+public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 {
+    public event IOnDestroyEvent.OnDestroyDelegate OnDestroyEvent;
+
     [SerializeField] private GameObject _shipThruster;
     [SerializeField] private GameObject _fuelBar;
     [SerializeField] private GameObject _velocityIndicator;
@@ -11,6 +13,7 @@ public class ShipBehaviour : MonoBehaviour
     private ShipParameterSO _shipParameter;
     private Rigidbody2D _rigidBody;
     private bool _isDestroyed;
+
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +58,11 @@ public class ShipBehaviour : MonoBehaviour
         }
 
         Debug.Log(string.Format("AngleOk: {0}, VelocityOk: {1}", angleOk, velocityOk));
+    }
+
+    private void OnDestroy()
+    {
+        OnDestroyEvent?.Invoke(gameObject);
     }
 
     public void RotateRight()
@@ -106,7 +114,7 @@ public class ShipBehaviour : MonoBehaviour
             AnimationSystem.animationSystem.PlayExplosionAt(GetPosition());
 
         var trail = gameObject.transform.Find("Trail").gameObject;
-        TrailManager.GetInstance().MoveTrailToTrailManager(trail);
+        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);
 
         Destroy(_shipParameter);
         Destroy(gameObject);

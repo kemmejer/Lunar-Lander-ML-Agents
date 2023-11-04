@@ -10,6 +10,7 @@ public class ShipBehaviour : MonoBehaviour
 
     private ShipParameterSO _shipParameter;
     private Rigidbody2D _rigidBody;
+    private bool _isDestroyed;
 
     // Start is called before the first frame update
     void Start()
@@ -96,8 +97,16 @@ public class ShipBehaviour : MonoBehaviour
 
     private void DestroyShip(bool explode = true)
     {
+        if (_isDestroyed)
+            return;
+
+        _isDestroyed = true;
+
         if (explode)
             AnimationSystem.animationSystem.PlayExplosionAt(GetPosition());
+
+        var trail = gameObject.transform.Find("Trail").gameObject;
+        TrailManager.GetInstance().MoveTrailToTrailManager(trail);
 
         Destroy(_shipParameter);
         Destroy(gameObject);

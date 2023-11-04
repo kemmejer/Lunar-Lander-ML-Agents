@@ -111,7 +111,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
         _isDestroyed = true;
 
         if (explode)
-            AnimationSystem.animationSystem.PlayExplosionAt(GetPosition());
+            AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
         var trail = gameObject.transform.Find("Trail").gameObject;
         TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);

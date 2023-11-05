@@ -13,7 +13,7 @@ public class PlayerSpawnerSO : ScriptableObject
     public static PlayerSpawnerSO GetInstance()
     {
         if (_shipParameterSO == null)
-            _shipParameterSO = Instantiate(AssetDatabase.LoadAssetAtPath<PlayerSpawnerSO>("Assets/Scripts/ScriptableObjects/Player/PlayerSpawnerSO.asset"));
+            _shipParameterSO = Instantiate(Resources.Load<PlayerSpawnerSO>("PlayerSpawnerSO"));
 
         return _shipParameterSO;
     }

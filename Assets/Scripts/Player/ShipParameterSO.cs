@@ -18,7 +18,7 @@ public class ShipParameterSO : ScriptableObject
     public static ShipParameterSO GetInstance()
     {
         if (_shipParameterSO == null)
-            _shipParameterSO = Instantiate(AssetDatabase.LoadAssetAtPath<ShipParameterSO>("Assets/Scripts/ScriptableObjects/Player/ShipParameterSO.asset"));
+            _shipParameterSO = Instantiate(Resources.Load<ShipParameterSO>("ShipParameterSO"));
 
         return _shipParameterSO;
     }

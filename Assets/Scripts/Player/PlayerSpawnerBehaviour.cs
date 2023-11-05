@@ -7,12 +7,14 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
     [SerializeField] private GameObject _spaceShip;
 
     private List<GameObject> _spaceShips;
+    private PlayerSpawnerSO _playerSpawnerSO;
 
     private static PlayerSpawnerBehaviour _playerSpawnerBehaviour;
 
     // Start is called before the first frame update
     void Start()
     {
+        _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
         _playerSpawnerBehaviour = GetComponent<PlayerSpawnerBehaviour>();
         _spaceShips = new List<GameObject>();
 
@@ -37,6 +39,10 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
 
         var ship = Instantiate(_spaceShip, spawnPos, Quaternion.identity);
         _spaceShips.Add(ship);
+
+        var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
+        var rigidBody = ship.GetComponent<Rigidbody2D>();
+        rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity);
 
         var shipBehaviour = ship.GetComponent<ShipBehaviour>();
         shipBehaviour.OnDestroyEvent += OnDestroyShip;

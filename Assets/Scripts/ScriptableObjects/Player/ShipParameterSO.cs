@@ -8,6 +8,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ShipParameterSO", menuName = "ScriptableObjects/ShipParameterSO")]
 public class ShipParameterSO : ScriptableObject
 {
+    public ShipPhysics physics;
+    public ControlParameter controlParameter;
+    public Fuel fuel;
+    public Landing landing;
+
     private static ShipParameterSO _shipParameterSO;
 
     public static ShipParameterSO GetInstance()
@@ -61,9 +66,5 @@ public class ShipParameterSO : ScriptableObject
         public float maxVelocity;
         public float maxAngle;
     }
-
-    public ShipPhysics physics;
-    public ControlParameter controlParameter;
-    public Fuel fuel;
-    public Landing landing;
 }
+

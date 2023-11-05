@@ -1,14 +1,17 @@
 using ImGuiNET;
 using UImGui;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class StaticSample : MonoBehaviour
 {
     private ShipParameterSO _shipParameter;
+    private PlayerSpawnerSO _playerSpawnerSO;
 
     private void Start()
     {
         _shipParameter = ShipParameterSO.GetInstance();
+        _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
     }
 
     private void Awake()
@@ -23,6 +26,7 @@ public class StaticSample : MonoBehaviour
     private void OnLayout(UImGui.UImGui uimgui)
     {
         PlayerShipHeader(uimgui);
+        ShipSpawnHeader(uimgui);
         ShipParameterHeader(uimgui);
     }
 
@@ -47,10 +51,18 @@ public class StaticSample : MonoBehaviour
     {
         if (ImGui.CollapsingHeader("Player Ship"))
         {
-            if(ImGui.Button("Spawn Player Ship"))
+            if (ImGui.Button("Spawn Player Ship"))
             {
                 PlayerSpawnerBehaviour.GetInstance().SpawnShip(true);
             }
+        }
+    }
+
+    private void ShipSpawnHeader(UImGui.UImGui uimgui)
+    {
+        if (ImGui.CollapsingHeader("Ship Spawn Parameter"))
+        {
+            ImGui.DragFloat("Horizontal Velocity", ref _playerSpawnerSO.horizontalStartingVelocity, 1.0f, 0.0f, 100.0f);
         }
     }
 

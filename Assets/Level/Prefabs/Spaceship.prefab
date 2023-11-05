@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2291152381233771292}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FuelBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 2420219234235244383}
   - component: {fileID: 1344047501635806445}
   - component: {fileID: 8863475216492431783}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ThrusterParticleSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4874,7 +4874,7 @@ GameObject:
   - component: {fileID: 1054550722860414921}
   - component: {fileID: 7360357665028905505}
   - component: {fileID: 3550336025196559763}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5022,7 +5022,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4243438422624723647}
   - component: {fileID: 8090169595422554980}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ThrusterLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5104,7 +5104,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1324502702840646000}
   - component: {fileID: 4714976898381379232}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5188,7 +5188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4984062071856846819}
   - component: {fileID: 5706008186216911470}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5271,7 +5271,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5360648382818513104}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Thruster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5305,7 +5305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5205262985218144083}
   - component: {fileID: 8293554740688412649}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5388,7 +5388,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 144265450117373207}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BarPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5425,7 +5425,7 @@ GameObject:
   - component: {fileID: 2715343521914787191}
   - component: {fileID: 5272030129619781901}
   - component: {fileID: 2480730421630546491}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Spaceship
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -5545,7 +5545,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -5633,7 +5633,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7470088370327363389}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VelocityIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5667,7 +5667,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4314897784593828322}
   - component: {fileID: 7549718987527492496}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

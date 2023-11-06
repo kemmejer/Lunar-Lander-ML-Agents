@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 [CreateAssetMenu(fileName = "PlayerSpawnerSO", menuName = "ScriptableObjects/PlayerSpawnerSO")]
 public class PlayerSpawnerSO : ScriptableObject
 {
-    public float horizontalStartingVelocity;
+    public RandomValue horizontalStartingVelocity;
 
-    private static PlayerSpawnerSO _shipParameterSO;
+    private static PlayerSpawnerSO _playerSpawnerSO;
 
     public static PlayerSpawnerSO GetInstance()
     {
-        if (_shipParameterSO == null)
-            _shipParameterSO = Instantiate(Resources.Load<PlayerSpawnerSO>("PlayerSpawnerSO"));
+        if (_playerSpawnerSO == null)
+            _playerSpawnerSO = Instantiate(Resources.Load<PlayerSpawnerSO>("PlayerSpawnerSO"));
 
-        return _shipParameterSO;
+        RandomValue.GenerateValuesForAllFields(_playerSpawnerSO);
+
+        return _playerSpawnerSO;
     }
-
 }

@@ -42,7 +42,7 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
 
         var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
         var rigidBody = ship.GetComponent<Rigidbody2D>();
-        rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity);
+        rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity.RndValue);
 
         var shipBehaviour = ship.GetComponent<ShipBehaviour>();
         shipBehaviour.OnDestroyEvent += OnDestroyShip;

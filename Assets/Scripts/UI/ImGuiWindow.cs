@@ -62,7 +62,7 @@ public class StaticSample : MonoBehaviour
     {
         if (ImGui.CollapsingHeader("Ship Spawn Parameter"))
         {
-            ImGui.DragFloat("Horizontal Velocity", ref _playerSpawnerSO.horizontalStartingVelocity, 1.0f, 0.0f, 100.0f);
+            ImGui.DragFloat2("Horizontal Velocity", ref _playerSpawnerSO.horizontalStartingVelocity.parameter, 1.0f, 0.0f, 100.0f);
         }
     }
 
@@ -71,25 +71,25 @@ public class StaticSample : MonoBehaviour
         if (ImGui.CollapsingHeader("Ship Parameter"))
         {
             ImGui.Text("Fuel");
-            ImGui.DragFloat("Max Fuel", ref _shipParameter.fuel.maxFuel, 1.0f, 100.0f, 1000.0f);
-            ImGui.DragFloat("Fuel Consumption", ref _shipParameter.fuel.fuelConsumption, 0.1f, 0.1f, 10.0f);
+            ImGui.DragFloat2("Max Fuel", ref _shipParameter.fuel.maxFuel.parameter, 1.0f, 100.0f, 1000.0f);
+            ImGui.DragFloat2("Fuel Consumption", ref _shipParameter.fuel.fuelConsumption.parameter, 0.1f, 0.1f, 10.0f);
             ImGui.Separator();
 
             ImGui.Text("Controls");
-            ImGui.DragFloat("Rotation Speed", ref _shipParameter.controlParameter.rotationSpeed, 0.1f, 0.1f, 10.0f);
-            ImGui.DragFloat("Thrust Amount", ref _shipParameter.controlParameter.thrustAmount, 0.1f, 0.1f, 10.0f);
+            ImGui.DragFloat2("Rotation Speed", ref _shipParameter.controlParameter.rotationSpeed.parameter, 0.1f, 0.1f, 10.0f);
+            ImGui.DragFloat2("Thrust Amount", ref _shipParameter.controlParameter.thrustAmount.parameter, 0.1f, 0.1f, 10.0f);
             ImGui.Separator();
 
             ImGui.Text("Landing");
-            ImGui.DragFloat("Max Velocity", ref _shipParameter.landing.maxVelocity, 0.1f, 0.5f, 5.0f);
-            ImGui.DragFloat("Max Angle", ref _shipParameter.landing.maxAngle, 1.0f, 1.0f, 10.0f);
+            ImGui.DragFloat2("Max Velocity", ref _shipParameter.landing.maxVelocity.parameter, 0.1f, 0.5f, 5.0f);
+            ImGui.DragFloat2("Max Angle", ref _shipParameter.landing.maxAngle.parameter, 1.0f, 1.0f, 10.0f);
             ImGui.Separator();
 
             ImGui.Text("Physics");
-            ImGui.DragFloat("Mass", ref _shipParameter.physics.mass, 1.0f, 1.0f, 1000.0f);
-            ImGui.DragFloat("Drag", ref _shipParameter.physics.drag, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat("Angular Drag", ref _shipParameter.physics.angularDrag, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat("Gracity Scale", ref _shipParameter.physics.gravityScale, 0.01f, 0.01f, 0.1f);
+            ImGui.DragFloat2("Mass", ref _shipParameter.physics.mass.parameter, 1.0f, 1.0f, 1000.0f);
+            ImGui.DragFloat2("Drag", ref _shipParameter.physics.drag.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Angular Drag", ref _shipParameter.physics.angularDrag.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
         }
     }
 }

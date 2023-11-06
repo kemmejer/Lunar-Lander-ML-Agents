@@ -28,9 +28,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
     // Update is called once per frame
     void Update()
     {
-        var scale = _fuelBar.transform.localScale;
-        var xScale = _shipParameter.fuel.remainingFuel / _shipParameter.fuel.maxFuel;
-        _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);
+
     }
 
     void FixedUpdate()
@@ -67,7 +65,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
     public void RotateRight()
     {
-        gameObject.transform.Rotate(0.0f, 0.0f, -_shipParameter.controlParameter.rotationSpeed);
+        gameObject.transform.Rotate(0.0f, 0.0f, -_shipParameter.controlParameter.rotationSpeed.value);
 
         var rotation = gameObject.transform.localEulerAngles;
         var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
@@ -77,7 +75,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
     public void RotateLeft()
     {
-        gameObject.transform.Rotate(0.0f, 0.0f, _shipParameter.controlParameter.rotationSpeed);
+        gameObject.transform.Rotate(0.0f, 0.0f, _shipParameter.controlParameter.rotationSpeed.value);
 
         var rotation = gameObject.transform.localEulerAngles;
         var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
@@ -87,13 +85,13 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
     public void Thrust()
     {
-        if (_shipParameter.fuel.remainingFuel == 0)
+        if (_shipParameter.fuel.remainingFuel.value == 0)
         {
             StopThrust();
             return;
         }
 
-        _rigidBody.AddForce(transform.up * _shipParameter.controlParameter.thrustAmount, ForceMode2D.Force);
+        _rigidBody.AddForce(transform.up * _shipParameter.controlParameter.thrustAmount.value, ForceMode2D.Force);
         _shipThruster.SetActive(true);
         UseFuel();
     }
@@ -124,10 +122,10 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
     {
         var shipPhysics = _shipParameter.physics;
 
-        _rigidBody.mass = shipPhysics.mass;
-        _rigidBody.drag = shipPhysics.drag;
-        _rigidBody.angularDrag = shipPhysics.angularDrag;
-        _rigidBody.gravityScale = shipPhysics.gravityScale;
+        _rigidBody.mass = shipPhysics.mass.value;
+        _rigidBody.drag = shipPhysics.drag.value;
+        _rigidBody.angularDrag = shipPhysics.angularDrag.value;
+        _rigidBody.gravityScale = shipPhysics.gravityScale.value;
     }
 
     private void UseFuel()
@@ -135,13 +133,13 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
         _shipParameter.fuel.UseFuel();
 
         var scale = _fuelBar.transform.localScale;
-        var xScale = _shipParameter.fuel.remainingFuel / _shipParameter.fuel.maxFuel;
+        var xScale = _shipParameter.fuel.remainingFuel.value / _shipParameter.fuel.maxFuel.value;
         _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);
     }
 
     private void UpdateVelocityIndicator()
     {
-        bool isVelocityOk = GetVelocity().magnitude < _shipParameter.landing.maxVelocity;
+        bool isVelocityOk = GetVelocity().magnitude < _shipParameter.landing.maxVelocity.value;
 
         if (isVelocityOk)
             _velocityIndicator.GetComponent<Renderer>().material.color = Color.green;
@@ -151,7 +149,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
     private void ResetFuel()
     {
-        _shipParameter.fuel.remainingFuel = _shipParameter.fuel.maxFuel;
+        _shipParameter.fuel.remainingFuel.value = _shipParameter.fuel.maxFuel.value;
 
         var scale = _fuelBar.transform.localScale;
         _fuelBar.transform.localScale = new Vector3(1.0f, scale.y, scale.z);
@@ -165,7 +163,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
         Debug.Log(string.Format("Landing angle: {0}", angle));
 
-        return Mathf.Abs(angle) < _shipParameter.landing.maxAngle;
+        return Mathf.Abs(angle) < _shipParameter.landing.maxAngle.value;
     }
 
     private bool IsCollisionVelocitySmallEnough(Collision2D collision)
@@ -175,7 +173,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
         Debug.Log(string.Format("Landing velocity: {0}", velocity));
 
-        return velocity < _shipParameter.landing.maxVelocity;
+        return velocity < _shipParameter.landing.maxVelocity.value;
     }
 
     private Vector2 GetPosition()

@@ -20,6 +20,8 @@ public class ShipParameterSO : ScriptableObject
         if (_shipParameterSO == null)
             _shipParameterSO = Instantiate(Resources.Load<ShipParameterSO>("ShipParameterSO"));
 
+        _shipParameterSO.GenerateRandomValues();
+
         return _shipParameterSO;
     }
 
@@ -28,43 +30,51 @@ public class ShipParameterSO : ScriptableObject
         return Instantiate(GetInstance());
     }
 
-    [Serializable]
-    public class ShipPhysics
+    public void GenerateRandomValues()
     {
-        public float mass;
-        public float drag;
-        public float angularDrag;
-        public float gravityScale;
+        RandomValue.GenerateValuesForAllFields(physics);
+        RandomValue.GenerateValuesForAllFields(controlParameter);
+        RandomValue.GenerateValuesForAllFields(fuel);
+        RandomValue.GenerateValuesForAllFields(landing);
     }
 
     [Serializable]
-    public class ControlParameter
+    public struct ShipPhysics
     {
-        public float rotationSpeed;
-        public float thrustAmount;
+        public RandomValue mass;
+        public RandomValue drag;
+        public RandomValue angularDrag;
+        public RandomValue gravityScale;
     }
 
     [Serializable]
-    public class Fuel
+    public struct ControlParameter
     {
-        public float maxFuel;
-        public float remainingFuel;
-        public float fuelConsumption;
+        public RandomValue rotationSpeed;
+        public RandomValue thrustAmount;
+    }
+
+    [Serializable]
+    public struct Fuel
+    {
+        public RandomValue maxFuel;
+        public RandomValue remainingFuel;
+        public RandomValue fuelConsumption;
 
         public void UseFuel()
         {
-            remainingFuel -= fuelConsumption;
+            remainingFuel.value -= fuelConsumption.value;
 
-            if(remainingFuel < 0)
-                remainingFuel = 0;
+            if (remainingFuel.value < 0)
+                remainingFuel.value = 0;
         }
     }
 
     [Serializable]
-    public class Landing
+    public struct Landing
     {
-        public float maxVelocity;
-        public float maxAngle;
+        public RandomValue maxVelocity;
+        public RandomValue maxAngle;
     }
 }
 

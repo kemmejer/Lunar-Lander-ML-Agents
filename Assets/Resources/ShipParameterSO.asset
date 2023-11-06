@@ -13,17 +13,39 @@ MonoBehaviour:
   m_Name: ShipParameterSO
   m_EditorClassIdentifier: 
   physics:
-    mass: 1
-    drag: 0
-    angularDrag: 0
-    gravityScale: 0.03
+    mass:
+      value: 0
+      parameter: {x: 1, y: 0}
+    drag:
+      value: 0
+      parameter: {x: 0, y: 0}
+    angularDrag:
+      value: 0
+      parameter: {x: 0, y: 0}
+    gravityScale:
+      value: 0
+      parameter: {x: 0.03, y: 0}
   controlParameter:
-    rotationSpeed: 1
-    thrustAmount: 1
+    rotationSpeed:
+      value: 0
+      parameter: {x: 1, y: 0}
+    thrustAmount:
+      value: 0
+      parameter: {x: 1, y: 0}
   fuel:
-    maxFuel: 1000
-    remainingFuel: 0
-    fuelConsumption: 1
+    maxFuel:
+      value: 0
+      parameter: {x: 1000, y: 0}
+    remainingFuel:
+      value: 0
+      parameter: {x: 0, y: 0}
+    fuelConsumption:
+      value: 0
+      parameter: {x: 1, y: 0}
   landing:
-    maxVelocity: 0.8
-    maxAngle: 5
+    maxVelocity:
+      value: 0
+      parameter: {x: 0.8, y: 0}
+    maxAngle:
+      value: 0
+      parameter: {x: 5, y: 0}

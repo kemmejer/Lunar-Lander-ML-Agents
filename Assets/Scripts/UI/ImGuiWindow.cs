@@ -1,4 +1,5 @@
 using ImGuiNET;
+using System;
 using UImGui;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -7,11 +8,13 @@ public class StaticSample : MonoBehaviour
 {
     private ShipParameterSO _shipParameter;
     private PlayerSpawnerSO _playerSpawnerSO;
+    private GroundGeneratorSO _groundGeneratorSO;
 
     private void Start()
     {
         _shipParameter = ShipParameterSO.GetInstance();
         _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
+        _groundGeneratorSO = GroundGeneratorSO.GetInstance();
     }
 
     private void Awake()
@@ -28,6 +31,7 @@ public class StaticSample : MonoBehaviour
         PlayerShipHeader(uimgui);
         ShipSpawnHeader(uimgui);
         ShipParameterHeader(uimgui);
+        GroundGeneratorHeader(uimgui);
     }
 
     // runs after UImGui.OnEnable();
@@ -90,6 +94,24 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Drag", ref _shipParameter.physics.drag.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Angular Drag", ref _shipParameter.physics.angularDrag.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
+        }
+    }
+
+    private void GroundGeneratorHeader(UImGui.UImGui uimgui)
+    {
+        if(ImGui.CollapsingHeader("Ground Generator"))
+        {
+            if(ImGui.Button("Generate Ground"))
+            {
+                GroundGeneratorBehaviour.GetInstance().GenerateGround();
+            }
+
+            ImGui.DragFloat2("Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Base noiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
+            ImGui.DragInt("Resolution", ref _groundGeneratorSO.resolution, 1, 2, 100);
+            ImGui.DragInt("Seed", ref _groundGeneratorSO.seed, 1, 0, int.MaxValue);
+
         }
     }
 }

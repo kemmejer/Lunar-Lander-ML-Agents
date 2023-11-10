@@ -9,19 +9,18 @@ public class StaticSample : MonoBehaviour
     private ShipParameterSO _shipParameter;
     private PlayerSpawnerSO _playerSpawnerSO;
     private GroundGeneratorSO _groundGeneratorSO;
-
-    private void Start()
-    {
-        _shipParameter = ShipParameterSO.GetInstance();
-        _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
-        _groundGeneratorSO = GroundGeneratorSO.GetInstance();
-    }
+    private RayCasterSO _rayCasterSO;
 
     private void Awake()
     {
         UImGuiUtility.Layout += OnLayout;
         UImGuiUtility.OnInitialize += OnInitialize;
         UImGuiUtility.OnDeinitialize += OnDeinitialize;
+
+        _shipParameter = ShipParameterSO.GetInstance();
+        _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
+        _groundGeneratorSO = GroundGeneratorSO.GetInstance();
+        _rayCasterSO = RayCasterSO.GetInstance();
     }
 
     // Unity Update method. 
@@ -32,6 +31,7 @@ public class StaticSample : MonoBehaviour
         ShipSpawnHeader(uimgui);
         ShipParameterHeader(uimgui);
         GroundGeneratorHeader(uimgui);
+        MachineLearningHeader(uimgui);
     }
 
     // runs after UImGui.OnEnable();
@@ -96,7 +96,7 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
         }
     }
-    float[] test = new float[2];
+
     private void GroundGeneratorHeader(UImGui.UImGui uimgui)
     {
         if(ImGui.CollapsingHeader("Ground Generator"))
@@ -111,6 +111,17 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
             ImGui.DragInt2("Resolution", ref _groundGeneratorSO.resolution.parameter[0], 1, 2, 100);
             ImGui.DragInt2("Seed", ref _groundGeneratorSO.seed.parameter[0], 1, 0, int.MaxValue);
+        }
+    }
+
+    private void MachineLearningHeader(UImGui.UImGui uimgui)
+    {
+        if(ImGui.CollapsingHeader("Machine Learning"))
+        {
+            ImGui.Text("Ray Cast");
+            ImGui.DragInt2("Ray Count", ref _rayCasterSO.rayCount.parameter[0], 1, 1, 10);
+            ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
+            ImGui.Checkbox("Draw Rays", ref _rayCasterSO.drawRays);
         }
     }
 }

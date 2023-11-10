@@ -23,12 +23,7 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
         UpdateShipPhysics();
         _shipThruster.SetActive(false);
         ResetFuel();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        SetRandomComponentColor();
     }
 
     void FixedUpdate()
@@ -189,6 +184,19 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
     private Vector2 GetVelocity()
     {
         return _rigidBody.velocity;
+    }
+
+    private void SetRandomComponentColor()
+    {
+        var hue = Random.value;
+        Color trailColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
+        var shipTrail = gameObject.GetComponentInChildren<ShipTrailBehaviour>();
+        shipTrail.SetColor(trailColor);
+
+        Color rayColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
+        rayColor.a = 0.1f;
+        var rayCaster = gameObject.GetComponentInChildren<RayCasterBehaviour>();
+        rayCaster.SetColor(rayColor);
     }
 
 }

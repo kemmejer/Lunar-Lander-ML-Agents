@@ -7,24 +7,13 @@ public class ShipTrailBehaviour : MonoBehaviour
 
     TrailRenderer _trailRenderer;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _trailRenderer = GetComponent<TrailRenderer>();
-
-        SetRandomColor();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetColor(Color color)
     {
-        
-    }
-
-    private void SetRandomColor()
-    {
-        Color color = Color.HSVToRGB(Random.value, 1.0f, 1.0f);
-
         _trailRenderer.startColor = color;
         _trailRenderer.endColor = color;
     }

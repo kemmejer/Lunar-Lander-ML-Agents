@@ -887,7 +887,7 @@ GameObject:
   - component: {fileID: 1284298166}
   - component: {fileID: 1284298168}
   - component: {fileID: 1284298169}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}

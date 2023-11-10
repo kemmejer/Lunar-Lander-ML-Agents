@@ -21,5 +21,9 @@ MonoBehaviour:
   noiseScale:
     value: 0
     parameter: {x: 0.1, y: 0}
-  seed: 2
-  resolution: 50
+  seed:
+    value: 0
+    parameter: 0000000000000000
+  resolution:
+    value: 0
+    parameter: 3200000000000000

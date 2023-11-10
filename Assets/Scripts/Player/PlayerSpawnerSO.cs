@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerSpawnerSO", menuName = "ScriptableObjects/PlayerSpawnerSO")]
 public class PlayerSpawnerSO : ScriptableObject
 {
-    public RandomValue horizontalStartingVelocity;
+    public RandomFloat horizontalStartingVelocity;
 
     private static PlayerSpawnerSO _playerSpawnerSO;
 
@@ -16,7 +16,7 @@ public class PlayerSpawnerSO : ScriptableObject
         if (_playerSpawnerSO == null)
             _playerSpawnerSO = Instantiate(Resources.Load<PlayerSpawnerSO>("PlayerSpawnerSO"));
 
-        RandomValue.GenerateValuesForAllFields(_playerSpawnerSO);
+        IRandomValue.GenerateValuesForAllFields(_playerSpawnerSO);
 
         return _playerSpawnerSO;
     }

@@ -5,11 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GroundGeneratorSO", menuName = "ScriptableObjects/GroundGeneratorSO")]
 public class GroundGeneratorSO : ScriptableObject
 {
-    public RandomValue baseHeight;
-    public RandomValue noiseHeight;
-    public RandomValue noiseScale;
-    public int seed;
-    public int resolution;
+    public RandomFloat baseHeight;
+    public RandomFloat noiseHeight;
+    public RandomFloat noiseScale;
+    public RandomInt seed;
+    public RandomInt resolution;
 
     private static GroundGeneratorSO _groundGeneratorSO;
 
@@ -18,7 +18,7 @@ public class GroundGeneratorSO : ScriptableObject
         if (_groundGeneratorSO == null)
             _groundGeneratorSO = Instantiate(Resources.Load<GroundGeneratorSO>("GroundGeneratorSO"));
 
-        RandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
+        IRandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
 
         return _groundGeneratorSO;
     }

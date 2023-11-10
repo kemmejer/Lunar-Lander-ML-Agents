@@ -15,6 +15,8 @@ public class GroundGeneratorBehaviour : MonoBehaviour
     private List<int> _triangles;
     private List<Vector2> _collider;
 
+    private const int RandomRange = 10000;
+
     private static GroundGeneratorBehaviour _instance;
 
     public static GroundGeneratorBehaviour GetInstance()
@@ -36,12 +38,11 @@ public class GroundGeneratorBehaviour : MonoBehaviour
 
     public void GenerateGround()
     {
-        RandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
+        IRandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
 
         _vertices = new List<Vector3>();
         _triangles = new List<int>();
         _collider = new List<Vector2>();
-
 
         GenerateBase();
         GenerateTop();
@@ -65,9 +66,10 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         }
 
         float x = screenBounds.min.x;
-        float stepSize = screenBounds.size.x / _groundGeneratorSO.resolution;
+        float stepSize = screenBounds.size.x / _groundGeneratorSO.resolution.value;
 
-        float seed = _groundGeneratorSO.seed.GetHashCode();
+        int seed = RandomHelper.GetSeededRandomInRange(_groundGeneratorSO.seed.value, -RandomRange, RandomRange);
+        Debug.Log(string.Format("Seed: {0}", seed));
         int triangleIndex = _vertices.Count;
 
         _collider.Add(screenBounds.min);
@@ -76,7 +78,7 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         //1-3-5
         //|\|\|...
         //0-2-4
-        for (int i = 0; i <= _groundGeneratorSO.resolution; i++)
+        for (int i = 0; i <= _groundGeneratorSO.resolution.value; i++)
         {
             float noise = Mathf.PerlinNoise1D(x * _groundGeneratorSO.noiseScale.value + seed) * _groundGeneratorSO.noiseHeight.value;
             float y = baseY + noise;
@@ -92,7 +94,7 @@ public class GroundGeneratorBehaviour : MonoBehaviour
 
         // Clockwise triangle indices
         // 0-1-2 | 2-1-3 | 2-3-4 | 4-3-5 ...
-        for (int i = 0; i < _groundGeneratorSO.resolution; i++)
+        for (int i = 0; i < _groundGeneratorSO.resolution.value; i++)
         {
             _triangles.AddRange(new int[] {
                 triangleIndex    , triangleIndex + 1, triangleIndex + 2,

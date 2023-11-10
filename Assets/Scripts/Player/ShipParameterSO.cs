@@ -32,34 +32,34 @@ public class ShipParameterSO : ScriptableObject
 
     public void GenerateRandomValues()
     {
-        RandomValue.GenerateValuesForAllFields(physics);
-        RandomValue.GenerateValuesForAllFields(controlParameter);
-        RandomValue.GenerateValuesForAllFields(fuel);
-        RandomValue.GenerateValuesForAllFields(landing);
+        IRandomValue.GenerateValuesForAllFields(physics);
+        IRandomValue.GenerateValuesForAllFields(controlParameter);
+        IRandomValue.GenerateValuesForAllFields(fuel);
+        IRandomValue.GenerateValuesForAllFields(landing);
     }
 
     [Serializable]
     public struct ShipPhysics
     {
-        public RandomValue mass;
-        public RandomValue drag;
-        public RandomValue angularDrag;
-        public RandomValue gravityScale;
+        public RandomFloat mass;
+        public RandomFloat drag;
+        public RandomFloat angularDrag;
+        public RandomFloat gravityScale;
     }
 
     [Serializable]
     public struct ControlParameter
     {
-        public RandomValue rotationSpeed;
-        public RandomValue thrustAmount;
+        public RandomFloat rotationSpeed;
+        public RandomFloat thrustAmount;
     }
 
     [Serializable]
     public struct Fuel
     {
-        public RandomValue maxFuel;
-        public RandomValue remainingFuel;
-        public RandomValue fuelConsumption;
+        public RandomFloat maxFuel;
+        public RandomFloat remainingFuel;
+        public RandomFloat fuelConsumption;
 
         public void UseFuel()
         {
@@ -73,8 +73,8 @@ public class ShipParameterSO : ScriptableObject
     [Serializable]
     public struct Landing
     {
-        public RandomValue maxVelocity;
-        public RandomValue maxAngle;
+        public RandomFloat maxVelocity;
+        public RandomFloat maxAngle;
     }
 }
 

@@ -96,7 +96,7 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
         }
     }
-
+    float[] test = new float[2];
     private void GroundGeneratorHeader(UImGui.UImGui uimgui)
     {
         if(ImGui.CollapsingHeader("Ground Generator"))
@@ -109,9 +109,8 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Base noiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
-            ImGui.DragInt("Resolution", ref _groundGeneratorSO.resolution, 1, 2, 100);
-            ImGui.DragInt("Seed", ref _groundGeneratorSO.seed, 1, 0, int.MaxValue);
-
+            ImGui.DragInt2("Resolution", ref _groundGeneratorSO.resolution.parameter[0], 1, 2, 100);
+            ImGui.DragInt2("Seed", ref _groundGeneratorSO.seed.parameter[0], 1, 0, int.MaxValue);
         }
     }
 }

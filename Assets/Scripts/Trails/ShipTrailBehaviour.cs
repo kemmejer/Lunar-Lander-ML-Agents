@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ShipTrailBehaviour : MonoBehaviour
 {
-
-    TrailRenderer _trailRenderer;
+    private TrailRenderer _trailRenderer;
 
     void Awake()
     {

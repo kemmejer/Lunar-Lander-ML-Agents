@@ -5425,6 +5425,8 @@ GameObject:
   - component: {fileID: 2715343521914787191}
   - component: {fileID: 5272030129619781901}
   - component: {fileID: 2480730421630546491}
+  - component: {fileID: 2752023488261144486}
+  - component: {fileID: 8558883226545992101}
   m_Layer: 6
   m_Name: Spaceship
   m_TagString: Player
@@ -5621,10 +5623,56 @@ MonoBehaviour:
   - {x: 1.28, y: -1.2220097, z: 0}
   m_ShapePathHash: -1047465633
   m_Mesh: {fileID: 0}
-  m_InstanceId: 33002
+  m_InstanceId: 33652
   m_LocalBounds:
     m_Center: {x: 0.0037412643, y: -0.2440902, z: 0}
     m_Extent: {x: 1.2762587, y: 0.97791946, z: 0}
+--- !u!114 &2752023488261144486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6919724492393014594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BrainParameters:
+    VectorObservationSize: 1
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 0
+      BranchSizes: 0200000003000000
+    VectorActionSize: 0200000003000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: ShipControl
+  TeamId: 0
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_ObservableAttributeHandling: 0
+--- !u!114 &8558883226545992101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6919724492393014594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 024706414fa7657428ea995ddca660ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
 --- !u!1 &8253628583721994781
 GameObject:
   m_ObjectHideFlags: 0
@@ -5703,8 +5751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3e5f9aa05d940448a68bcf6ee79820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rayCount: 5
-  _rayAngle: 90
   _rayCasterObject: {fileID: 3759894250979854677, guid: 0bc9c3dcd791afe4abd75300e747f6a1, type: 3}
 --- !u!120 &7033705726263023551
 LineRenderer:

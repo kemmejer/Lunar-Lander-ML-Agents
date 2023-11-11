@@ -14,8 +14,6 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
     private Rigidbody2D _rigidBody;
     private bool _isDestroyed;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         _shipParameter = ShipParameterSO.GetInstanceCopy();

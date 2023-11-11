@@ -22,7 +22,7 @@ public class RayCastBehaviour : MonoBehaviour
         _direction = direction;
     }
 
-    public void CastRay(bool drawRay = false)
+    public RaycastHit2D CastRay(bool drawRay = false)
     {
         var origin = gameObject.transform.position;
         var rayHit = Physics2D.Raycast(origin, _direction, 100, _layerMask);
@@ -31,6 +31,8 @@ public class RayCastBehaviour : MonoBehaviour
             DrawRay(origin, rayHit.point);
         else
             HideRay();
+
+        return rayHit;
     }
 
     public void SetColor(Color color)

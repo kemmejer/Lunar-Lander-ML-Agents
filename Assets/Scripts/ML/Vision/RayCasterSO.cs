@@ -5,7 +5,7 @@ using UnityEngine;
 public class RayCasterSO : ScriptableObject
 {
     public RandomFloat angle;
-    public RandomInt rayCount;
+    public int rayCount;
     public bool drawRays;
 
     private static RayCasterSO _rayCasterSO;

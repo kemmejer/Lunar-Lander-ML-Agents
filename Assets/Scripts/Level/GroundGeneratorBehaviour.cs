@@ -69,7 +69,6 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         float stepSize = screenBounds.size.x / _groundGeneratorSO.resolution.value;
 
         int seed = RandomHelper.GetSeededRandomInRange(_groundGeneratorSO.seed.value, -RandomRange, RandomRange);
-        Debug.Log(string.Format("Seed: {0}", seed));
         int triangleIndex = _vertices.Count;
 
         _collider.Add(screenBounds.min);

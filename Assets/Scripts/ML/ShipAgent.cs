@@ -5,9 +5,12 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
+using Unity.VisualScripting;
 
 public class ShipAgent : Agent
 {
+    public event IOnEndEpisode.OnEndEpisodeDelegate OnEndEpisode;
+
     private ShipBehaviour _shipBehaviour;
     private RayCasterBehaviour _rayCasterBehaviour;
     private BehaviorParameters _behaviorParameters;
@@ -26,6 +29,9 @@ public class ShipAgent : Agent
     {
         _shipBehaviour = GetComponent<ShipBehaviour>();
         _rayCasterBehaviour = GetComponentInChildren<RayCasterBehaviour>();
+
+        _shipBehaviour.OnDestroyEvent += OnDestroyShip;
+        _shipBehaviour.OnShipLandedEvent += OnShipLanded;
     }
 
     private void FixedUpdate()
@@ -62,5 +68,27 @@ public class ShipAgent : Agent
         {
             sensor.AddObservation(rayHit.distance);
         }
+    }
+
+    private void OnShipLanded(Vector2 landingPosition)
+    {
+        SetReward(1.0f);
+        EndTraining();
+    }
+
+    private void OnDestroyShip(GameObject ship)
+    {
+        SetReward(-1.0f);
+        EndTraining();
+    }
+
+    private void EndTraining()
+    {
+        _shipBehaviour.OnDestroyEvent -= OnDestroyShip;
+        _shipBehaviour.OnShipLandedEvent -= OnShipLanded;
+
+        OnEndEpisode?.Invoke(this);
+
+        Destroy(this);
     }
 }

@@ -2,7 +2,6 @@ using ImGuiNET;
 using System;
 using UImGui;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 public class StaticSample : MonoBehaviour
 {
@@ -10,6 +9,7 @@ public class StaticSample : MonoBehaviour
     private PlayerSpawnerSO _playerSpawnerSO;
     private GroundGeneratorSO _groundGeneratorSO;
     private RayCasterSO _rayCasterSO;
+    private TrainingSO _trainingSO;
 
     private void Awake()
     {
@@ -21,14 +21,14 @@ public class StaticSample : MonoBehaviour
         _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
         _groundGeneratorSO = GroundGeneratorSO.GetInstance();
         _rayCasterSO = RayCasterSO.GetInstance();
+        _trainingSO = TrainingSO.GetInstance();
     }
 
     // Unity Update method. 
     // Your code belongs here! Like ImGui.Begin... etc.
     private void OnLayout(UImGui.UImGui uimgui)
     {
-        PlayerShipHeader(uimgui);
-        ShipSpawnHeader(uimgui);
+        ControlHeader(uimgui);
         ShipParameterHeader(uimgui);
         GroundGeneratorHeader(uimgui);
         MachineLearningHeader(uimgui);
@@ -51,26 +51,35 @@ public class StaticSample : MonoBehaviour
         UImGuiUtility.OnDeinitialize -= OnDeinitialize;
     }
 
-    private void PlayerShipHeader(UImGui.UImGui uimgui)
+    private void ControlHeader(in UImGui.UImGui uimgui)
     {
-        if (ImGui.CollapsingHeader("Player Ship"))
+        if (ImGui.CollapsingHeader("Controls", ImGuiTreeNodeFlags.DefaultOpen))
         {
+            ImGui.Text("Ship");
             if (ImGui.Button("Spawn Player Ship"))
-            {
                 PlayerSpawnerBehaviour.GetInstance().SpawnShip(true);
-            }
+
+            ImGui.SameLine();
+            if(ImGui.Button("Destroy Ships"))
+                PlayerSpawnerBehaviour.GetInstance().DestroyShips();
+
+            ImGui.Separator();
+            ImGui.Text("Training");
+            if (ImGui.Button("Start Training"))
+                TrainingManagerBehaviour.GetInstance().StartTraining();
+
+            ImGui.SameLine();
+            if (ImGui.Button("Stop Training"))
+                TrainingManagerBehaviour.GetInstance().StopTraining();
+
+            ImGui.Separator();
+            ImGui.Text("Trails");
+            if(ImGui.Button("Delete Trails"))
+                TrailManager.GetInstance().DestoryTrails();
         }
     }
 
-    private void ShipSpawnHeader(UImGui.UImGui uimgui)
-    {
-        if (ImGui.CollapsingHeader("Ship Spawn Parameter"))
-        {
-            ImGui.DragFloat2("Horizontal Velocity", ref _playerSpawnerSO.horizontalStartingVelocity.parameter, 1.0f, 0.0f, 100.0f);
-        }
-    }
-
-    private void ShipParameterHeader(UImGui.UImGui uimgui)
+    private void ShipParameterHeader(in UImGui.UImGui uimgui)
     {
         if (ImGui.CollapsingHeader("Ship Parameter"))
         {
@@ -94,18 +103,21 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Drag", ref _shipParameter.physics.drag.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Angular Drag", ref _shipParameter.physics.angularDrag.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
+            ImGui.Separator();
+
+            ImGui.Text("Spawning");
+            ImGui.DragFloat2("Horizontal Velocity", ref _playerSpawnerSO.horizontalStartingVelocity.parameter, 1.0f, 0.0f, 100.0f);
         }
     }
 
-    private void GroundGeneratorHeader(UImGui.UImGui uimgui)
+    private void GroundGeneratorHeader(in UImGui.UImGui uimgui)
     {
         if(ImGui.CollapsingHeader("Ground Generator"))
         {
             if(ImGui.Button("Generate Ground"))
-            {
                 GroundGeneratorBehaviour.GetInstance().GenerateGround();
-            }
 
+            ImGui.Separator();
             ImGui.DragFloat2("Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Base noiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
@@ -114,7 +126,7 @@ public class StaticSample : MonoBehaviour
         }
     }
 
-    private void MachineLearningHeader(UImGui.UImGui uimgui)
+    private void MachineLearningHeader(in UImGui.UImGui uimgui)
     {
         if(ImGui.CollapsingHeader("Machine Learning"))
         {
@@ -122,6 +134,9 @@ public class StaticSample : MonoBehaviour
             ImGui.DragInt("Ray Count", ref _rayCasterSO.rayCount, 1, 1, 10);
             ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
             ImGui.Checkbox("Draw Rays", ref _rayCasterSO.drawRays);
+
+            ImGui.Text("Training");
+            ImGui.DragInt("Ship Count", ref _trainingSO.shipCount, 1, 1, 100);
         }
     }
 }

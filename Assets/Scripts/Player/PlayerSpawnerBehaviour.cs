@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents.Policies;
 using UnityEngine;
 
 public class PlayerSpawnerBehaviour : MonoBehaviour
@@ -17,8 +18,6 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
         _playerSpawnerBehaviour = GetComponent<PlayerSpawnerBehaviour>();
         _spaceShips = new List<GameObject>();
-
-        SpawnShip(true);
     }
 
     private void OnDisable()
@@ -31,13 +30,12 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         return _playerSpawnerBehaviour;
     }
 
-    public void SpawnShip(bool userControllable = false)
+    public GameObject SpawnShip(bool userControllable = false)
     {
         var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         var bounds = spriteRenderer.bounds;
         var spawnPos = RandomHelper.RandomInRange(bounds.min, bounds.max);
-
-        var ship = Instantiate(_spaceShip, spawnPos, Quaternion.identity);
+        var ship = Instantiate(_spaceShip, spawnPos, Quaternion.identity, gameObject.transform.parent);
         _spaceShips.Add(ship);
 
         var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
@@ -51,9 +49,16 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         {
             PlayerInput.GetInstance().SetPlayer(shipBehaviour);
         }
+        else
+        {
+            var shipAgent = ship.GetComponent<ShipAgent>();
+            shipAgent.enabled = true;
+        }
+
+        return ship;
     }
 
-    private void DestroyShips()
+    public void DestroyShips()
     {
         foreach (var ship in _spaceShips)
         {

@@ -17,6 +17,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         _instance = GetComponent<TrainingManagerBehaviour>();
         _trainingSO = TrainingSO.GetInstance();
+        StartTraining();
     }
 
     public static TrainingManagerBehaviour GetInstance()
@@ -50,10 +51,11 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         for (int i = 0; i < _trainingSO.shipCount; i++)
         {
-            var ship = playerSpawner.SpawnShip();
+            var ship = playerSpawner.InstantiateShip();
+
             var shipAgent = ship.GetComponent<ShipAgent>();
-            _agents.Add(shipAgent);
             shipAgent.OnEndEpisode += OnShipEpisodeEnded;
+            _agents.Add(shipAgent);
         }
     }
 
@@ -68,12 +70,5 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private void OnShipEpisodeEnded(ShipAgent shipAgent)
     {
-        shipAgent.OnEndEpisode -= OnShipEpisodeEnded;
-        _agents.Remove(shipAgent);
-
-        if (!_agents.Any())
-        {
-            EndBatch();
-        }
     }
 }

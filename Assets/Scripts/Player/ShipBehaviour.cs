@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
+public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 {
-    public event IOnDestroyEvent.OnDestroyDelegate OnDestroyEvent;
     public event IOnShipLandedEvent.OnShipLandedDelegate OnShipLandedEvent;
 
     public ShipParameterSO ShipParameterSO { get; private set; }
@@ -14,16 +14,10 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
     [SerializeField] private GameObject _velocityIndicator;
 
     private Rigidbody2D _rigidBody;
-    private bool _isDestroyed;
 
-    void Start()
+    void Awake()
     {
-        ShipParameterSO = ShipParameterSO.GetInstanceCopy();
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
-        UpdateShipPhysics();
-        _shipThruster.SetActive(false);
-        ResetFuel();
-        SetRandomComponentColor();
     }
 
     void FixedUpdate()
@@ -33,7 +27,8 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
     private void OnBecameInvisible()
     {
-        DestroyShip();
+        if(gameObject.activeInHierarchy)
+            OnShipLanded(IOnShipLandedEvent.LandingType.Crash);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -43,19 +38,23 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
 
         if (angleOk && velocityOk)
         {
-            OnShipLanded();
+            OnShipLanded(IOnShipLandedEvent.LandingType.Success);
         }
         else
         {
-            DestroyShip();
+            OnShipLanded(IOnShipLandedEvent.LandingType.Crash);
         }
 
         Debug.Log(string.Format("AngleOk: {0}, VelocityOk: {1}", angleOk, velocityOk));
     }
 
-    private void OnDestroy()
+    public void InitShip()
     {
-        OnDestroyEvent?.Invoke(gameObject);
+        ShipParameterSO = ShipParameterSO.GetInstanceCopy();
+        UpdateShipPhysics();
+        _shipThruster.SetActive(false);
+        ResetFuel();
+        SetRandomComponentColor();
     }
 
     public void RotateRight()
@@ -96,26 +95,15 @@ public class ShipBehaviour : MonoBehaviour, IOnDestroyEvent
         _shipThruster.SetActive(false);
     }
 
-    private void OnShipLanded()
+    private void OnShipLanded(IOnShipLandedEvent.LandingType landingType)
     {
-        OnShipLandedEvent?.Invoke(gameObject.transform.position);
-    }
-
-    private void DestroyShip(bool explode = true)
-    {
-        if (_isDestroyed)
-            return;
-
-        _isDestroyed = true;
-
-        if (explode)
+        /*if (landingType == IOnShipLandedEvent.LandingType.Crash)
             AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
         var trail = gameObject.transform.Find("Trail").gameObject;
-        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);
+        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);*/
 
-        Destroy(ShipParameterSO);
-        Destroy(gameObject);
+        OnShipLandedEvent?.Invoke(gameObject.transform.position, landingType);
     }
 
     private void UpdateShipPhysics()

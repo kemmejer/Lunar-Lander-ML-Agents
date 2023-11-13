@@ -25,8 +25,9 @@ public class TrailManager : MonoBehaviour
         if (!trail.gameObject.activeInHierarchy)
             return;
 
-        trail.transform.SetParent(gameObject.transform);
-        _trails.Add(trail);
+        var trailCopy = Instantiate(trail, gameObject.transform);
+
+        _trails.Add(trailCopy);
     }
 
     public void DestoryTrails()

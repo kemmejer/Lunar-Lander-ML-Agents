@@ -57,7 +57,7 @@ public class StaticSample : MonoBehaviour
         {
             ImGui.Text("Ship");
             if (ImGui.Button("Spawn Player Ship"))
-                PlayerSpawnerBehaviour.GetInstance().SpawnShip(true);
+                PlayerSpawnerBehaviour.GetInstance().InstantiateShip(true);
 
             ImGui.SameLine();
             if(ImGui.Button("Destroy Ships"))

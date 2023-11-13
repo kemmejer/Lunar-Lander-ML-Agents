@@ -15,7 +15,7 @@ public class ShipAgent : Agent
     private RayCasterBehaviour _rayCasterBehaviour;
     private BehaviorParameters _behaviorParameters;
 
-    private const int ObervationParameterCount = 3 + 4;
+    private const int ObervationParameterCount = 2 + 1;
 
     private void Awake()
     {
@@ -30,8 +30,14 @@ public class ShipAgent : Agent
         _shipBehaviour = GetComponent<ShipBehaviour>();
         _rayCasterBehaviour = GetComponentInChildren<RayCasterBehaviour>();
 
-        _shipBehaviour.OnDestroyEvent += OnDestroyShip;
         _shipBehaviour.OnShipLandedEvent += OnShipLanded;
+    }
+
+    public override void OnEpisodeBegin()
+    {
+        base.OnEpisodeBegin();
+
+        PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
     }
 
     private void FixedUpdate()
@@ -60,35 +66,33 @@ public class ShipAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(gameObject.transform.position);
-        sensor.AddObservation(gameObject.transform.rotation);
+        sensor.AddObservation(new Vector2(gameObject.transform.position.x, gameObject.transform.position.y));
+        sensor.AddObservation(gameObject.transform.eulerAngles.z);
 
         var rayHits = _rayCasterBehaviour.CastRays();
         foreach (var rayHit in rayHits)
         {
-            sensor.AddObservation(rayHit.distance);
+            if(rayHit.collider)
+                sensor.AddObservation(rayHit.distance);
+            else
+                sensor.AddObservation(-1.0f);
         }
     }
 
-    private void OnShipLanded(Vector2 landingPosition)
+    private void OnShipLanded(Vector2 landingPosition, IOnShipLandedEvent.LandingType landingType)
     {
-        SetReward(1.0f);
-        EndTraining();
-    }
+        if (landingType == IOnShipLandedEvent.LandingType.Success)
+            SetReward(1.0f);
+        else
+            SetReward(-1.0f);
 
-    private void OnDestroyShip(GameObject ship)
-    {
-        SetReward(-1.0f);
         EndTraining();
     }
 
     private void EndTraining()
     {
-        _shipBehaviour.OnDestroyEvent -= OnDestroyShip;
-        _shipBehaviour.OnShipLandedEvent -= OnShipLanded;
-
         OnEndEpisode?.Invoke(this);
 
-        Destroy(this);
+        EndEpisode();
     }
 }

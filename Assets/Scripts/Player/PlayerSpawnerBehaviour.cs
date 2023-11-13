@@ -12,8 +12,7 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
 
     private static PlayerSpawnerBehaviour _playerSpawnerBehaviour;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _playerSpawnerSO = PlayerSpawnerSO.GetInstance();
         _playerSpawnerBehaviour = GetComponent<PlayerSpawnerBehaviour>();
@@ -30,23 +29,16 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         return _playerSpawnerBehaviour;
     }
 
-    public GameObject SpawnShip(bool userControllable = false)
+    public GameObject InstantiateShip(bool userControllable = false)
     {
-        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        var bounds = spriteRenderer.bounds;
-        var spawnPos = RandomHelper.RandomInRange(bounds.min, bounds.max);
-        var ship = Instantiate(_spaceShip, spawnPos, Quaternion.identity, gameObject.transform.parent);
+        var ship = Instantiate(_spaceShip, gameObject.transform.parent);
         _spaceShips.Add(ship);
 
-        var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
-        var rigidBody = ship.GetComponent<Rigidbody2D>();
-        rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity.RndValue);
-
-        var shipBehaviour = ship.GetComponent<ShipBehaviour>();
-        shipBehaviour.OnDestroyEvent += OnDestroyShip;
+        ResetShip(ship);
 
         if (userControllable)
         {
+            var shipBehaviour = ship.GetComponent<ShipBehaviour>();
             PlayerInput.GetInstance().SetPlayer(shipBehaviour);
         }
         else
@@ -58,6 +50,32 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         return ship;
     }
 
+    public void ResetShip(GameObject ship)
+    {
+        // Ship parameter
+        var shipBehaviour = ship.GetComponent<ShipBehaviour>();
+        shipBehaviour.InitShip();
+
+        // Transform
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        var bounds = spriteRenderer.bounds;
+        var spawnPos = RandomHelper.RandomInRange(bounds.min, bounds.max);
+        ship.transform.position = spawnPos;
+        ship.transform.rotation = Quaternion.identity;
+
+        // Rigidbody
+        var rigidBody = ship.GetComponent<Rigidbody2D>();
+        ResetHelper.ResetRigidBody(rigidBody);
+        rigidBody.position = spawnPos;
+        var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
+        rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity.RndValue);
+
+        // Trail
+        var trail = ship.GetComponentInChildren<TrailRenderer>();
+        trail.Clear();
+
+    }
+
     public void DestroyShips()
     {
         foreach (var ship in _spaceShips)
@@ -66,13 +84,5 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         }
 
         _spaceShips.Clear();
-    }
-
-    private void OnDestroyShip(GameObject ship)
-    {
-        var shipBehaviour = ship.GetComponent<ShipBehaviour>();
-        shipBehaviour.OnDestroyEvent -= OnDestroyShip;
-
-        _spaceShips.Remove(ship);
     }
 }

@@ -11,9 +11,12 @@ public class ShipAgent : Agent
 {
     public event IOnEndEpisode.OnEndEpisodeDelegate OnEndEpisode;
 
+    public TrainingSO TrainingSO { get; set; }
+
     private ShipBehaviour _shipBehaviour;
     private RayCasterBehaviour _rayCasterBehaviour;
     private BehaviorParameters _behaviorParameters;
+    private int decisionIteration = 1;
 
     private const int ObervationParameterCount = 2 + 1;
 
@@ -42,7 +45,16 @@ public class ShipAgent : Agent
 
     private void FixedUpdate()
     {
-        RequestDecision();
+        if (decisionIteration >= TrainingSO.decisionInterval)
+        {
+            RequestDecision();
+            decisionIteration = 1;
+        }
+        else
+        {
+            RequestAction();
+            decisionIteration++;
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -72,7 +84,7 @@ public class ShipAgent : Agent
         var rayHits = _rayCasterBehaviour.CastRays();
         foreach (var rayHit in rayHits)
         {
-            if(rayHit.collider)
+            if (rayHit.collider)
                 sensor.AddObservation(rayHit.distance);
             else
                 sensor.AddObservation(-1.0f);

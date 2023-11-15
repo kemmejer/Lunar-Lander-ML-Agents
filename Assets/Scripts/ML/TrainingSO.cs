@@ -6,6 +6,7 @@ using UnityEngine;
 public class TrainingSO : ScriptableObject
 {
     public int shipCount;
+    public int decisionInterval;
 
     private static TrainingSO _trainingSO;
 
@@ -17,5 +18,10 @@ public class TrainingSO : ScriptableObject
         IRandomValue.GenerateValuesForAllFields(_trainingSO);
 
         return _trainingSO;
+    }
+
+    public static TrainingSO GetInstanceCopy()
+    {
+        return Instantiate(GetInstance());
     }
 }

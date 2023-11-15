@@ -16,7 +16,6 @@ public class TrainingManagerBehaviour : MonoBehaviour
     void Start()
     {
         _instance = GetComponent<TrainingManagerBehaviour>();
-        _trainingSO = TrainingSO.GetInstance();
     }
 
     public static TrainingManagerBehaviour GetInstance()
@@ -28,7 +27,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         if (_isRunning)
             return;
+
         _isRunning = true;
+        _trainingSO = TrainingSO.GetInstanceCopy();
 
         StartBatch();
     }
@@ -54,6 +55,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
             var shipAgent = ship.GetComponent<ShipAgent>();
             shipAgent.OnEndEpisode += OnShipEpisodeEnded;
+            shipAgent.TrainingSO = _trainingSO;
             _agents.Add(shipAgent);
         }
     }

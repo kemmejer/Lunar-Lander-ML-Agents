@@ -137,6 +137,7 @@ public class StaticSample : MonoBehaviour
 
             ImGui.Text("Training");
             ImGui.DragInt("Ship Count", ref _trainingSO.shipCount, 1, 1, 100);
+            ImGui.DragInt("Decision Interval", ref _trainingSO.decisionInterval, 1, 1, 10);
         }
     }
 }

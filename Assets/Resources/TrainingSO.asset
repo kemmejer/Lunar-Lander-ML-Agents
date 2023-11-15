@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: TrainingSO
   m_EditorClassIdentifier: 
   shipCount: 25
+  decisionInterval: 3

@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AnimationSystem : MonoBehaviour
 {
 
     [SerializeField] private ParticleSystem explosionPrefab;
+    private ParticleSystem _explosion;
+    private const int ExplosionEmitCount = 3;
 
     private static AnimationSystem _animationSystem;
 
@@ -13,12 +17,7 @@ public class AnimationSystem : MonoBehaviour
     void Start()
     {
         _animationSystem = GetComponent<AnimationSystem>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        _explosion = Instantiate(explosionPrefab, gameObject.transform);
     }
 
     public static AnimationSystem GetInstance()
@@ -28,7 +27,8 @@ public class AnimationSystem : MonoBehaviour
 
     public void PlayExplosionAt(Vector3 position)
     {
-        var explosion = Instantiate(explosionPrefab, position, Quaternion.identity, gameObject.transform);
-        explosion.Play();
+        _explosion.transform.position = position;
+        _explosion.Emit(ExplosionEmitCount);
     }
 }
+

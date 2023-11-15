@@ -97,11 +97,11 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     private void OnShipLanded(IOnShipLandedEvent.LandingType landingType)
     {
-        /*if (landingType == IOnShipLandedEvent.LandingType.Crash)
+        if (landingType == IOnShipLandedEvent.LandingType.Crash)
             AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
         var trail = gameObject.transform.Find("Trail").gameObject;
-        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);*/
+        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);
 
         OnShipLandedEvent?.Invoke(gameObject.transform.position, landingType);
     }

@@ -17,7 +17,6 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         _instance = GetComponent<TrainingManagerBehaviour>();
         _trainingSO = TrainingSO.GetInstance();
-        StartTraining();
     }
 
     public static TrainingManagerBehaviour GetInstance()

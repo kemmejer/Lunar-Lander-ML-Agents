@@ -12,6 +12,8 @@ public class TrainingManagerBehaviour : MonoBehaviour
     private List<ShipAgent> _agents;
     private bool _isRunning;
 
+    private int finishedShipCount;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +33,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
 
-        StartBatch();
+        CreateAgents();
     }
 
     public void StopTraining()
@@ -41,10 +43,12 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         _isRunning = false;
 
-        EndBatch();
+        PlayerSpawnerBehaviour.GetInstance().DestroyShips();
+        TrailManager.GetInstance().DestoryTrails();
+        _agents.Clear();
     }
 
-    private void StartBatch()
+    private void CreateAgents()
     {
         _agents = new List<ShipAgent>();
         var playerSpawner = PlayerSpawnerBehaviour.GetInstance();
@@ -60,16 +64,25 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
-    private void EndBatch()
+    private void StartBatch()
     {
-        PlayerSpawnerBehaviour.GetInstance().DestroyShips();
+        finishedShipCount = 0;
         TrailManager.GetInstance().DestoryTrails();
 
-        if(_isRunning)
-            StartBatch();
+        foreach (var agent in _agents)
+        {
+            agent.enabled = true;
+            agent.gameObject.SetActive(true);
+            agent.EndEpisode();
+        }
     }
 
     private void OnShipEpisodeEnded(ShipAgent shipAgent)
     {
+        shipAgent.enabled = false;
+        finishedShipCount++;
+
+        if (finishedShipCount == _agents.Count)
+            StartBatch();
     }
 }

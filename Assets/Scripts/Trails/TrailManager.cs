@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TrailManager : MonoBehaviour
 {
+    public const string TrailName = "Trail";
+
+    [SerializeField] private GameObject _trailPrefab;
+
     private List<GameObject> _trails;
     private static TrailManager _instance;
 
@@ -22,12 +27,12 @@ public class TrailManager : MonoBehaviour
 
     public void MoveTrailToTrailManager(GameObject trail)
     {
-        if (!trail.gameObject.activeInHierarchy)
-            return;
+        // Add a new trail to the trails parent object
+        AddTrailToObject(trail.transform.parent);
 
-        var trailCopy = Instantiate(trail, gameObject.transform);
-
-        _trails.Add(trailCopy);
+        // Move the trail to the trail manager
+        trail.transform.SetParent(transform, true);
+        _trails.Add(trail);
     }
 
     public void DestoryTrails()
@@ -38,6 +43,12 @@ public class TrailManager : MonoBehaviour
         }
 
         _trails.Clear();
+    }
+
+    private void AddTrailToObject(Transform target)
+    {
+        var trail = Instantiate(_trailPrefab, target);
+        trail.name = TrailName;
     }
 
 }

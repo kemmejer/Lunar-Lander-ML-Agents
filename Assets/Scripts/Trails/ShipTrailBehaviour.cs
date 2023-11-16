@@ -6,13 +6,11 @@ public class ShipTrailBehaviour : MonoBehaviour
 {
     private TrailRenderer _trailRenderer;
 
-    void Awake()
-    {
-        _trailRenderer = GetComponent<TrailRenderer>();
-    }
-
     public void SetColor(Color color)
     {
+        if (!_trailRenderer)
+            _trailRenderer = GetComponent<TrailRenderer>();
+
         _trailRenderer.startColor = color;
         _trailRenderer.endColor = color;
     }

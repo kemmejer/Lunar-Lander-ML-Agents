@@ -93,18 +93,19 @@ public class ShipAgent : Agent
 
     private void OnShipLanded(Vector2 landingPosition, IOnShipLandedEvent.LandingType landingType)
     {
-        if (landingType == IOnShipLandedEvent.LandingType.Success)
-            SetReward(1.0f);
-        else
-            SetReward(-1.0f);
+        switch (landingType)
+        {
+            case IOnShipLandedEvent.LandingType.Success: SetReward(1.0f); break;
+            case IOnShipLandedEvent.LandingType.Crash: SetReward(-0.2f); break;
+            case IOnShipLandedEvent.LandingType.OutOfBounds: SetReward(-1.0f); break;
+        }
 
         EndTraining();
     }
 
     private void EndTraining()
     {
+        decisionIteration = 1;
         OnEndEpisode?.Invoke(this);
-
-        EndEpisode();
     }
 }

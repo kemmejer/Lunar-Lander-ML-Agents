@@ -4,7 +4,7 @@ public interface IOnShipLandedEvent
 {
     public enum LandingType
     {
-        Success, Crash
+        Success, Crash, OutOfBounds
     }
 
     public event OnShipLandedDelegate OnShipLandedEvent;

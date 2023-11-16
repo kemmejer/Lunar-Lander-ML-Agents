@@ -28,7 +28,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
     private void OnBecameInvisible()
     {
         if(gameObject.activeInHierarchy)
-            OnShipLanded(IOnShipLandedEvent.LandingType.Crash);
+            OnShipLanded(IOnShipLandedEvent.LandingType.OutOfBounds);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -100,8 +100,11 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         if (landingType == IOnShipLandedEvent.LandingType.Crash)
             AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
-        var trail = gameObject.transform.Find("Trail").gameObject;
-        TrailManager.GetInstance()?.MoveTrailToTrailManager(trail);
+        if(landingType != IOnShipLandedEvent.LandingType.Success)
+            gameObject.SetActive(false);
+
+        var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
+        TrailManager.GetInstance().MoveTrailToTrailManager(trail);
 
         OnShipLandedEvent?.Invoke(gameObject.transform.position, landingType);
     }

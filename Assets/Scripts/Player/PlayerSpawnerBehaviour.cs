@@ -73,7 +73,6 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         // Trail
         var trail = ship.GetComponentInChildren<TrailRenderer>();
         trail.Clear();
-
     }
 
     public void DestroyShips()

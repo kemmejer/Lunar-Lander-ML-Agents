@@ -32,6 +32,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
+        ObservationNormalizer.Init();
 
         CreateAgents();
     }

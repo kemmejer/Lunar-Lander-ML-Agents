@@ -18,7 +18,7 @@ public class ShipAgent : Agent
     private BehaviorParameters _behaviorParameters;
     private int decisionIteration = 1;
 
-    private const int ObervationParameterCount = 2 + 1;
+    private const int ObervationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
     {
@@ -78,16 +78,31 @@ public class ShipAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(new Vector2(gameObject.transform.position.x, gameObject.transform.position.y));
-        sensor.AddObservation(gameObject.transform.eulerAngles.z);
+        // Position
+        Vector2 normalizedPosition = ObservationNormalizer.NormalizeScreenPosition(gameObject.transform.position);
+        sensor.AddObservation(normalizedPosition);
 
+        // Rotation
+        float normalizedRotation = ObservationNormalizer.NormalizeEulerAngle(gameObject.transform.eulerAngles.z);
+        sensor.AddObservation(normalizedRotation);
+
+        //Velocity
+        var normalizedVelocity = ObservationNormalizer.NormalizeVelocity(_shipBehaviour.GetVelocity());
+        sensor.AddObservation(normalizedVelocity);
+
+        // RayCast distance
         var rayHits = _rayCasterBehaviour.CastRays();
         foreach (var rayHit in rayHits)
         {
             if (rayHit.collider)
-                sensor.AddObservation(rayHit.distance);
+            {
+                float normalizedDistance = ObservationNormalizer.NormalizeRayCastDistance(rayHit.distance);
+                sensor.AddObservation(normalizedDistance);
+            }
             else
+            {
                 sensor.AddObservation(-1.0f);
+            }
         }
     }
 

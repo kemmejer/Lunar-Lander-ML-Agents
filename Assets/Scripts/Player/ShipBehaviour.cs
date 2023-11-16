@@ -95,6 +95,21 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _shipThruster.SetActive(false);
     }
 
+    public Vector2 GetPosition()
+    {
+        return gameObject.transform.position;
+    }
+
+    public Vector2 GetUpFacingShipNormal()
+    {
+        return gameObject.transform.rotation * Vector2.up;
+    }
+
+    public Vector2 GetVelocity()
+    {
+        return _rigidBody.velocity;
+    }
+
     private void OnShipLanded(IOnShipLandedEvent.LandingType landingType)
     {
         if (landingType == IOnShipLandedEvent.LandingType.Crash)
@@ -165,21 +180,6 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         Debug.Log(string.Format("Landing velocity: {0}", velocity));
 
         return velocity < ShipParameterSO.landing.maxVelocity.value;
-    }
-
-    private Vector2 GetPosition()
-    {
-        return gameObject.transform.position;
-    }
-
-    private Vector2 GetUpFacingShipNormal()
-    {
-        return gameObject.transform.rotation * Vector2.up;
-    }
-
-    private Vector2 GetVelocity()
-    {
-        return _rigidBody.velocity;
     }
 
     private void SetRandomComponentColor()

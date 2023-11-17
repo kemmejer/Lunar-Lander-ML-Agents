@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static IOnShipLandedEvent;
 
 public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 {
-    public event IOnShipLandedEvent.OnShipLandedDelegate OnShipLandedEvent;
+    public event OnShipLandedDelegate OnShipLandedEvent;
 
     public ShipParameterSO ShipParameterSO { get; private set; }
 
@@ -27,25 +28,27 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     private void OnBecameInvisible()
     {
-        if(gameObject.activeInHierarchy)
-            OnShipLanded(IOnShipLandedEvent.LandingType.OutOfBounds);
+        if (gameObject.activeInHierarchy)
+            OnShipLanded(LandingType.OutOfBounds, 0.0f, Vector2.zero);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        bool angleOk = IsCollisionAngleSmallEnough(collision);
-        bool velocityOk = IsCollisionVelocitySmallEnough(collision);
+        float landingDeltaAngle;
+        Vector2 landingVelocity;
+        bool angleOk = IsCollisionAngleSmallEnough(collision, out landingDeltaAngle);
+        bool velocityOk = IsCollisionVelocitySmallEnough(collision, out landingVelocity);
 
         if (angleOk && velocityOk)
         {
-            OnShipLanded(IOnShipLandedEvent.LandingType.Success);
+            OnShipLanded(LandingType.Success, landingDeltaAngle, landingVelocity);
         }
         else
         {
-            OnShipLanded(IOnShipLandedEvent.LandingType.Crash);
+            OnShipLanded(LandingType.Crash, landingDeltaAngle, landingVelocity);
         }
 
-        Debug.Log(string.Format("AngleOk: {0}, VelocityOk: {1}", angleOk, velocityOk));
+        Debug.Log(string.Format("AngleOk: {0}, VelocityOk: {1}, Angle: {2}, Velocity: {3}", angleOk, velocityOk, landingDeltaAngle, landingVelocity));
     }
 
     public void InitShip()
@@ -61,20 +64,22 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
     {
         gameObject.transform.Rotate(0.0f, 0.0f, -ShipParameterSO.controlParameter.rotationSpeed.value);
 
-        var rotation = gameObject.transform.localEulerAngles;
-        var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
-        if (zRotation < -90.0f)
-            gameObject.transform.localEulerAngles = new Vector3(rotation.x, rotation.y, 270.0f);
+        if (GetEulerRotation() < -Constants.MaxShipAngle)
+        {
+            var rotation = gameObject.transform.eulerAngles;
+            gameObject.transform.eulerAngles = new Vector3(rotation.x, rotation.y, -Constants.MaxShipAngle);
+        }
     }
 
     public void RotateLeft()
     {
         gameObject.transform.Rotate(0.0f, 0.0f, ShipParameterSO.controlParameter.rotationSpeed.value);
 
-        var rotation = gameObject.transform.localEulerAngles;
-        var zRotation = rotation.z > 180 ? rotation.z - 360 : rotation.z;
-        if (zRotation > 90.0f)
-            gameObject.transform.localEulerAngles = new Vector3(rotation.x, rotation.y, 90.0f);
+        if (GetEulerRotation() > Constants.MaxShipAngle)
+        {
+            var rotation = gameObject.transform.eulerAngles;
+            gameObject.transform.eulerAngles = new Vector3(rotation.x, rotation.y, Constants.MaxShipAngle);
+        }
     }
 
     public void Thrust()
@@ -100,6 +105,12 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return gameObject.transform.position;
     }
 
+    public float GetEulerRotation()
+    {
+        var eulerAngle = gameObject.transform.eulerAngles.z;
+        return eulerAngle > 180.0f ? eulerAngle - 360.0f : eulerAngle;
+    }
+
     public Vector2 GetUpFacingShipNormal()
     {
         return gameObject.transform.rotation * Vector2.up;
@@ -110,18 +121,24 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return _rigidBody.velocity;
     }
 
-    private void OnShipLanded(IOnShipLandedEvent.LandingType landingType)
+    private void OnShipLanded(LandingType landingType, float landingDeltaAngle, in Vector2 landingVelocity)
     {
-        if (landingType == IOnShipLandedEvent.LandingType.Crash)
+        if (landingType == LandingType.Crash)
             AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
-        if(landingType != IOnShipLandedEvent.LandingType.Success)
+        if (landingType != LandingType.Success)
             gameObject.SetActive(false);
 
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
         TrailManager.GetInstance().MoveTrailToTrailManager(trail);
 
-        OnShipLandedEvent?.Invoke(gameObject.transform.position, landingType);
+        var landingData = new LandingData() {
+            type = landingType,
+            position = GetPosition(),
+            velocity = landingVelocity,
+            groundDeltaAngle = landingDeltaAngle };
+
+        OnShipLandedEvent?.Invoke(landingData);
     }
 
     private void UpdateShipPhysics()
@@ -161,23 +178,19 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _fuelBar.transform.localScale = new Vector3(1.0f, scale.y, scale.z);
     }
 
-    private bool IsCollisionAngleSmallEnough(Collision2D collision)
+    private bool IsCollisionAngleSmallEnough(Collision2D collision, out float landingDeltaAngle)
     {
         var surfaceNormal = collision.GetContact(0).normal;
         var shipNormal = GetUpFacingShipNormal();
-        var angle = Vector2.Angle(surfaceNormal, shipNormal);
+        landingDeltaAngle = Vector2.Angle(surfaceNormal, shipNormal);
 
-        Debug.Log(string.Format("Landing angle: {0}", angle));
-
-        return Mathf.Abs(angle) < ShipParameterSO.landing.maxAngle.value;
+        return Mathf.Abs(landingDeltaAngle) < ShipParameterSO.landing.maxAngle.value;
     }
 
-    private bool IsCollisionVelocitySmallEnough(Collision2D collision)
+    private bool IsCollisionVelocitySmallEnough(Collision2D collision, out Vector2 landingVelocity)
     {
-        var velocity2D = collision.GetContact(0).relativeVelocity;
-        var velocity = velocity2D.magnitude;
-
-        Debug.Log(string.Format("Landing velocity: {0}", velocity));
+        landingVelocity = collision.GetContact(0).relativeVelocity;
+        float velocity = landingVelocity.magnitude;
 
         return velocity < ShipParameterSO.landing.maxVelocity.value;
     }

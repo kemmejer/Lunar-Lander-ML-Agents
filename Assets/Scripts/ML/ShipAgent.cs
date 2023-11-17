@@ -6,6 +6,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
+using static IOnShipLandedEvent;
 
 public class ShipAgent : Agent
 {
@@ -79,11 +80,11 @@ public class ShipAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Position
-        Vector2 normalizedPosition = ObservationNormalizer.NormalizeScreenPosition(gameObject.transform.position);
+        Vector2 normalizedPosition = ObservationNormalizer.NormalizeScreenPosition(_shipBehaviour.GetPosition());
         sensor.AddObservation(normalizedPosition);
 
         // Rotation
-        float normalizedRotation = ObservationNormalizer.NormalizeEulerAngle(gameObject.transform.eulerAngles.z);
+        float normalizedRotation = ObservationNormalizer.NormalizeEulerAngle(_shipBehaviour.GetEulerRotation());
         sensor.AddObservation(normalizedRotation);
 
         //Velocity
@@ -106,16 +107,49 @@ public class ShipAgent : Agent
         }
     }
 
-    private void OnShipLanded(Vector2 landingPosition, IOnShipLandedEvent.LandingType landingType)
+    private void OnShipLanded(in LandingData landingData)
     {
-        switch (landingType)
-        {
-            case IOnShipLandedEvent.LandingType.Success: SetReward(1.0f); break;
-            case IOnShipLandedEvent.LandingType.Crash: SetReward(-0.2f); break;
-            case IOnShipLandedEvent.LandingType.OutOfBounds: SetReward(-1.0f); break;
-        }
-
+        RewardLanding(landingData);
         EndTraining();
+    }
+
+    private void RewardLanding(in LandingData landingData)
+    {
+        switch (landingData.type)
+        {
+            case LandingType.Success: RewardSuccessfullLanding(landingData); break;
+            case LandingType.Crash: RewardCrash(landingData); break;
+            case LandingType.OutOfBounds: SetReward(-1.0f); break;
+        }
+    }
+
+    private void RewardSuccessfullLanding(in LandingData landingData)
+    {
+        float reward = 1.0f;
+        SetReward(reward);
+    }
+
+    private void RewardCrash(in LandingData landingData)
+    {
+        const float penaltyFactor = 0.5f;
+        const float successReward = 0.3f;
+        float reward = 0.0f;
+
+        // Angle
+        float groundDeltaAngle = Mathf.Abs(landingData.groundDeltaAngle);
+        if (groundDeltaAngle < _shipBehaviour.ShipParameterSO.landing.maxAngle.value)
+            reward += successReward;
+        else
+            reward -= ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle) * penaltyFactor;
+
+        // Velocity
+
+        if (landingData.velocity.magnitude < _shipBehaviour.ShipParameterSO.landing.maxVelocity.value)
+            reward += successReward;
+        else
+            reward -= ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude * penaltyFactor;
+
+        SetReward(reward);
     }
 
     private void EndTraining()

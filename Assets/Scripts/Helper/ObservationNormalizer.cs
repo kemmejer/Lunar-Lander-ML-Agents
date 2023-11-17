@@ -43,11 +43,11 @@ public static class ObservationNormalizer
     /// <summary>
     /// Normalizes the provided euler angle in a [-1,1] range
     /// </summary>
-    /// <param name="angle">Euler angle bettween range [0,360]</param>
+    /// <param name="angle">Euler angle between a [-180,180] range</param>
     /// <returns>Normalized angle in a [-1,1] range </returns>
     public static float NormalizeEulerAngle(float angle)
     {
-        return angle > 180.0f ? (angle - 360.0f) / 180.0f : angle / 180.0f;
+        return angle / 180;
     }
 
     /// <summary>

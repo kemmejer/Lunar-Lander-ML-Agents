@@ -5,8 +5,10 @@ using UnityEngine;
 public class RayCasterSO : ScriptableObject
 {
     public RandomFloat angle;
-    public int rayCount;
-    public bool drawRays;
+    public int raysPerDirection;
+    public static bool drawRays;
+
+    public int RayCount => raysPerDirection * 2 + 1;
 
     private static RayCasterSO _rayCasterSO;
 

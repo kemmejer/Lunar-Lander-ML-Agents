@@ -25,7 +25,7 @@ public class ShipAgent : Agent
     {
         _behaviorParameters = GetComponent<BehaviorParameters>();
 
-        var rayCount = RayCasterSO.GetInstance().rayCount;
+        var rayCount = RayCasterSO.GetInstance().RayCount;
         _behaviorParameters.BrainParameters.VectorObservationSize = ObervationParameterCount + rayCount;
     }
 
@@ -105,6 +105,28 @@ public class ShipAgent : Agent
                 sensor.AddObservation(-1.0f);
             }
         }
+
+        // Reward 
+        float groundDistance = ObservationNormalizer.NormalizeRayCastDistance(rayHits[rayHits.Length / 2].distance);
+        if (groundDistance < 0.3)
+        {
+            if (_shipBehaviour.IsShipTooFast())
+                AddReward(-0.05f);
+            else
+                AddReward(0.02f);
+        }
+
+        float shipRotation = Mathf.Abs(_shipBehaviour.GetEulerRotation());
+        if (shipRotation > _shipBehaviour.ShipParameterSO.landing.maxAngle.value * 2)
+            AddReward(-0.02f);
+        else
+            AddReward(0.01f);
+
+        bool isShipMovingDown = normalizedVelocity.y < 0.0f;
+        if (isShipMovingDown)
+            AddReward(0.01f);
+        else
+            AddReward(-0.05f);
     }
 
     private void OnShipLanded(in LandingData landingData)
@@ -119,13 +141,13 @@ public class ShipAgent : Agent
         {
             case LandingType.Success: RewardSuccessfullLanding(landingData); break;
             case LandingType.Crash: RewardCrash(landingData); break;
-            case LandingType.OutOfBounds: SetReward(-1.0f); break;
+            case LandingType.OutOfBounds: SetReward(-10.0f); break;
         }
     }
 
     private void RewardSuccessfullLanding(in LandingData landingData)
     {
-        float reward = 1.0f;
+        float reward = 10.0f;
         SetReward(reward);
     }
 

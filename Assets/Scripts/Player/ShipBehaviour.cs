@@ -121,6 +121,11 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return _rigidBody.velocity;
     }
 
+    public bool IsShipTooFast()
+    {
+        return GetVelocity().magnitude >= ShipParameterSO.landing.maxVelocity.value;
+    }
+
     private void OnShipLanded(LandingType landingType, float landingDeltaAngle, in Vector2 landingVelocity)
     {
         if (landingType == LandingType.Crash)
@@ -162,12 +167,12 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     private void UpdateVelocityIndicator()
     {
-        bool isVelocityOk = GetVelocity().magnitude < ShipParameterSO.landing.maxVelocity.value;
+        bool isShipTooFast = IsShipTooFast();
 
-        if (isVelocityOk)
-            _velocityIndicator.GetComponent<Renderer>().material.color = Color.green;
-        else
+        if (isShipTooFast)
             _velocityIndicator.GetComponent<Renderer>().material.color = Color.red;
+        else
+            _velocityIndicator.GetComponent<Renderer>().material.color = Color.green;
     }
 
     private void ResetFuel()

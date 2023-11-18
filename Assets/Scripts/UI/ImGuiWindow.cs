@@ -131,9 +131,9 @@ public class StaticSample : MonoBehaviour
         if(ImGui.CollapsingHeader("Machine Learning"))
         {
             ImGui.Text("Ray Cast");
-            ImGui.DragInt("Ray Count", ref _rayCasterSO.rayCount, 1, 1, 10);
+            ImGui.DragInt("Rays per direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);
             ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
-            ImGui.Checkbox("Draw Rays", ref _rayCasterSO.drawRays);
+            ImGui.Checkbox("Draw Rays", ref RayCasterSO.drawRays);
 
             ImGui.Text("Training");
             ImGui.DragInt("Ship Count", ref _trainingSO.shipCount, 1, 1, 100);

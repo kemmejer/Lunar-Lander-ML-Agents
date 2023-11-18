@@ -30,7 +30,7 @@ public class RayCasterBehaviour : MonoBehaviour
         var rayHits = new RaycastHit2D[_casters.Length];
         for (int i = 0; i < _casters.Length; i++)
         {
-            rayHits[i] = _casters[i].CastRay(_rayCasterSO.drawRays);
+            rayHits[i] = _casters[i].CastRay();
         }
 
         return rayHits;
@@ -38,21 +38,17 @@ public class RayCasterBehaviour : MonoBehaviour
 
     public void SetColor(Color color)
     {
-        foreach(var caster in _casters)
+        foreach (var caster in _casters)
         {
             caster.SetColor(color);
         }
     }
 
-    public int GetRayCount()
-    {
-        return _rayCasterSO.rayCount;
-    }
-
     private void GenerateCaster()
     {
-        var rayCount = _rayCasterSO.rayCount;
+        var rayCount = _rayCasterSO.RayCount;
         var rayAngle = _rayCasterSO.angle.value;
+        var rayDistance = CameraHelper.GetScreenBounds().size.y;
 
         _casters = new RayCastBehaviour[rayCount];
 
@@ -66,6 +62,7 @@ public class RayCasterBehaviour : MonoBehaviour
 
             Vector2 direction = Quaternion.Euler(0.0f, 0.0f, angle) * Vector2.down;
             caster.SetDirection(direction);
+            caster.SetCastDistance(rayDistance);
 
             _casters[i] = caster.GetComponent<RayCastBehaviour>();
 

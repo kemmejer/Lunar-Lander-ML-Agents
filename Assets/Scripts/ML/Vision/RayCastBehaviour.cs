@@ -8,6 +8,7 @@ public class RayCastBehaviour : MonoBehaviour
     private LineRenderer _lineRenderer;
     [SerializeField] private LayerMask _layerMask;
     private Vector2 _direction = Vector2.down;
+    private float _castDistance;
 
     void Awake()
     {
@@ -22,12 +23,17 @@ public class RayCastBehaviour : MonoBehaviour
         _direction = direction;
     }
 
-    public RaycastHit2D CastRay(bool drawRay = false)
+    public void SetCastDistance(float distance)
+    {
+        _castDistance = distance;
+    }
+
+    public RaycastHit2D CastRay()
     {
         var origin = gameObject.transform.position;
-        var rayHit = Physics2D.Raycast(origin, _direction, 100, _layerMask);
+        var rayHit = Physics2D.Raycast(origin, _direction, _castDistance, _layerMask);
 
-        if (drawRay && rayHit.collider)
+        if (RayCasterSO.drawRays && rayHit.collider)
             DrawRay(origin, rayHit.point);
         else
             HideRay();

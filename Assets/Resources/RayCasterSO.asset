@@ -15,5 +15,4 @@ MonoBehaviour:
   angle:
     value: 0
     parameter: {x: 90, y: 0}
-  rayCount: 5
-  drawRays: 0
+  raysPerDirection: 2

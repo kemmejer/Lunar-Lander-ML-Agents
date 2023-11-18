@@ -7,7 +7,6 @@ public static class ObservationNormalizer
     private static Vector2 _minScreenPos;
     private static Vector2 _maxScreenPos;
     private static Vector2 _screenDimensions;
-    private static float _screenDiagonal;
 
     private const float MaxVelocity = 6.0f;
 
@@ -17,7 +16,6 @@ public static class ObservationNormalizer
         _minScreenPos = screenBounds.min;
         _maxScreenPos = screenBounds.max;
         _screenDimensions = screenBounds.max - screenBounds.min;
-        _screenDiagonal = Mathf.Sqrt(Mathf.Pow(_screenDimensions.x, 2.0f) + Mathf.Pow(_screenDimensions.y, 2.0f));
     }
 
     /// <summary>
@@ -51,12 +49,12 @@ public static class ObservationNormalizer
     }
 
     /// <summary>
-    /// Normalizes the provided distance in a [0,1] range using the screen diagonal
+    /// Normalizes the provided distance in a [0,1] range using the screen height
     /// </summary>
     /// <param name="distance">Distance inside the screen bounds</param>
     /// <returns>Normalized distance in a [0,1] range</returns>
     public static float NormalizeRayCastDistance(float distance)
     {
-        return distance / _screenDiagonal;
+        return distance / _screenDimensions.y;
     }
 }

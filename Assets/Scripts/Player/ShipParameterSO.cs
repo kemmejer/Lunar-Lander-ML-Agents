@@ -43,7 +43,6 @@ public class ShipParameterSO : ScriptableObject
     {
         public RandomFloat mass;
         public RandomFloat drag;
-        public RandomFloat angularDrag;
         public RandomFloat gravityScale;
     }
 

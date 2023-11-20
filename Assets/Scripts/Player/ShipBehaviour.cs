@@ -134,6 +134,8 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         if (landingType != LandingType.Success)
             gameObject.SetActive(false);
 
+        _rigidBody.velocity = Vector2.zero;
+
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
         TrailManager.GetInstance().MoveTrailToTrailManager(trail);
 
@@ -152,8 +154,8 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
         _rigidBody.mass = shipPhysics.mass.value;
         _rigidBody.drag = shipPhysics.drag.value;
-        _rigidBody.angularDrag = shipPhysics.angularDrag.value;
         _rigidBody.gravityScale = shipPhysics.gravityScale.value;
+        _rigidBody.freezeRotation = true;
     }
 
     private void UseFuel()

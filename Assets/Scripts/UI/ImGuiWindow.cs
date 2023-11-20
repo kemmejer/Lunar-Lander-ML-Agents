@@ -101,7 +101,6 @@ public class StaticSample : MonoBehaviour
             ImGui.Text("Physics");
             ImGui.DragFloat2("Mass", ref _shipParameter.physics.mass.parameter, 1.0f, 1.0f, 1000.0f);
             ImGui.DragFloat2("Drag", ref _shipParameter.physics.drag.parameter, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat2("Angular Drag", ref _shipParameter.physics.angularDrag.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
             ImGui.Separator();
 

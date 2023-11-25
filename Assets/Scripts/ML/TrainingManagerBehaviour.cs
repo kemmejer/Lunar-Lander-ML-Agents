@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Unity.MLAgents;
 using UnityEngine;
 
 public class TrainingManagerBehaviour : MonoBehaviour
@@ -14,8 +16,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private int finishedShipCount;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _instance = GetComponent<TrainingManagerBehaviour>();
     }
@@ -61,6 +62,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
             var shipAgent = ship.GetComponent<ShipAgent>();
             shipAgent.OnEndEpisode += OnShipEpisodeEnded;
             shipAgent.TrainingSO = _trainingSO;
+            shipAgent.EnableAgent();
             _agents.Add(shipAgent);
         }
     }
@@ -72,15 +74,14 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         foreach (var agent in _agents)
         {
-            agent.enabled = true;
-            agent.gameObject.SetActive(true);
             agent.EndEpisode();
+            agent.GetComponent<ShipBehaviour>().SetShipActive(true);
+            agent.EnableAgent();
         }
     }
 
     private void OnShipEpisodeEnded(ShipAgent shipAgent)
     {
-        shipAgent.enabled = false;
         finishedShipCount++;
 
         if (finishedShipCount == _agents.Count)

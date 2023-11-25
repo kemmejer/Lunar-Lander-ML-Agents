@@ -28,10 +28,15 @@ public class StaticSample : MonoBehaviour
     // Your code belongs here! Like ImGui.Begin... etc.
     private void OnLayout(UImGui.UImGui uimgui)
     {
-        ControlHeader(uimgui);
-        ShipParameterHeader(uimgui);
-        GroundGeneratorHeader(uimgui);
-        MachineLearningHeader(uimgui);
+        if (ImGui.Begin("Settings"))
+        {
+            ControlHeader(uimgui);
+            ShipParameterHeader(uimgui);
+            GroundGeneratorHeader(uimgui);
+            MachineLearningHeader(uimgui);
+
+            ImGui.End();
+        }
     }
 
     // runs after UImGui.OnEnable();
@@ -60,7 +65,7 @@ public class StaticSample : MonoBehaviour
                 PlayerSpawnerBehaviour.GetInstance().InstantiateShip(true);
 
             ImGui.SameLine();
-            if(ImGui.Button("Destroy Ships"))
+            if (ImGui.Button("Destroy Ships"))
                 PlayerSpawnerBehaviour.GetInstance().DestroyShips();
 
             ImGui.Separator();
@@ -74,7 +79,7 @@ public class StaticSample : MonoBehaviour
 
             ImGui.Separator();
             ImGui.Text("Trails");
-            if(ImGui.Button("Delete Trails"))
+            if (ImGui.Button("Delete Trails"))
                 TrailManager.GetInstance().DestoryTrails();
         }
     }
@@ -111,9 +116,9 @@ public class StaticSample : MonoBehaviour
 
     private void GroundGeneratorHeader(in UImGui.UImGui uimgui)
     {
-        if(ImGui.CollapsingHeader("Ground Generator"))
+        if (ImGui.CollapsingHeader("Ground Generator"))
         {
-            if(ImGui.Button("Generate Ground"))
+            if (ImGui.Button("Generate Ground"))
                 GroundGeneratorBehaviour.GetInstance().GenerateGround();
 
             ImGui.Separator();
@@ -127,7 +132,7 @@ public class StaticSample : MonoBehaviour
 
     private void MachineLearningHeader(in UImGui.UImGui uimgui)
     {
-        if(ImGui.CollapsingHeader("Machine Learning"))
+        if (ImGui.CollapsingHeader("Machine Learning"))
         {
             ImGui.Text("Ray Cast");
             ImGui.DragInt("Rays per direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);

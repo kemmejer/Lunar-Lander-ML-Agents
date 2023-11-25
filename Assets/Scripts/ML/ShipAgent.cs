@@ -17,13 +17,19 @@ public class ShipAgent : Agent
     private ShipBehaviour _shipBehaviour;
     private RayCasterBehaviour _rayCasterBehaviour;
     private BehaviorParameters _behaviorParameters;
-    private int decisionIteration = 1;
+    private ShipDecisionRequester _shipDecisionRequester;
+
+    private bool _hasEpisodeEnded;
 
     private const int ObervationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
     {
+        _shipBehaviour = GetComponent<ShipBehaviour>();
         _behaviorParameters = GetComponent<BehaviorParameters>();
+        _shipDecisionRequester = gameObject.AddComponent<ShipDecisionRequester>();
+
+        _shipBehaviour.OnShipLandedEvent += OnShipLanded;
 
         var rayCount = RayCasterSO.GetInstance().RayCount;
         _behaviorParameters.BrainParameters.VectorObservationSize = ObervationParameterCount + rayCount;
@@ -31,37 +37,34 @@ public class ShipAgent : Agent
 
     private void Start()
     {
-        _shipBehaviour = GetComponent<ShipBehaviour>();
         _rayCasterBehaviour = GetComponentInChildren<RayCasterBehaviour>();
+        _shipDecisionRequester.DecisionPeriod = TrainingSO.decisionInterval;
+    }
 
-        _shipBehaviour.OnShipLandedEvent += OnShipLanded;
+    /// <summary>
+    /// Override OnDisable to prevent the base class OnDisable call of the Agent class.
+    /// This is made to prevent uninitialization of the agent and its rewards while hiding the ship.
+    /// </summary>
+    protected override void OnDisable()
+    {
+        
     }
 
     public override void OnEpisodeBegin()
     {
         base.OnEpisodeBegin();
 
+        _hasEpisodeEnded = false;
         PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
-    }
-
-    private void FixedUpdate()
-    {
-        if (decisionIteration >= TrainingSO.decisionInterval)
-        {
-            RequestDecision();
-            decisionIteration = 1;
-        }
-        else
-        {
-            RequestAction();
-            decisionIteration++;
-        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         int thrustAction = actions.DiscreteActions[0];
         int rotateAction = actions.DiscreteActions[1];
+
+        if (_hasEpisodeEnded)
+            Debug.LogError("WHAT?");
 
         switch (rotateAction)
         {
@@ -107,26 +110,51 @@ public class ShipAgent : Agent
         }
 
         // Reward 
+        if (_hasEpisodeEnded)
+            return; // Dont reward an already landed ship
+
         float groundDistance = ObservationNormalizer.NormalizeRayCastDistance(rayHits[rayHits.Length / 2].distance);
+        bool isShipMovingDown = normalizedVelocity.y < 0.0f;
+        bool isShipThrusting = _shipBehaviour.IsShipTHrusting();
+        bool isShipTooFast = _shipBehaviour.IsShipTooFast();
+
+        float reward = 0.0f;
         if (groundDistance < 0.3)
         {
-            if (_shipBehaviour.IsShipTooFast())
-                AddReward(-0.05f);
-            else
-                AddReward(0.02f);
+            if (isShipTooFast)
+            {
+                if (isShipThrusting)
+                    reward += 0.02f;
+                else
+                    reward -= 0.05f;
+            }
+            else if (isShipMovingDown)
+            {
+                reward += 0.1f;
+            }
         }
 
         float shipRotation = Mathf.Abs(_shipBehaviour.GetEulerRotation());
         if (shipRotation > _shipBehaviour.ShipParameterSO.landing.maxAngle.value * 2)
-            AddReward(-0.02f);
-        else
-            AddReward(0.01f);
+            reward -= 0.02f;
 
-        bool isShipMovingDown = normalizedVelocity.y < 0.0f;
+        float groundDistanceFactor = Mathf.Max(1 - groundDistance, 0.0f) * 0.05f;
         if (isShipMovingDown)
-            AddReward(0.01f);
+            reward += groundDistanceFactor;
         else
-            AddReward(-0.05f);
+            reward -= 0.1f;
+
+        SetReward(reward);
+    }
+
+    public void EnableAgent()
+    {
+        _shipDecisionRequester.Enabled = true;
+    }
+
+    public void DisableAgent()
+    {
+        _shipDecisionRequester.Enabled = false;
     }
 
     private void OnShipLanded(in LandingData landingData)
@@ -147,14 +175,13 @@ public class ShipAgent : Agent
 
     private void RewardSuccessfullLanding(in LandingData landingData)
     {
-        float reward = 10.0f;
-        SetReward(reward);
+        SetReward(50.0f);
     }
 
     private void RewardCrash(in LandingData landingData)
     {
-        const float penaltyFactor = 0.5f;
-        const float successReward = 0.3f;
+        const float penaltyFactor = 2.0f;
+        const float successReward = 0.2f;
         float reward = 0.0f;
 
         // Angle
@@ -165,7 +192,6 @@ public class ShipAgent : Agent
             reward -= ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle) * penaltyFactor;
 
         // Velocity
-
         if (landingData.velocity.magnitude < _shipBehaviour.ShipParameterSO.landing.maxVelocity.value)
             reward += successReward;
         else
@@ -176,7 +202,9 @@ public class ShipAgent : Agent
 
     private void EndTraining()
     {
-        decisionIteration = 1;
+        _hasEpisodeEnded = true;
+        DisableAgent();
+
         OnEndEpisode?.Invoke(this);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static IOnShipLandedEvent;
@@ -13,6 +14,8 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
     [SerializeField] private GameObject _shipThruster;
     [SerializeField] private GameObject _fuelBar;
     [SerializeField] private GameObject _velocityIndicator;
+
+    private bool _isThrusting;
 
     private Rigidbody2D _rigidBody;
 
@@ -53,6 +56,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     public void InitShip()
     {
+        SetShipActive(true);
         ShipParameterSO = ShipParameterSO.GetInstanceCopy();
         UpdateShipPhysics();
         _shipThruster.SetActive(false);
@@ -90,6 +94,8 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
             return;
         }
 
+        _isThrusting = true;
+
         _rigidBody.AddForce(transform.up * ShipParameterSO.controlParameter.thrustAmount.value, ForceMode2D.Force);
         _shipThruster.SetActive(true);
         UseFuel();
@@ -97,6 +103,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     public void StopThrust()
     {
+        _isThrusting = false;
         _shipThruster.SetActive(false);
     }
 
@@ -126,24 +133,36 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return GetVelocity().magnitude >= ShipParameterSO.landing.maxVelocity.value;
     }
 
+    public bool IsShipTHrusting()
+    {
+        return _isThrusting;
+    }
+
+    public void SetShipActive(bool active)
+    {
+        gameObject.SetActive(active);
+    }
+
     private void OnShipLanded(LandingType landingType, float landingDeltaAngle, in Vector2 landingVelocity)
     {
         if (landingType == LandingType.Crash)
             AnimationSystem.GetInstance().PlayExplosionAt(GetPosition());
 
         if (landingType != LandingType.Success)
-            gameObject.SetActive(false);
+            SetShipActive(false);
 
         _rigidBody.velocity = Vector2.zero;
 
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
         TrailManager.GetInstance().MoveTrailToTrailManager(trail);
 
-        var landingData = new LandingData() {
+        var landingData = new LandingData()
+        {
             type = landingType,
             position = GetPosition(),
             velocity = landingVelocity,
-            groundDeltaAngle = landingDeltaAngle };
+            groundDeltaAngle = landingDeltaAngle
+        };
 
         OnShipLandedEvent?.Invoke(landingData);
     }
@@ -214,5 +233,4 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         var rayCaster = gameObject.GetComponentInChildren<RayCasterBehaviour>();
         rayCaster.SetColor(rayColor);
     }
-
 }

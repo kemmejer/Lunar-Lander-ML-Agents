@@ -1250,7 +1250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50e48c4c26f98c498f45b0426a36a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spaceShip: {fileID: 6919724492393014594, guid: 4794e6f4d55a3ab40a5606165b59f45b, type: 3}
+  _playerShipPrefab: {fileID: 6919724492393014594, guid: 4794e6f4d55a3ab40a5606165b59f45b, type: 3}
+  _agentShipPrefab: {fileID: 6919724492393014594, guid: 774d6adf38c43de4996155eb8588ec63, type: 3}
 --- !u!1 &1739234348
 GameObject:
   m_ObjectHideFlags: 0

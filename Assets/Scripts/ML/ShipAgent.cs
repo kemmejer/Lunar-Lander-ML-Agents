@@ -7,12 +7,15 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
 using static IOnShipLandedEvent;
+using TMPro;
 
 public class ShipAgent : Agent
 {
     public event IOnEndEpisode.OnEndEpisodeDelegate OnEndEpisode;
 
     public TrainingSO TrainingSO { get; set; }
+
+    private TextMeshProUGUI _rewardText;
 
     private ShipBehaviour _shipBehaviour;
     private RayCasterBehaviour _rayCasterBehaviour;
@@ -21,13 +24,16 @@ public class ShipAgent : Agent
 
     private bool _hasEpisodeEnded;
 
+    private readonly Color _rewardPositiveColor = new Color(0.8f, 1.0f, 0.8f);
+    private readonly Color _rewardNegativeColor = new Color(1.0f, 0.8f, 0.8f);
+
     private const int ObservationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
     {
         _shipBehaviour = GetComponent<ShipBehaviour>();
         _behaviorParameters = GetComponent<BehaviorParameters>();
-        _shipDecisionRequester = gameObject.AddComponent<ShipDecisionRequester>();
+        _shipDecisionRequester = GetComponent<ShipDecisionRequester>();
 
         _shipBehaviour.OnShipLandedEvent += OnShipLanded;
 
@@ -38,6 +44,8 @@ public class ShipAgent : Agent
     private void Start()
     {
         _rayCasterBehaviour = GetComponentInChildren<RayCasterBehaviour>();
+        _rewardText = GetComponentInChildren<TextMeshProUGUI>();
+
         _shipDecisionRequester.DecisionPeriod = TrainingSO.decisionInterval;
     }
 
@@ -47,7 +55,7 @@ public class ShipAgent : Agent
     /// </summary>
     protected override void OnDisable()
     {
-        
+
     }
 
     public override void OnEpisodeBegin()
@@ -144,6 +152,8 @@ public class ShipAgent : Agent
             reward -= 0.1f;
 
         SetReward(reward);
+
+        UpdateRewardText();
     }
 
     public void EnableAgent()
@@ -205,15 +215,26 @@ public class ShipAgent : Agent
         DisableAgent();
 
         OnEndEpisode?.Invoke(this);
+
+        UpdateRewardText();
     }
 
     private void ResetShip()
     {
-        var trail = gameObject.GetComponentInChildren<TrailRenderer>();
-        trail.Clear();
+        PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
 
         SetRandomComponentColor();
-        PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
+        UpdateRewardText();
+
+        var trail = gameObject.GetComponentInChildren<TrailRenderer>();
+        trail.Clear();
+    }
+
+    private void UpdateRewardText()
+    {
+        float cumulativeReward = GetCumulativeReward();
+        _rewardText.SetText(cumulativeReward.ToString("0.000"));
+        _rewardText.color = cumulativeReward >= 0 ? _rewardPositiveColor : _rewardNegativeColor;
     }
 
     private void SetRandomComponentColor()

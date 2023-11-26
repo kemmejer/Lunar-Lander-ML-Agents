@@ -21,7 +21,7 @@ public class ShipAgent : Agent
 
     private bool _hasEpisodeEnded;
 
-    private const int ObervationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
+    private const int ObservationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class ShipAgent : Agent
         _shipBehaviour.OnShipLandedEvent += OnShipLanded;
 
         var rayCount = RayCasterSO.GetInstance().RayCount;
-        _behaviorParameters.BrainParameters.VectorObservationSize = ObervationParameterCount + rayCount;
+        _behaviorParameters.BrainParameters.VectorObservationSize = ObservationParameterCount + rayCount;
     }
 
     private void Start()
@@ -43,7 +43,7 @@ public class ShipAgent : Agent
 
     /// <summary>
     /// Override OnDisable to prevent the base class OnDisable call of the Agent class.
-    /// This is made to prevent uninitialization of the agent and its rewards while hiding the ship.
+    /// This is made to prevent deinitialization of the agent and its rewards while hiding the ship.
     /// </summary>
     protected override void OnDisable()
     {
@@ -53,9 +53,8 @@ public class ShipAgent : Agent
     public override void OnEpisodeBegin()
     {
         base.OnEpisodeBegin();
-
         _hasEpisodeEnded = false;
-        PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
+        ResetShip();
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -111,11 +110,11 @@ public class ShipAgent : Agent
 
         // Reward 
         if (_hasEpisodeEnded)
-            return; // Dont reward an already landed ship
+            return; // Don't reward an already landed ship
 
         float groundDistance = ObservationNormalizer.NormalizeRayCastDistance(rayHits[rayHits.Length / 2].distance);
         bool isShipMovingDown = normalizedVelocity.y < 0.0f;
-        bool isShipThrusting = _shipBehaviour.IsShipTHrusting();
+        bool isShipThrusting = _shipBehaviour.IsShipThrusting();
         bool isShipTooFast = _shipBehaviour.IsShipTooFast();
 
         float reward = 0.0f;
@@ -167,13 +166,13 @@ public class ShipAgent : Agent
     {
         switch (landingData.type)
         {
-            case LandingType.Success: RewardSuccessfullLanding(landingData); break;
+            case LandingType.Success: RewardSuccessfulLanding(landingData); break;
             case LandingType.Crash: RewardCrash(landingData); break;
             case LandingType.OutOfBounds: SetReward(-10.0f); break;
         }
     }
 
-    private void RewardSuccessfullLanding(in LandingData landingData)
+    private void RewardSuccessfulLanding(in LandingData landingData)
     {
         SetReward(50.0f);
     }
@@ -206,5 +205,27 @@ public class ShipAgent : Agent
         DisableAgent();
 
         OnEndEpisode?.Invoke(this);
+    }
+
+    private void ResetShip()
+    {
+        var trail = gameObject.GetComponentInChildren<TrailRenderer>();
+        trail.Clear();
+
+        SetRandomComponentColor();
+        PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
+    }
+
+    private void SetRandomComponentColor()
+    {
+        var hue = Random.value;
+        Color trailColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
+        var shipTrail = gameObject.GetComponentInChildren<ShipTrailBehaviour>();
+        shipTrail.SetColor(trailColor);
+
+        Color rayColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
+        rayColor.a = 0.1f;
+        var rayCaster = gameObject.GetComponentInChildren<RayCasterBehaviour>();
+        rayCaster.SetColor(rayColor);
     }
 }

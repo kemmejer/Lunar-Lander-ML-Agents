@@ -37,10 +37,8 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        float landingDeltaAngle;
-        Vector2 landingVelocity;
-        bool angleOk = IsCollisionAngleSmallEnough(collision, out landingDeltaAngle);
-        bool velocityOk = IsCollisionVelocitySmallEnough(collision, out landingVelocity);
+        bool angleOk = IsCollisionAngleSmallEnough(collision, out float landingDeltaAngle);
+        bool velocityOk = IsCollisionVelocitySmallEnough(collision, out Vector2 landingVelocity);
 
         if (angleOk && velocityOk)
         {
@@ -61,7 +59,6 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         UpdateShipPhysics();
         _shipThruster.SetActive(false);
         ResetFuel();
-        SetRandomComponentColor();
     }
 
     public void RotateRight()
@@ -133,7 +130,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return GetVelocity().magnitude >= ShipParameterSO.landing.maxVelocity.value;
     }
 
-    public bool IsShipTHrusting()
+    public bool IsShipThrusting()
     {
         return _isThrusting;
     }
@@ -219,18 +216,5 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         float velocity = landingVelocity.magnitude;
 
         return velocity < ShipParameterSO.landing.maxVelocity.value;
-    }
-
-    private void SetRandomComponentColor()
-    {
-        var hue = Random.value;
-        Color trailColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
-        var shipTrail = gameObject.GetComponentInChildren<ShipTrailBehaviour>();
-        shipTrail.SetColor(trailColor);
-
-        Color rayColor = Color.HSVToRGB(hue, 1.0f, 1.0f);
-        rayColor.a = 0.1f;
-        var rayCaster = gameObject.GetComponentInChildren<RayCasterBehaviour>();
-        rayCaster.SetColor(rayColor);
     }
 }

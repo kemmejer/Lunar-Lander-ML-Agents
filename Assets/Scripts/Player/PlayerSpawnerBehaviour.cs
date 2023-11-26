@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class PlayerSpawnerBehaviour : MonoBehaviour
 {
-    [SerializeField] private GameObject _spaceShip;
+    [SerializeField] private GameObject _playerShipPrefab;
+    [SerializeField] private GameObject _agentShipPrefab;
 
     private List<GameObject> _spaceShips;
     private PlayerSpawnerSO _playerSpawnerSO;
@@ -31,21 +32,21 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
 
     public GameObject InstantiateShip(bool userControllable = false)
     {
-        var ship = Instantiate(_spaceShip, gameObject.transform.parent);
-        _spaceShips.Add(ship);
-
-        ResetShip(ship);
-
+        GameObject ship;
         if (userControllable)
         {
+            ship = Instantiate(_playerShipPrefab, gameObject.transform.parent);
             var shipBehaviour = ship.GetComponent<ShipBehaviour>();
             PlayerInput.GetInstance().SetPlayer(shipBehaviour);
         }
         else
         {
-            var shipAgent = ship.GetComponent<ShipAgent>();
-            shipAgent.enabled = true;
+            ship = Instantiate(_agentShipPrefab, gameObject.transform.parent);
         }
+
+        _spaceShips.Add(ship);
+
+        ResetShip(ship);
 
         return ship;
     }
@@ -60,8 +61,7 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         var bounds = spriteRenderer.bounds;
         var spawnPos = RandomHelper.RandomInRange(bounds.min, bounds.max);
-        ship.transform.position = spawnPos;
-        ship.transform.rotation = Quaternion.identity;
+        ship.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
 
         // Rigidbody
         var rigidBody = ship.GetComponent<Rigidbody2D>();
@@ -69,10 +69,6 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         rigidBody.position = spawnPos;
         var startingVelocity = spawnPos.x > bounds.center.x ? Vector3.left : Vector3.right;
         rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity.RndValue);
-
-        // Trail
-        var trail = ship.GetComponentInChildren<TrailRenderer>();
-        trail.Clear();
     }
 
     public void DestroyShips()

@@ -13,8 +13,17 @@ public class StaticSample : MonoBehaviour
     private TrainingSO _trainingSO;
 
     private int _configIndex = 0;
+    private string _modalConfigName = string.Empty;
     private string[] _configs;
 
+    private string CurrentConfigName => _configs[_configIndex];
+
+    private const ImGuiWindowFlags ModalFlags = ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+    private const string CreateConfigModalName = "Create Config";
+    private const string DeleteConfigModalName = "Delete Config";
+    private bool _createConfigModalOpenable = true;
+    private bool _deleteConfigModalOpenable = true;
+    private bool _configSaveAndDeleteActive;
 
     private void Awake()
     {
@@ -37,13 +46,19 @@ public class StaticSample : MonoBehaviour
     {
         if (ImGui.Begin("Settings"))
         {
-            ControlHeader(uimgui);
-            ShipParameterHeader(uimgui);
-            GroundGeneratorHeader(uimgui);
-            MachineLearningHeader(uimgui);
+            if (ImGui.Button("Import asset"))
+            {
+                ImGui.OpenPopup("ImportAssetDialog");
+            }
+
+            ControlHeader();
+            ShipParameterHeader();
+            GroundGeneratorHeader();
+            MachineLearningHeader();
 
             ImGui.End();
         }
+
     }
 
     // runs after UImGui.OnEnable();
@@ -63,7 +78,7 @@ public class StaticSample : MonoBehaviour
         UImGuiUtility.OnDeinitialize -= OnDeinitialize;
     }
 
-    private void ControlHeader(in UImGui.UImGui uimgui)
+    private void ControlHeader()
     {
         if (ImGui.CollapsingHeader("Controls", ImGuiTreeNodeFlags.DefaultOpen))
         {
@@ -90,26 +105,37 @@ public class StaticSample : MonoBehaviour
 
             ImGui.Separator();
             ImGui.Text("Config");
-            ImGui.ListBox(string.Empty, ref _configIndex, _configs, _configs.Length);
+            if (ImGui.Combo(string.Empty, ref _configIndex, _configs, _configs.Length))
+                _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
 
             ImGui.SameLine();
-            if(ImGui.Button("+"))
-                CreateConfig();
+            if (ImGui.Button("+"))
+                ImGui.OpenPopup(CreateConfigModalName);
 
-            ImGui.SameLine();
-            if (ImGui.Button("-"))
-                DeleteConfig();
+            CreateConfigModal();
+
+            if (_configSaveAndDeleteActive)
+            {
+                ImGui.SameLine();
+                if (ImGui.Button("-"))
+                    ImGui.OpenPopup(DeleteConfigModalName);
+            }
+
+            DeleteConfigModal();
 
             if (ImGui.Button("Load"))
-                ConfigManager.LoadConfig(_configs[_configIndex]);
+                ConfigManager.LoadConfig(CurrentConfigName);
 
-            ImGui.SameLine();
-            if (ImGui.Button("Save"))
-                ConfigManager.SaveConfig(_configs[_configIndex]);
+            if (_configSaveAndDeleteActive)
+            {
+                ImGui.SameLine();
+                if (ImGui.Button("Save"))
+                    ConfigManager.SaveConfig(CurrentConfigName);
+            }
         }
     }
 
-    private void ShipParameterHeader(in UImGui.UImGui uimgui)
+    private void ShipParameterHeader()
     {
         if (ImGui.CollapsingHeader("Ship Parameter"))
         {
@@ -139,7 +165,7 @@ public class StaticSample : MonoBehaviour
         }
     }
 
-    private void GroundGeneratorHeader(in UImGui.UImGui uimgui)
+    private void GroundGeneratorHeader()
     {
         if (ImGui.CollapsingHeader("Ground Generator"))
         {
@@ -155,7 +181,7 @@ public class StaticSample : MonoBehaviour
         }
     }
 
-    private void MachineLearningHeader(in UImGui.UImGui uimgui)
+    private void MachineLearningHeader()
     {
         if (ImGui.CollapsingHeader("Machine Learning"))
         {
@@ -174,20 +200,56 @@ public class StaticSample : MonoBehaviour
     private void UpdateConfigNames()
     {
         _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
+        _configIndex = Array.IndexOf(_configs, ConfigManager.CurrentConfig.Name);
+        _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
     }
 
-    private void CreateConfigModal(in UImGui.UImGui uimgui)
+    private void CreateConfigModal()
     {
+        _createConfigModalOpenable = true;
+
+        if (ImGui.BeginPopupModal(CreateConfigModalName, ref _createConfigModalOpenable, ModalFlags))
+        {
+            ImGui.InputText("Name", ref _modalConfigName, 16);
+
+            if (ImGui.Button("Create"))
+            {
+                ConfigManager.SaveConfig(_modalConfigName);
+                ConfigManager.LoadConfig(_modalConfigName);
+                UpdateConfigNames();
+                ImGui.CloseCurrentPopup();
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel"))
+                ImGui.CloseCurrentPopup();
+
+            ImGui.EndPopup();
+        }
 
     }
 
-    private void CreateConfig()
+    private void DeleteConfigModal()
     {
-        UpdateConfigNames();
-    }
+        _deleteConfigModalOpenable = true;
 
-    private void DeleteConfig()
-    {
-        UpdateConfigNames();
+        if (ImGui.BeginPopupModal(DeleteConfigModalName, ref _deleteConfigModalOpenable, ModalFlags))
+        {
+            ImGui.Text(string.Format("Delete Config: \"{0}\"?", CurrentConfigName));
+
+            if (ImGui.Button("Delete"))
+            {
+                ConfigManager.DeleteConfig(CurrentConfigName);
+                ConfigManager.LoadConfig(ConfigManager.Configs.FirstOrDefault()?.Name);
+                UpdateConfigNames();
+                ImGui.CloseCurrentPopup();
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel"))
+                ImGui.CloseCurrentPopup();
+
+            ImGui.EndPopup();
+        }
     }
 }

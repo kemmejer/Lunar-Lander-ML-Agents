@@ -1,5 +1,6 @@
 using ImGuiNET;
 using System;
+using System.Linq;
 using UImGui;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ public class StaticSample : MonoBehaviour
     private GroundGeneratorSO _groundGeneratorSO;
     private RayCasterSO _rayCasterSO;
     private TrainingSO _trainingSO;
+
+    private int _configIndex = 0;
+    private string[] _configs;
+
 
     private void Awake()
     {
@@ -22,6 +27,8 @@ public class StaticSample : MonoBehaviour
         _groundGeneratorSO = GroundGeneratorSO.GetInstance();
         _rayCasterSO = RayCasterSO.GetInstance();
         _trainingSO = TrainingSO.GetInstance();
+
+        UpdateConfigNames();
     }
 
     // Unity Update method. 
@@ -68,6 +75,10 @@ public class StaticSample : MonoBehaviour
             if (ImGui.Button("Destroy Ships"))
                 PlayerSpawnerBehaviour.GetInstance().DestroyShips();
 
+            ImGui.SameLine();
+            if (ImGui.Button("Delete Trails"))
+                TrailManager.GetInstance().DestoryTrails();
+
             ImGui.Separator();
             ImGui.Text("Training");
             if (ImGui.Button("Start Training"))
@@ -78,9 +89,23 @@ public class StaticSample : MonoBehaviour
                 TrainingManagerBehaviour.GetInstance().StopTraining();
 
             ImGui.Separator();
-            ImGui.Text("Trails");
-            if (ImGui.Button("Delete Trails"))
-                TrailManager.GetInstance().DestoryTrails();
+            ImGui.Text("Config");
+            ImGui.ListBox(string.Empty, ref _configIndex, _configs, _configs.Length);
+
+            ImGui.SameLine();
+            if(ImGui.Button("+"))
+                CreateConfig();
+
+            ImGui.SameLine();
+            if (ImGui.Button("-"))
+                DeleteConfig();
+
+            if (ImGui.Button("Load"))
+                ConfigManager.LoadConfig(_configs[_configIndex]);
+
+            ImGui.SameLine();
+            if (ImGui.Button("Save"))
+                ConfigManager.SaveConfig(_configs[_configIndex]);
         }
     }
 
@@ -106,7 +131,7 @@ public class StaticSample : MonoBehaviour
             ImGui.Text("Physics");
             ImGui.DragFloat2("Mass", ref _shipParameter.physics.mass.parameter, 1.0f, 1.0f, 1000.0f);
             ImGui.DragFloat2("Drag", ref _shipParameter.physics.drag.parameter, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat2("Gracity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
+            ImGui.DragFloat2("Gravity Scale", ref _shipParameter.physics.gravityScale.parameter, 0.01f, 0.01f, 0.1f);
             ImGui.Separator();
 
             ImGui.Text("Spawning");
@@ -135,13 +160,34 @@ public class StaticSample : MonoBehaviour
         if (ImGui.CollapsingHeader("Machine Learning"))
         {
             ImGui.Text("Ray Cast");
+            ImGui.Checkbox("Draw Rays", ref RayCasterSO.drawRays);
             ImGui.DragInt("Rays per direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);
             ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
-            ImGui.Checkbox("Draw Rays", ref RayCasterSO.drawRays);
+            ImGui.Separator();
 
             ImGui.Text("Training");
             ImGui.DragInt("Ship Count", ref _trainingSO.shipCount, 1, 1, 100);
             ImGui.DragInt("Decision Interval", ref _trainingSO.decisionInterval, 1, 1, 10);
         }
+    }
+
+    private void UpdateConfigNames()
+    {
+        _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
+    }
+
+    private void CreateConfigModal(in UImGui.UImGui uimgui)
+    {
+
+    }
+
+    private void CreateConfig()
+    {
+        UpdateConfigNames();
+    }
+
+    private void DeleteConfig()
+    {
+        UpdateConfigNames();
     }
 }

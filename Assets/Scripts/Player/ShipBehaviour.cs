@@ -150,9 +150,6 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
         _rigidBody.velocity = Vector2.zero;
 
-        var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
-        TrailManager.GetInstance().MoveTrailToTrailManager(trail);
-
         var landingData = new LandingData()
         {
             type = landingType,

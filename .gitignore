@@ -81,6 +81,9 @@ imgui.ini
 # Output Artifacts
 /results
 
+# Model Configs
+/config/parameter
+
 # TextMesh Pro files
 [Aa]ssets/TextMesh*Pro/
 /Assets/TextMesh Pro.meta

@@ -6,37 +6,12 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ShipParameterSO", menuName = "ScriptableObjects/ShipParameterSO")]
-public class ShipParameterSO : ScriptableObject
+public class ShipParameterSO : ConfigScriptableObject<ShipParameterSO>
 {
     public ShipPhysics physics;
     public ControlParameter controlParameter;
     public Fuel fuel;
     public Landing landing;
-
-    private static ShipParameterSO _shipParameterSO;
-
-    public static ShipParameterSO GetInstance()
-    {
-        if (_shipParameterSO == null)
-            _shipParameterSO = Instantiate(Resources.Load<ShipParameterSO>("ShipParameterSO"));
-
-        _shipParameterSO.GenerateRandomValues();
-
-        return _shipParameterSO;
-    }
-
-    public static ShipParameterSO GetInstanceCopy()
-    {
-        return Instantiate(GetInstance());
-    }
-
-    public void GenerateRandomValues()
-    {
-        IRandomValue.GenerateValuesForAllFields(physics);
-        IRandomValue.GenerateValuesForAllFields(controlParameter);
-        IRandomValue.GenerateValuesForAllFields(fuel);
-        IRandomValue.GenerateValuesForAllFields(landing);
-    }
 
     [Serializable]
     public struct ShipPhysics

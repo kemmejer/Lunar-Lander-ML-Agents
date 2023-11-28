@@ -168,6 +168,9 @@ public class ShipAgent : Agent
 
     private void OnShipLanded(in LandingData landingData)
     {
+        var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
+        TrailManager.GetInstance().MoveTrailToTrailManager(trail);
+
         RewardLanding(landingData);
         EndTraining();
     }

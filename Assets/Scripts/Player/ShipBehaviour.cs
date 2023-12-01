@@ -10,6 +10,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
     public event OnShipLandedDelegate OnShipLandedEvent;
 
     public ShipParameterSO ShipParameterSO { get; private set; }
+    public bool IsInitialized { get; private set; }
 
     [SerializeField] private GameObject _shipThruster;
     [SerializeField] private GameObject _fuelBar;
@@ -54,11 +55,12 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
 
     public void InitShip()
     {
-        SetShipActive(true);
         ShipParameterSO = ShipParameterSO.GetInstanceCopy();
         UpdateShipPhysics();
         _shipThruster.SetActive(false);
         ResetFuel();
+        SetShipActive(true);
+        IsInitialized = true;
     }
 
     public void RotateRight()

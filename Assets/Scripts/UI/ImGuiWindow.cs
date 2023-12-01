@@ -84,15 +84,11 @@ public class StaticSample : MonoBehaviour
         {
             ImGui.Text("Ship");
             if (ImGui.Button("Spawn Player Ship"))
-                PlayerSpawnerBehaviour.GetInstance().InstantiateShip(true);
+                PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.Player);
 
             ImGui.SameLine();
-            if (ImGui.Button("Destroy Ships"))
-                PlayerSpawnerBehaviour.GetInstance().DestroyShips();
-
-            ImGui.SameLine();
-            if (ImGui.Button("Delete Trails"))
-                TrailManager.GetInstance().DestoryTrails();
+            if (ImGui.Button("Spawn Agent Ship"))
+                PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.TrainedAgent);
 
             ImGui.Separator();
             ImGui.Text("Training");
@@ -102,6 +98,15 @@ public class StaticSample : MonoBehaviour
             ImGui.SameLine();
             if (ImGui.Button("Stop Training"))
                 TrainingManagerBehaviour.GetInstance().StopTraining();
+
+            ImGui.Separator();
+            ImGui.Text("Scene");
+            if (ImGui.Button("Destroy Ships"))
+                PlayerSpawnerBehaviour.GetInstance().DestroyShips();
+
+            ImGui.SameLine();
+            if (ImGui.Button("Delete Trails"))
+                TrailManager.GetInstance().DestoryTrails();
 
             ImGui.Separator();
             ImGui.Text("Config");
@@ -191,7 +196,7 @@ public class StaticSample : MonoBehaviour
             ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
             ImGui.Separator();
 
-            ImGui.Text("Training");
+            ImGui.Text("TrainingAgent");
             ImGui.DragInt("Ship Count", ref _trainingSO.shipCount, 1, 1, 100);
             ImGui.DragInt("Decision Interval", ref _trainingSO.decisionInterval, 1, 1, 10);
         }

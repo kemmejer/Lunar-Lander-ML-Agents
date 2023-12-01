@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents.Policies;
@@ -12,6 +13,8 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
     private PlayerSpawnerSO _playerSpawnerSO;
 
     private static PlayerSpawnerBehaviour _playerSpawnerBehaviour;
+
+    public enum ShipType { Player, TrainedAgent, TrainingAgent }
 
     void Awake()
     {
@@ -30,23 +33,35 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         return _playerSpawnerBehaviour;
     }
 
-    public GameObject InstantiateShip(bool userControllable = false)
+    public GameObject InstantiateShip(ShipType shipType)
     {
-        GameObject ship;
-        if (userControllable)
+        Func<GameObject, GameObject> CreateShip = shipPrefab =>
         {
-            ship = Instantiate(_playerShipPrefab, gameObject.transform.parent);
-            var shipBehaviour = ship.GetComponent<ShipBehaviour>();
-            PlayerInput.GetInstance().SetPlayer(shipBehaviour);
-        }
-        else
+            var shipInstance = Instantiate(shipPrefab, gameObject.transform.parent);
+            ResetShip(shipInstance);
+            _spaceShips.Add(shipInstance);
+            return shipInstance;
+        };
+
+        GameObject ship = null;
+        switch (shipType)
         {
-            ship = Instantiate(_agentShipPrefab, gameObject.transform.parent);
+            case ShipType.Player:
+                ship = CreateShip(_playerShipPrefab);
+                var shipBehaviour = ship.GetComponent<ShipBehaviour>();
+                PlayerInput.GetInstance().SetPlayer(shipBehaviour);
+                break;
+
+            case ShipType.TrainedAgent:
+                if (ConfigManager.CurrentModel == null) return null;
+                ship = CreateShip(_agentShipPrefab);
+                ship.GetComponent<ShipAgent>().SetAgentModel(ConfigManager.CurrentModel);
+                break;
+
+            case ShipType.TrainingAgent:
+                ship = CreateShip(_agentShipPrefab);
+                break;
         }
-
-        _spaceShips.Add(ship);
-
-        ResetShip(ship);
 
         return ship;
     }

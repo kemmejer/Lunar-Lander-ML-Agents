@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Unity.Barracuda;
 using UnityEngine;
-using UnityEngine.WSA;
 
 public static class ConfigManager
 {
     public static List<Config> Configs { get; private set; }
     public static Config CurrentConfig { get; private set; }
+    public static AgentModel CurrentModel { get; private set; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Init()
@@ -41,6 +42,9 @@ public static class ConfigManager
 
         config.Load();
         CurrentConfig = config;
+
+        CurrentModel = new AgentModel(CurrentConfig.Name);
+        CurrentModel.Load();
     }
 
     public static void SaveConfig(string name)

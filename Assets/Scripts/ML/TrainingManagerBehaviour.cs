@@ -33,7 +33,6 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
-        ObservationNormalizer.Init();
 
         CreateAgents();
     }
@@ -57,11 +56,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         for (int i = 0; i < _trainingSO.shipCount; i++)
         {
-            var ship = playerSpawner.InstantiateShip();
+            var ship = playerSpawner.InstantiateShip(PlayerSpawnerBehaviour.ShipType.TrainingAgent);
 
             var shipAgent = ship.GetComponent<ShipAgent>();
             shipAgent.OnEndEpisode += OnShipEpisodeEnded;
-            shipAgent.TrainingSO = _trainingSO;
             shipAgent.EnableAgent();
             _agents.Add(shipAgent);
         }

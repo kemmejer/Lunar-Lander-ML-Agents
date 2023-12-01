@@ -13,10 +13,7 @@ public class ShipAgent : Agent
 {
     public event IOnEndEpisode.OnEndEpisodeDelegate OnEndEpisode;
 
-    public TrainingSO TrainingSO { get; set; }
-
     private TextMeshProUGUI _rewardText;
-
     private ShipBehaviour _shipBehaviour;
     private RayCasterBehaviour _rayCasterBehaviour;
     private BehaviorParameters _behaviorParameters;
@@ -31,26 +28,24 @@ public class ShipAgent : Agent
 
     private void Awake()
     {
+        ObservationNormalizer.Init();
+
         _shipBehaviour = GetComponent<ShipBehaviour>();
         _behaviorParameters = GetComponent<BehaviorParameters>();
         _shipDecisionRequester = GetComponent<ShipDecisionRequester>();
-
-        _shipBehaviour.OnShipLandedEvent += OnShipLanded;
-
-        var rayCount = RayCasterSO.GetInstance().RayCount;
-        _behaviorParameters.BrainParameters.VectorObservationSize = ObservationParameterCount + rayCount;
-    }
-
-    private void Start()
-    {
         _rayCasterBehaviour = GetComponentInChildren<RayCasterBehaviour>();
         _rewardText = GetComponentInChildren<TextMeshProUGUI>();
 
-        _shipDecisionRequester.DecisionPeriod = TrainingSO.decisionInterval;
+        _shipBehaviour.OnShipLandedEvent += OnShipLanded;
+        
+        var rayCount = RayCasterSO.GetInstance().RayCount;
+        _behaviorParameters.BrainParameters.VectorObservationSize = ObservationParameterCount + rayCount;
+        _behaviorParameters.BehaviorName = Constants.AgentName;
+        _shipDecisionRequester.DecisionPeriod = TrainingSO.GetInstance().decisionInterval;
     }
 
     /// <summary>
-    /// Override OnDisable to prevent the base class OnDisable call of the Agent class.
+    /// Override OnDisable to prevent the base class OnDisable call of the TrainedAgent class.
     /// This is made to prevent deinitialization of the agent and its rewards while hiding the ship.
     /// </summary>
     protected override void OnDisable()
@@ -62,6 +57,7 @@ public class ShipAgent : Agent
     {
         base.OnEpisodeBegin();
         _hasEpisodeEnded = false;
+
         ResetShip();
     }
 
@@ -166,11 +162,19 @@ public class ShipAgent : Agent
         _shipDecisionRequester.Enabled = false;
     }
 
+    public void SetAgentModel(in AgentModel model)
+    {
+        SetModel(Constants.AgentName, model.Model);
+        ResetShip();
+        _behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
+        EnableAgent();
+    }
+
     private void OnShipLanded(in LandingData landingData)
     {
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
         TrailManager.GetInstance().MoveTrailToTrailManager(trail);
-
+        
         RewardLanding(landingData);
         EndTraining();
     }
@@ -224,6 +228,9 @@ public class ShipAgent : Agent
 
     private void ResetShip()
     {
+        if (!_shipBehaviour.IsInitialized)
+            return;
+
         PlayerSpawnerBehaviour.GetInstance().ResetShip(gameObject);
 
         SetRandomComponentColor();

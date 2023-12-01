@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "TrainingSO", menuName = "ScriptableObjects/TrainingSO")]
+[CreateAssetMenu(fileName = "_trainingSO", menuName = "ScriptableObjects/_trainingSO")]
 public class TrainingSO : ConfigScriptableObject<TrainingSO>
 {
     public int shipCount;

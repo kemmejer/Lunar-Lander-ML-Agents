@@ -7,7 +7,7 @@ public class Config
 {
     public string Name {  get; private set; }
 
-    private string ConfigResourceBasePath => Path.Combine(Constants.ConfigPath, Name);
+    private string ConfigBasePath => Path.Combine(Constants.ConfigPath, Name);
 
     public Config(string name)
     {
@@ -16,19 +16,19 @@ public class Config
 
     public void Load()
     {
-        TrainingSO.Load(ConfigResourceBasePath);
-        RayCasterSO.Load(ConfigResourceBasePath);
-        PlayerSpawnerSO.Load(ConfigResourceBasePath);
-        ShipParameterSO.Load(ConfigResourceBasePath);
-        GroundGeneratorSO.Load(ConfigResourceBasePath);
+        TrainingSO.Load(ConfigBasePath);
+        RayCasterSO.Load(ConfigBasePath);
+        PlayerSpawnerSO.Load(ConfigBasePath);
+        ShipParameterSO.Load(ConfigBasePath);
+        GroundGeneratorSO.Load(ConfigBasePath);
     }
 
     public void Save()
     {
-        TrainingSO.Save(ConfigResourceBasePath);
-        RayCasterSO.Save(ConfigResourceBasePath);
-        PlayerSpawnerSO.Save(ConfigResourceBasePath);
-        ShipParameterSO.Save(ConfigResourceBasePath);
-        GroundGeneratorSO.Save(ConfigResourceBasePath);
+        TrainingSO.Save(ConfigBasePath);
+        RayCasterSO.Save(ConfigBasePath);
+        PlayerSpawnerSO.Save(ConfigBasePath);
+        ShipParameterSO.Save(ConfigBasePath);
+        GroundGeneratorSO.Save(ConfigBasePath);
     }
 }

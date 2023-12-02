@@ -21,14 +21,14 @@ public class AgentModel
         Name = name;
     }
 
-    public void Load()
+    public bool Load()
     {
         UnityEngine.Object.Destroy(Model);
         Model = null;
 
         var modelPath = GetModelPath();
         if (modelPath == null)
-            return;
+            return false;
 
         var converter = new ONNXModelConverter(true);
         var model = converter.Convert(modelPath);
@@ -47,6 +47,8 @@ public class AgentModel
         Model = ScriptableObject.CreateInstance<NNModel>();
         Model.modelData = modelData;
         Model.name = Constants.AgentName;
+
+        return true;
     }
 
     private string GetModelPath()

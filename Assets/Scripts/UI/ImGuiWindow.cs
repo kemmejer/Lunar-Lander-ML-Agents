@@ -24,6 +24,7 @@ public class StaticSample : MonoBehaviour
     private bool _createConfigModalOpenable = true;
     private bool _deleteConfigModalOpenable = true;
     private bool _configSaveAndDeleteActive;
+    private bool _loadedModel;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class StaticSample : MonoBehaviour
         _trainingSO = TrainingSO.GetInstance();
 
         UpdateConfigNames();
+        LoadConfig();
     }
 
     // Unity Update method. 
@@ -86,9 +88,12 @@ public class StaticSample : MonoBehaviour
             if (ImGui.Button("Spawn Player Ship"))
                 PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.Player);
 
-            ImGui.SameLine();
-            if (ImGui.Button("Spawn Agent Ship"))
-                PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.TrainedAgent);
+            if (_loadedModel)
+            {
+                ImGui.SameLine();
+                if (ImGui.Button("Spawn Agent Ship"))
+                    PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.TrainedAgent);
+            }
 
             ImGui.Separator();
             ImGui.Text("Training");
@@ -111,7 +116,7 @@ public class StaticSample : MonoBehaviour
             ImGui.Separator();
             ImGui.Text("Config");
             if (ImGui.Combo(string.Empty, ref _configIndex, _configs, _configs.Length))
-                _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
+                LoadConfig();
 
             ImGui.SameLine();
             if (ImGui.Button("+"))
@@ -128,15 +133,15 @@ public class StaticSample : MonoBehaviour
 
             DeleteConfigModal();
 
-            if (ImGui.Button("Load"))
-                ConfigManager.LoadConfig(CurrentConfigName);
-
             if (_configSaveAndDeleteActive)
             {
-                ImGui.SameLine();
                 if (ImGui.Button("Save"))
-                    ConfigManager.SaveConfig(CurrentConfigName);
+                    SaveConfig();
+
+                ImGui.SameLine();
             }
+
+            ImGui.Text(string.Format("Loaded Model: {0}", ConfigManager.CurrentModel?.Name ?? "None"));
         }
     }
 
@@ -207,6 +212,21 @@ public class StaticSample : MonoBehaviour
         _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
         _configIndex = Array.IndexOf(_configs, ConfigManager.CurrentConfig.Name);
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
+        _loadedModel = ConfigManager.CurrentModel != null;
+    }
+
+
+    private void LoadConfig()
+    {
+        ConfigManager.LoadConfig(CurrentConfigName);
+        _loadedModel = ConfigManager.CurrentModel != null;
+        _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
+    }
+
+    private void SaveConfig()
+    {
+        ConfigManager.SaveConfig(CurrentConfigName);
+        _loadedModel = ConfigManager.CurrentModel != null;
     }
 
     private void CreateConfigModal()

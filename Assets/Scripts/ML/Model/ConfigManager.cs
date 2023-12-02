@@ -43,8 +43,8 @@ public static class ConfigManager
         config.Load();
         CurrentConfig = config;
 
-        CurrentModel = new AgentModel(CurrentConfig.Name);
-        CurrentModel.Load();
+        var model = new AgentModel(CurrentConfig.Name);
+        CurrentModel = model.Load() ? model : null;
     }
 
     public static void SaveConfig(string name)

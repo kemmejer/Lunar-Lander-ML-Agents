@@ -150,6 +150,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         if (landingType != LandingType.Success)
             SetShipActive(false);
 
+        StopThrust();
         _rigidBody.velocity = Vector2.zero;
 
         var landingData = new LandingData()

@@ -23,8 +23,7 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         return _instance;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _instance = GetComponent<GroundGeneratorBehaviour>();
         _groundGeneratorSO = GroundGeneratorSO.GetInstance();
@@ -35,9 +34,10 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         GenerateGround();
     }
 
-    public void GenerateGround()
+    public void GenerateGround(bool generateNewRandom = true)
     {
-        IRandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
+        if(generateNewRandom)
+            IRandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
 
         _vertices = new List<Vector3>();
         _triangles = new List<int>();

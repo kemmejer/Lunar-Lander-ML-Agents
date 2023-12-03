@@ -58,6 +58,9 @@ public class AgentModel
             return null;
 
         var files = Directory.GetFiles(modelFolderPath, "*" + ModelFileExtension);
+        if (!files.Any())
+            return null;
+
         var numbers = files.Select(file => int.Parse(Regex.Match(file, @"(\d+)\" + ModelFileExtension).Groups[1].Value)).ToArray();
         var maxIndex = Array.IndexOf(numbers, numbers.Max());
 

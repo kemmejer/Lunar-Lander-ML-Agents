@@ -122,7 +122,7 @@ public class ShipAgent : Agent
         bool isShipTooFast = _shipBehaviour.IsShipTooFast();
 
         float reward = 0.0f;
-        if (groundDistance < 0.3)
+        if (groundDistance < 0.2)
         {
             if (isShipTooFast)
             {
@@ -138,7 +138,7 @@ public class ShipAgent : Agent
         }
 
         float shipRotation = Mathf.Abs(_shipBehaviour.GetEulerRotation());
-        if (shipRotation > _shipBehaviour.ShipParameterSO.landing.maxAngle.value * 2)
+        if (shipRotation > Constants.MaxShipAngle / 2.0f)
             reward -= 0.02f;
 
         float groundDistanceFactor = Mathf.Max(1 - groundDistance, 0.0f) * 0.05f;
@@ -197,7 +197,7 @@ public class ShipAgent : Agent
     private void RewardCrash(in LandingData landingData)
     {
         const float penaltyFactor = 2.0f;
-        const float successReward = 0.2f;
+        const float successReward = 2.0f;
         float reward = 0.0f;
 
         // Angle
@@ -211,7 +211,7 @@ public class ShipAgent : Agent
         if (landingData.velocity.magnitude < _shipBehaviour.ShipParameterSO.landing.maxVelocity.value)
             reward += successReward;
         else
-            reward -= ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude * penaltyFactor;
+            reward -= ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude * penaltyFactor * 2;
 
         SetReward(reward);
     }

@@ -5712,7 +5712,7 @@ MonoBehaviour:
   - {x: 1.28, y: -1.2220097, z: 0}
   m_ShapePathHash: -1047465633
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40824
+  m_InstanceId: 31204
   m_LocalBounds:
     m_Center: {x: 0.0037412643, y: -0.2440902, z: 0}
     m_Extent: {x: 1.2762587, y: 0.97791946, z: 0}
@@ -5854,7 +5854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3e5f9aa05d940448a68bcf6ee79820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rayCasterObject: {fileID: 3759894250979854677, guid: 0bc9c3dcd791afe4abd75300e747f6a1, type: 3}
+  _rayCastPrefab: {fileID: 3759894250979854677, guid: 0bc9c3dcd791afe4abd75300e747f6a1, type: 3}
 --- !u!120 &7033705726263023551
 LineRenderer:
   serializedVersion: 2

@@ -198,7 +198,8 @@ public class StaticSample : MonoBehaviour
             ImGui.Text("Ray Cast");
             ImGui.Checkbox("Draw Rays", ref RayCasterSO.drawRays);
             ImGui.DragInt("Rays per direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);
-            ImGui.DragFloat2("Angle", ref _rayCasterSO.angle.parameter, 1.0f, 0.0f, 120.0f);
+            ImGui.DragFloat("Angle", ref _rayCasterSO.angle, 1.0f, 0.0f, 120.0f);
+            ImGui.DragFloat("Horizontal Distribution", ref _rayCasterSO.horizontalRayDistribution, 0.1f, 0.0f, 1.0f);
             ImGui.Separator();
 
             ImGui.Text("TrainingAgent");

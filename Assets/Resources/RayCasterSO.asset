@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f353f4eae772e7d43b4f0bff3278406d, type: 3}
   m_Name: RayCasterSO
   m_EditorClassIdentifier: 
-  angle:
-    value: 0
-    parameter: {x: 90, y: 0}
+  angle: 90
   raysPerDirection: 2
+  horizontalRayDistribution: 0.9

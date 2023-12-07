@@ -1,1 +1,2 @@
-.venv\Scripts\activate
+@cd scripts
+@.venv\Scripts\activate

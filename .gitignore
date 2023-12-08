@@ -87,3 +87,6 @@ imgui.ini
 # TextMesh Pro files
 [Aa]ssets/TextMesh*Pro/
 /Assets/TextMesh Pro.meta
+
+# Specific files
+/Assets/ML-Agents/Timers/MainScene_timers.json

@@ -46,6 +46,7 @@ logger = logging_util.get_logger(__name__)
 
 TRAINING_STATUS_FILE_NAME = "training_status.json"
 
+custom_side_channels = list[SideChannel]()
 
 def get_version_string() -> str:
     return f""" Version information:
@@ -193,6 +194,10 @@ def create_environment_factory(
     ) -> UnityEnvironment:
         # Make sure that each environment gets a different seed
         env_seed = seed + worker_id
+
+        # Add custom side channels
+        side_channels.extend(custom_side_channels)
+
         return UnityEnvironment(
             file_name=env_path,
             worker_id=worker_id,

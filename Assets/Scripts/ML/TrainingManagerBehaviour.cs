@@ -33,6 +33,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
+        VisualizationLogger.Init();
 
         CreateAgents();
     }
@@ -46,6 +47,8 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
+        VisualizationLogger.UnInit();
+
         _agents.Clear();
     }
 

@@ -21,13 +21,11 @@ public static class VisualizationLogger
         RewardImage
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     public static void Init()
     {
         _statsRecorder = Academy.Instance.StatsRecorder;
         _imageChannel = new ImageVisualizationChannel();
         SideChannelManager.RegisterSideChannel(_imageChannel);
-        _imageChannel.SendData();
     }
 
     public static void UnInit()

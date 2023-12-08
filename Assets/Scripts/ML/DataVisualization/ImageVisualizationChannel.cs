@@ -37,7 +37,7 @@ public class ImageVisualizationChannel : SideChannel
     public void SendData()
     {
         using var message = new OutgoingMessage();
-        message.WriteString("Hallo");
+        
         QueueMessageToSend(message);
     }
 }

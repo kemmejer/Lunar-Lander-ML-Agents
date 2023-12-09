@@ -7,6 +7,7 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
 using static IOnShipLandedEvent;
+using ImageGraphName = VisualizationLogger.ImageGraphName;
 using TMPro;
 
 public class ShipAgent : Agent
@@ -37,7 +38,7 @@ public class ShipAgent : Agent
         _rewardText = GetComponentInChildren<TextMeshProUGUI>();
 
         _shipBehaviour.OnShipLandedEvent += OnShipLanded;
-        
+
         var rayCount = RayCasterSO.GetInstance().RayCount;
         _behaviorParameters.BrainParameters.VectorObservationSize = ObservationParameterCount + rayCount;
         _behaviorParameters.BehaviorName = Constants.AgentName;
@@ -112,6 +113,8 @@ public class ShipAgent : Agent
             }
         }
 
+        CollectImageData();
+
         // Reward 
         if (_hasEpisodeEnded)
             return; // Don't reward an already landed ship
@@ -174,7 +177,7 @@ public class ShipAgent : Agent
     {
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
         TrailManager.GetInstance().MoveTrailToTrailManager(trail);
-        
+
         RewardLanding(landingData);
         EndTraining();
     }
@@ -258,5 +261,20 @@ public class ShipAgent : Agent
         rayColor.a = 0.1f;
         var rayCaster = gameObject.GetComponentInChildren<RayCasterBehaviour>();
         rayCaster.SetColor(rayColor);
+    }
+
+    private void CollectImageData()
+    {
+        var position = _shipBehaviour.GetPosition();
+        var rotation = _shipBehaviour.GetEulerRotation();
+        var velocity = _shipBehaviour.GetVelocity();
+        var reward = GetCumulativeReward();
+        var isBoosting = _shipBehaviour.IsShipThrusting() ? 1.0f : 0.0f;
+
+        VisualizationLogger.AddImageValue(ImageGraphName.PositionImage, position);
+        VisualizationLogger.AddImageValue(ImageGraphName.RotationImage, rotation);
+        VisualizationLogger.AddImageValue(ImageGraphName.VelocityImage, velocity);
+        VisualizationLogger.AddImageValue(ImageGraphName.RewardImage, reward);
+        VisualizationLogger.AddImageValue(ImageGraphName.ThrustImage, isBoosting);
     }
 }

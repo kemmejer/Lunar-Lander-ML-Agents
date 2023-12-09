@@ -6,24 +6,11 @@ using Unity.MLAgents;
 using Unity.MLAgents.SideChannels;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using ImageGraphName = VisualizationLogger.ImageGraphName;
+
 
 public class ImageVisualizationChannel : SideChannel
 {
-    public struct ImageDataFloat
-    {
-        float posX;
-        float posY;
-        float value;
-    }
-
-    public struct ImageDataVec
-    {
-        float posX;
-        float posY;
-        float vecX;
-        float vecY;
-    }
-
     public ImageVisualizationChannel()
     {
         ChannelId = new Guid("E6FC6161-7938-4C11-825B-56870D25E80F");
@@ -34,10 +21,13 @@ public class ImageVisualizationChannel : SideChannel
         Debug.Log(msg);
     }
 
-    public void SendData()
+    public void SendData(in ImageVisualizationData data)
     {
         using var message = new OutgoingMessage();
-        
+
+        message.WriteInt32((int)data.GraphName);
+        message.WriteFloatList(data.Data);
+
         QueueMessageToSend(message);
     }
 }

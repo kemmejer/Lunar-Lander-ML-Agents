@@ -1,5 +1,5 @@
-from ImageVisualization import ImageVisualization
 import Train
+from ImageVisualization import ImageVisualization
 
 imageVisualization = ImageVisualization()
 

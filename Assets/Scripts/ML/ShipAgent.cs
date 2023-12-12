@@ -113,8 +113,6 @@ public class ShipAgent : Agent
             }
         }
 
-        CollectImageData();
-
         // Reward 
         if (_hasEpisodeEnded)
             return; // Don't reward an already landed ship
@@ -152,6 +150,7 @@ public class ShipAgent : Agent
 
         SetReward(reward);
 
+        CollectImageData();
         UpdateRewardText();
     }
 
@@ -271,10 +270,10 @@ public class ShipAgent : Agent
         var reward = GetCumulativeReward();
         var isBoosting = _shipBehaviour.IsShipThrusting() ? 1.0f : 0.0f;
 
-        VisualizationLogger.AddImageValue(ImageGraphName.PositionImage, position);
-        VisualizationLogger.AddImageValue(ImageGraphName.RotationImage, rotation);
-        VisualizationLogger.AddImageValue(ImageGraphName.VelocityImage, velocity);
-        VisualizationLogger.AddImageValue(ImageGraphName.RewardImage, reward);
-        VisualizationLogger.AddImageValue(ImageGraphName.ThrustImage, isBoosting);
+        VisualizationLogger.AddImageValue(ImageGraphName.Position, position);
+        VisualizationLogger.AddImageValue(ImageGraphName.Rotation, rotation);
+        VisualizationLogger.AddImageValue(ImageGraphName.Velocity, velocity);
+        VisualizationLogger.AddImageValue(ImageGraphName.Reward, reward);
+        VisualizationLogger.AddImageValue(ImageGraphName.Thrust, isBoosting);
     }
 }

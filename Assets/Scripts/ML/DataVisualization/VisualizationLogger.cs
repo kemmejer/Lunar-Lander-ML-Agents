@@ -22,11 +22,12 @@ public static class VisualizationLogger
 
     public enum ImageGraphName
     {
-        PositionImage, // float x, float y
-        RotationImage, // float rotation (euler)
-        VelocityImage, // float velocityX, float velocity
-        RewardImage,   // float reward
-        ThrustImage    // float thrust (0 = false, 1 = true)
+        WorldBounds, // float minX, float minY, float maxX, float maxY
+        Position,    // float x, float y
+        Rotation,    // float rotation (euler)
+        Velocity,    // float velocityX, float velocity
+        Reward,      // float reward
+        Thrust       // float thrust (0 = false, 1 = true)
     }
 
     public static void Init()
@@ -41,6 +42,8 @@ public static class VisualizationLogger
         {
             _imageVisualizationData[i] = new ImageVisualizationData((ImageGraphName)i);
         }
+
+        SendImageWorldBounds();
     }
 
     public static void UnInit()
@@ -71,5 +74,13 @@ public static class VisualizationLogger
         var imageData = _imageVisualizationData[(int)graphName];
         _imageChannel.SendData(imageData);
         imageData.Clear();
+    }
+
+    public static void SendImageWorldBounds()
+    {
+        var bounds = CameraHelper.GetScreenBounds();
+        var worldBoundsData = _imageVisualizationData[(int)ImageGraphName.WorldBounds];
+        worldBoundsData.Data.AddRange(new float[] { bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y });
+        SendImageData(ImageGraphName.WorldBounds);
     }
 }

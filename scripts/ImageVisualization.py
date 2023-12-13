@@ -1,6 +1,8 @@
+from hashlib import sha1
 from typing import List
 
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -54,7 +56,9 @@ class ImageVisualization:
             case ImageGraphName.Thrust:
                 self.generate_thrust_image()
 
-    def generate_dataframe(self, values: np.ndarray[float]) -> pd.DataFrame:
+        plt.show()
+
+    def get_grid_positions(self) -> tuple[np.ndarray[float], np.ndarray[float]]:
         positions = self.data[int(ImageGraphName.Position)]
         positions = round_array(positions)
 
@@ -68,35 +72,79 @@ class ImageVisualization:
         else:
             x_fill = np.pad(x_fill, (0, self.bounds.height_count - self.bounds.width_count), 'constant')
 
-        # Pad the value array to the same length as the coordinate arrays
-        values = np.append(values, np.full(x_fill.size, np.nan))
-
         # Retrieve the coordinate arrays
         x_coords = np.append(positions[0::2], x_fill)
         y_coords = np.append(positions[1::2], y_fill)
 
-        # Create a dataframe. The grouping calculates the mean over all duplicate positions. The pivot fills all missing gaps in the dataframe with NaN
+        return x_coords, y_coords
+
+    def generate_dataframe(self, values: np.ndarray[float]) -> pd.DataFrame:
+        x_coords, y_coords = self.get_grid_positions()
+        values = np.append(values, np.full(x_coords.size - values.size, np.nan))  # Pad the value array to the same length as the coordinate arrays
         df = pd.DataFrame(data={"x": x_coords, "y": y_coords, "z": values})
-        df = df.groupby(["x", "y"], as_index=False).mean()
-        df = df.pivot(index="y", columns="x", values="z")
+
+        return df
+
+    def generate_dataframe_2d(self, values: np.ndarray[float]) -> pd.DataFrame:
+        x_coords, y_coords = self.get_grid_positions()
+        values = np.append(values, np.full(int(2 * (x_coords.size - values.size / 2)), np.nan)
+                           )  # Pad the value array to the same length as the coordinate arrays
+        u_values = values[0::2]
+        v_values = values[1::2]
+        df = pd.DataFrame(data={"x": x_coords, "y": y_coords, "u": u_values, "v": v_values})
 
         return df
 
     def generate_position_image(self) -> None:
-        pass
+        positions = self.data[int(ImageGraphName.Position)]
+        values = np.ones(int(positions.size / 2))
+
+        df = self.generate_dataframe(values)
+        df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
+        df = df.pivot(index="y", columns="x", values="z")
+
+        axes = sns.heatmap(df, cmap="viridis")
+        axes.invert_yaxis()
+        axes.set_aspect('equal', adjustable='box')
 
     def generate_rotation_image(self) -> None:
-        pass
+        rotations = self.data[int(ImageGraphName.Rotation)]
+        df = self.generate_dataframe(rotations)
+        df = df.groupby(["x", "y"], as_index=False).mean()
+
+        radians = np.radians(df["z"] + 90.0)
+        u_values = np.cos(radians)
+        v_values = np.sin(radians)
+
+        quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
+        quiver.axes.set_aspect('equal', adjustable='box')
+
+        colorbar = plt.colorbar(quiver)
+        colorbar.set_label("Euler Angle")
 
     def generate_velocity_image(self) -> None:
-        pass
+        velocity = self.data[int(ImageGraphName.Velocity)]
+        df = self.generate_dataframe_2d(velocity)
+        df = df.groupby(["x", "y"], as_index=False).mean()
+
+        magnitudes = np.sqrt(df["u"] ** 2 + df["v"] ** 2)
+        quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
+        quiver.axes.set_aspect('equal', adjustable='box')
+
+        colorbar = plt.colorbar(quiver)
+        colorbar.set_label('Magnitude of Velocity')
 
     def generate_reward_image(self) -> None:
         rewards = self.data[ImageGraphName.Reward]
+
+        # The grouping calculates the mean over all duplicate positions. The pivot fills all missing gaps in the dataframe with NaN
         df = self.generate_dataframe(rewards)
-        axes = sns.heatmap(df)
+        df = df.groupby(["x", "y"], as_index=False).mean()
+        df = df.pivot(index="y", columns="x", values="z")
+
+        axes = sns.heatmap(df, cmap="viridis", center=0.0)
         axes.invert_yaxis()
-        plt.show()
+        axes.set_aspect('equal', adjustable='box')
 
     def generate_thrust_image(self) -> None:
         pass

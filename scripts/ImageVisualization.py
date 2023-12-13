@@ -137,7 +137,6 @@ class ImageVisualization:
     def generate_reward_image(self) -> None:
         rewards = self.data[ImageGraphName.Reward]
 
-        # The grouping calculates the mean over all duplicate positions. The pivot fills all missing gaps in the dataframe with NaN
         df = self.generate_dataframe(rewards)
         df = df.groupby(["x", "y"], as_index=False).mean()
         df = df.pivot(index="y", columns="x", values="z")
@@ -147,4 +146,12 @@ class ImageVisualization:
         axes.set_aspect('equal', adjustable='box')
 
     def generate_thrust_image(self) -> None:
-        pass
+        thrust = self.data[ImageGraphName.Thrust]
+
+        df = self.generate_dataframe(thrust)
+        df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
+        df = df.pivot(index="y", columns="x", values="z")
+
+        axes = sns.heatmap(df, cmap="viridis")
+        axes.invert_yaxis()
+        axes.set_aspect('equal', adjustable='box')

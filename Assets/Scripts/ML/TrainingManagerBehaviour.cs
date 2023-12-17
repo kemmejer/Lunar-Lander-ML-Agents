@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Unity.MLAgents;
@@ -14,7 +17,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
     private List<ShipAgent> _agents;
     private bool _isRunning;
 
-    private int finishedShipCount;
+    private int _finishedShipCount;
+
+    private bool _trainingServerStarted;
+    private Process _trainingServerProcess;
 
     void Awake()
     {
@@ -33,9 +39,8 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
-        VisualizationLogger.Init();
 
-        CreateAgents();
+        StartCoroutine(StartTrainingServer());
     }
 
     public void StopTraining()
@@ -44,6 +49,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
             return;
 
         _isRunning = false;
+        _trainingServerStarted = false;
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
@@ -70,7 +76,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private void StartBatch()
     {
-        finishedShipCount = 0;
+        _finishedShipCount = 0;
         TrailManager.GetInstance().DestoryTrails();
 
         foreach (var agent in _agents)
@@ -83,9 +89,45 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private void OnShipEpisodeEnded(ShipAgent shipAgent)
     {
-        finishedShipCount++;
+        _finishedShipCount++;
 
-        if (finishedShipCount == _agents.Count)
+        if (_finishedShipCount == _agents.Count)
             StartBatch();
+    }
+
+    private IEnumerator StartTrainingServer()
+    {
+        _trainingServerProcess = new Process();
+        _trainingServerProcess.StartInfo.FileName = Constants.TrainingBatPath;
+        _trainingServerProcess.StartInfo.Arguments = ConfigManager.CurrentConfig.Name;
+        //_trainingServerProcess.StartInfo.CreateNoWindow = true;
+        _trainingServerProcess.StartInfo.UseShellExecute = false;
+        _trainingServerProcess.StartInfo.RedirectStandardOutput = true;
+        _trainingServerProcess.StartInfo.RedirectStandardError = true;
+
+        _trainingServerProcess.OutputDataReceived += new DataReceivedEventHandler(TrainingServerOutputHandler);
+        _trainingServerProcess.ErrorDataReceived += new DataReceivedEventHandler(TrainingServerOutputHandler);
+
+        _trainingServerProcess.Start();
+        _trainingServerProcess.BeginOutputReadLine();
+        _trainingServerProcess.BeginErrorReadLine();
+
+        yield return new WaitUntil(() => _trainingServerStarted);
+
+        OnTrainingServerStarted();
+    }
+
+    private void TrainingServerOutputHandler(object sender, DataReceivedEventArgs e)
+    {
+        UnityEngine.Debug.Log(e.Data);
+        if (e.Data.Contains("Listening on port"))
+            _trainingServerStarted = true;
+    }
+
+    private void OnTrainingServerStarted()
+    {
+        VisualizationLogger.Init();
+
+        CreateAgents();
     }
 }

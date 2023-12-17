@@ -2,8 +2,6 @@ import uuid
 from enum import IntEnum
 from pyclbr import Function
 
-import numpy as np
-from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.side_channel import (IncomingMessage,
                                                      OutgoingMessage,
                                                      SideChannel)
@@ -30,8 +28,6 @@ class ImageVisualizationChannel(SideChannel):
         self.add_data_callback(graph_name, data)
 
     def send_string(self, data: str) -> None:
-        # Add the string to an OutgoingMessage
         msg = OutgoingMessage()
         msg.write_string(data)
-        # We call this method to queue the data we want to send
         super().queue_message_to_send(msg)

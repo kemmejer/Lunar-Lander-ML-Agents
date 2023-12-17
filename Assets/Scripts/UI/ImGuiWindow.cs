@@ -4,7 +4,7 @@ using System.Linq;
 using UImGui;
 using UnityEngine;
 
-public class StaticSample : MonoBehaviour
+public class ImGuiWindow : MonoBehaviour
 {
     private ShipParameterSO _shipParameter;
     private PlayerSpawnerSO _playerSpawnerSO;
@@ -37,7 +37,6 @@ public class StaticSample : MonoBehaviour
         _groundGeneratorSO = GroundGeneratorSO.GetInstance();
         _rayCasterSO = RayCasterSO.GetInstance();
         _trainingSO = TrainingSO.GetInstance();
-
         UpdateConfigNames();
         LoadConfig();
     }
@@ -48,15 +47,11 @@ public class StaticSample : MonoBehaviour
     {
         if (ImGui.Begin("Settings"))
         {
-            if (ImGui.Button("Import asset"))
-            {
-                ImGui.OpenPopup("ImportAssetDialog");
-            }
-
             ControlHeader();
             ShipParameterHeader();
             GroundGeneratorHeader();
             MachineLearningHeader();
+            Logger.Draw();
 
             ImGui.End();
         }

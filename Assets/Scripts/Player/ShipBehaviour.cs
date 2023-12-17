@@ -49,8 +49,6 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         {
             OnShipLanded(LandingType.Crash, landingDeltaAngle, landingVelocity);
         }
-
-        Debug.Log(string.Format("AngleOk: {0}, VelocityOk: {1}, Angle: {2}, Velocity: {3}", angleOk, velocityOk, landingDeltaAngle, landingVelocity));
     }
 
     public void InitShip()

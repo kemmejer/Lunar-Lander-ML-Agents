@@ -119,7 +119,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private void TrainingServerOutputHandler(object sender, DataReceivedEventArgs e)
     {
-        UnityEngine.Debug.Log(e.Data);
+        Logger.Log(e.Data);
         if (e.Data.Contains("Listening on port"))
             _trainingServerStarted = true;
     }

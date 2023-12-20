@@ -6,8 +6,9 @@ python -m venv .venv
 .venv\Scripts\activate && ^
 python -m pip install --upgrade pip && ^
 pip install torch~=1.13.1 -f https://download.pytorch.org/whl/torch_stable.html && ^
-pip install -e "../Dependencies/ml-agents-envs" && ^
-pip install -e "../Dependencies/ml-agents" && ^
 pip install matplotlib~=3.8.2 && ^
 pip install seaborn~=0.13.0 && ^
+pip install -e "../Dependencies/ml-agents-envs" && ^
+pip install -e "../Dependencies/ml-agents" && ^
+pip install -e "tensorboard_image_plugin" && ^
 deactivate

@@ -42,11 +42,13 @@ from mlagents_envs import logging_util
 from mlagents.plugins.stats_writer import register_stats_writer_plugins
 from mlagents.plugins.trainer_type import register_trainer_plugins
 
+from mlagents.trainers.stats import TensorboardWriter
+from ImageVisualization import ImageGraphName
+
 logger = logging_util.get_logger(__name__)
 
 TRAINING_STATUS_FILE_NAME = "training_status.json"
 
-custom_side_channels = list[SideChannel]()
 
 def get_version_string() -> str:
     return f""" Version information:
@@ -99,6 +101,13 @@ def run_training(run_seed: int, options: RunOptions, num_areas: int) -> None:
 
         # Configure Tensorboard Writers and StatsReporter
         stats_writers = register_stats_writer_plugins(options)
+
+        # Filter all image data from the TensorboardWriter
+        tensorboard_writer: list[TensorboardWriter] = [writer for writer in stats_writers if isinstance(writer, TensorboardWriter)]
+        if (len(tensorboard_writer) == 1):
+            image_graph_names = [graph.name for graph in ImageGraphName]
+            tensorboard_writer[0].hidden_keys.extend(image_graph_names)
+
         for sw in stats_writers:
             StatsReporter.add_writer(sw)
 
@@ -194,9 +203,6 @@ def create_environment_factory(
     ) -> UnityEnvironment:
         # Make sure that each environment gets a different seed
         env_seed = seed + worker_id
-
-        # Add custom side channels
-        side_channels.extend(custom_side_channels)
 
         return UnityEnvironment(
             file_name=env_path,

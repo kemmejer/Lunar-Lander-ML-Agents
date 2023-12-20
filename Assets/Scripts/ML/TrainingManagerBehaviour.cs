@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using Unity.MLAgents;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class TrainingManagerBehaviour : MonoBehaviour
 {
@@ -53,7 +54,6 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
-        VisualizationLogger.UnInit();
 
         _agents.Clear();
     }

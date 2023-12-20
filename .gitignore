@@ -75,6 +75,17 @@ crashlytics-build.properties
 .venv/
 __pycache__/
 
+# Distribution / packaging
+develop-eggs/
+dist/
+eggs/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
 #ImGui
 imgui.ini
 
@@ -90,3 +101,4 @@ imgui.ini
 
 # Specific files
 /Assets/ML-Agents/Timers/MainScene_timers.json
+

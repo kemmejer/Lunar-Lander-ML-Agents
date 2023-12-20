@@ -1,5 +1,6 @@
 from hashlib import sha1
 from typing import List
+from enum import IntEnum
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -7,36 +8,41 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from ImageVisualizationChannel import ImageGraphName, ImageVisualizationChannel
-
 POSITION_STEP_SIZE = 0.5
 
 
-def round_array(array: np.ndarray[float]):
+def round_array(array: np.ndarray[float]) -> np.ndarray[float]:
     return np.round(array / POSITION_STEP_SIZE) * POSITION_STEP_SIZE
+
+
+class ImageGraphName(IntEnum):
+    WorldBounds = 0  # float minX, float minY, float maxX, float maxY
+    Position = 1     # float x, float y
+    Rotation = 2     # float rotation (euler)
+    Velocity = 3     # float velocityX, float velocity
+    Reward = 4       # float reward
+    Thrust = 5       # float thrust (0 = false, 1 = true)
 
 
 class WorldBounds:
     def __init__(self, world_bounds: List[float]) -> None:
         world_bounds = round_array(world_bounds)
-        self.min_x = world_bounds[0]
-        self.min_y = world_bounds[1]
-        self.max_x = world_bounds[2]
-        self.max_y = world_bounds[3]
-        self.width = self.max_x - self.min_x
-        self.height = self.max_y - self.min_y
-        self.width_count = int(self.width / POSITION_STEP_SIZE) + 1
-        self.height_count = int(self.height / POSITION_STEP_SIZE) + 1
+        self.min_x: float = world_bounds[0]
+        self.min_y: float = world_bounds[1]
+        self.max_x: float = world_bounds[2]
+        self.max_y: float = world_bounds[3]
+        self.width: float = self.max_x - self.min_x
+        self.height: float = self.max_y - self.min_y
+        self.width_count: int = int(self.width / POSITION_STEP_SIZE) + 1
+        self.height_count: int = int(self.height / POSITION_STEP_SIZE) + 1
 
 
 class ImageVisualization:
 
     def __init__(self) -> None:
-        self.channel = ImageVisualizationChannel(self.add_data)
         self.data = [np.array(np.float) for _ in range(len(ImageGraphName))]
 
     def add_data(self, graph_name: ImageGraphName, data: List[float]) -> None:
-        # self.data[graph_name] = np.append(self.data[graph_name], data)
         self.data[int(graph_name)] = np.asarray(data)
         if graph_name == ImageGraphName.WorldBounds:
             self.bounds = WorldBounds(self.data[ImageGraphName.WorldBounds])
@@ -99,59 +105,59 @@ class ImageVisualization:
         positions = self.data[int(ImageGraphName.Position)]
         values = np.ones(int(positions.size / 2))
 
-        df = self.generate_dataframe(values)
+        df: pd.DataFrame = self.generate_dataframe(values)
         df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes = sns.heatmap(df, cmap="viridis")
+        axes: plt.Axes = sns.heatmap(df, cmap="viridis")
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')
 
     def generate_rotation_image(self) -> None:
         rotations = self.data[int(ImageGraphName.Rotation)]
-        df = self.generate_dataframe(rotations)
+        df: pd.DataFrame = self.generate_dataframe(rotations)
         df = df.groupby(["x", "y"], as_index=False).mean()
 
         radians = np.radians(df["z"] + 90.0)
         u_values = np.cos(radians)
         v_values = np.sin(radians)
 
-        quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
+        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
         quiver.axes.set_aspect('equal', adjustable='box')
 
-        colorbar = plt.colorbar(quiver)
+        colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label("Euler Angle")
 
     def generate_velocity_image(self) -> None:
         velocity = self.data[int(ImageGraphName.Velocity)]
-        df = self.generate_dataframe_2d(velocity)
+        df: pd.DataFrame = self.generate_dataframe_2d(velocity)
         df = df.groupby(["x", "y"], as_index=False).mean()
 
         magnitudes = np.sqrt(df["u"] ** 2 + df["v"] ** 2)
-        quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
+        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
         quiver.axes.set_aspect('equal', adjustable='box')
 
-        colorbar = plt.colorbar(quiver)
+        colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label('Magnitude of Velocity')
 
     def generate_reward_image(self) -> None:
         rewards = self.data[ImageGraphName.Reward]
 
-        df = self.generate_dataframe(rewards)
+        df: pd.DataFrame = self.generate_dataframe(rewards)
         df = df.groupby(["x", "y"], as_index=False).mean()
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes = sns.heatmap(df, cmap="viridis", center=0.0)
+        axes: plt.Axes = sns.heatmap(df, cmap="viridis", center=0.0)
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')
 
     def generate_thrust_image(self) -> None:
         thrust = self.data[ImageGraphName.Thrust]
 
-        df = self.generate_dataframe(thrust)
+        df: pd.DataFrame = self.generate_dataframe(thrust)
         df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes = sns.heatmap(df, cmap="viridis")
+        axes: plt.Axes = sns.heatmap(df, cmap="viridis")
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')

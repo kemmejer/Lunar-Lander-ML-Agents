@@ -11,7 +11,6 @@ using UnityEngine;
 public static class VisualizationLogger
 {
     private static StatsRecorder _statsRecorder;
-    private static ImageVisualizationChannel _imageChannel;
     private static ImageVisualizationData[] _imageVisualizationData;
     private const int ImageBufferSize = 32768;
 
@@ -33,8 +32,6 @@ public static class VisualizationLogger
     public static void Init()
     {
         _statsRecorder = Academy.Instance.StatsRecorder;
-        _imageChannel = new ImageVisualizationChannel();
-        SideChannelManager.RegisterSideChannel(_imageChannel);
 
         int imageGraphCount = Enum.GetNames(typeof(ImageGraphName)).Length;
         _imageVisualizationData = new ImageVisualizationData[imageGraphCount];
@@ -46,11 +43,6 @@ public static class VisualizationLogger
         SendImageWorldBounds();
     }
 
-    public static void UnInit()
-    {
-        SideChannelManager.UnregisterSideChannel(_imageChannel);
-        _imageChannel = null;
-    }
 
     public static void AddValue(ImageGraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
     {
@@ -59,21 +51,13 @@ public static class VisualizationLogger
 
     public static void AddImageValue(ImageGraphName name, float value)
     {
-        if (_imageVisualizationData[(int)name].AddFloat(value) > ImageBufferSize)
-            SendImageData(name);
+        CollectImageValue(name, value);
     }
 
     public static void AddImageValue(ImageGraphName name, in Vector2 value)
     {
-        if (_imageVisualizationData[(int)name].AddVec(value) > ImageBufferSize)
-            SendImageData(name);
-    }
-
-    public static void SendImageData(ImageGraphName graphName)
-    {
-        var imageData = _imageVisualizationData[(int)graphName];
-        _imageChannel.SendData(imageData);
-        imageData.Clear();
+        CollectImageValue(name, value.x);
+        CollectImageValue(name, value.y);
     }
 
     public static void SendImageWorldBounds()
@@ -81,6 +65,15 @@ public static class VisualizationLogger
         var bounds = CameraHelper.GetScreenBounds();
         var worldBoundsData = _imageVisualizationData[(int)ImageGraphName.WorldBounds];
         worldBoundsData.Data.AddRange(new float[] { bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y });
-        SendImageData(ImageGraphName.WorldBounds);
+
+        CollectImageValue(ImageGraphName.WorldBounds, bounds.min.x);
+        CollectImageValue(ImageGraphName.WorldBounds, bounds.min.y);
+        CollectImageValue(ImageGraphName.WorldBounds, bounds.max.x);
+        CollectImageValue(ImageGraphName.WorldBounds, bounds.max.y);
+    }
+
+    private static void CollectImageValue(ImageGraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
+    {
+        _statsRecorder.Add(name.ToString(), value, method);
     }
 }

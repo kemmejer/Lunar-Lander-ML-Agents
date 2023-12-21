@@ -1,9 +1,7 @@
-from hashlib import sha1
-from typing import List
 from enum import IntEnum
+from typing import List
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -42,27 +40,27 @@ class ImageVisualization:
     def __init__(self) -> None:
         self.data = [np.array(np.float) for _ in range(len(ImageGraphName))]
 
-    def add_data(self, graph_name: ImageGraphName, data: List[float]) -> None:
+    def set_image_data(self, graph_name: ImageGraphName, data: List[float]) -> None:
         self.data[int(graph_name)] = np.asarray(data)
         if graph_name == ImageGraphName.WorldBounds:
             self.bounds = WorldBounds(self.data[ImageGraphName.WorldBounds])
-        else:
-            self.generate_image(graph_name)
 
-    def generate_image(self, graph_name: ImageGraphName) -> None:
+    def generate_image(self, graph_name: ImageGraphName) -> plt.Figure | None:
+        plt.figure(graph_name.value)
+        figure: plt.Figure = None
         match graph_name:
             case ImageGraphName.Position:
-                self.generate_position_image()
+                figure = self.generate_position_image()
             case ImageGraphName.Rotation:
-                self.generate_rotation_image()
+                figure = self.generate_rotation_image()
             case ImageGraphName.Velocity:
-                self.generate_velocity_image()
+                figure = self.generate_velocity_image()
             case ImageGraphName.Reward:
-                self.generate_reward_image()
+                figure = self.generate_reward_image()
             case ImageGraphName.Thrust:
-                self.generate_thrust_image()
+                figure = self.generate_thrust_image()
 
-        plt.show()
+        return figure
 
     def get_grid_positions(self) -> tuple[np.ndarray[float], np.ndarray[float]]:
         positions = self.data[int(ImageGraphName.Position)]
@@ -101,7 +99,7 @@ class ImageVisualization:
 
         return df
 
-    def generate_position_image(self) -> None:
+    def generate_position_image(self) -> plt.Figure:
         positions = self.data[int(ImageGraphName.Position)]
         values = np.ones(int(positions.size / 2))
 
@@ -110,10 +108,13 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         axes: plt.Axes = sns.heatmap(df, cmap="viridis")
+        axes.set_title("Position")
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')
 
-    def generate_rotation_image(self) -> None:
+        return axes.get_figure()
+
+    def generate_rotation_image(self) -> plt.Figure:
         rotations = self.data[int(ImageGraphName.Rotation)]
         df: pd.DataFrame = self.generate_dataframe(rotations)
         df = df.groupby(["x", "y"], as_index=False).mean()
@@ -123,24 +124,30 @@ class ImageVisualization:
         v_values = np.sin(radians)
 
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
+        plt.title("Rotation")
         quiver.axes.set_aspect('equal', adjustable='box')
 
         colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label("Euler Angle")
 
-    def generate_velocity_image(self) -> None:
+        return quiver.axes.get_figure()
+
+    def generate_velocity_image(self) -> plt.Figure:
         velocity = self.data[int(ImageGraphName.Velocity)]
         df: pd.DataFrame = self.generate_dataframe_2d(velocity)
         df = df.groupby(["x", "y"], as_index=False).mean()
 
         magnitudes = np.sqrt(df["u"] ** 2 + df["v"] ** 2)
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
+        plt.title("Velocity")
         quiver.axes.set_aspect('equal', adjustable='box')
 
         colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label('Magnitude of Velocity')
 
-    def generate_reward_image(self) -> None:
+        return quiver.axes.get_figure()
+
+    def generate_reward_image(self) -> plt.Figure:
         rewards = self.data[ImageGraphName.Reward]
 
         df: pd.DataFrame = self.generate_dataframe(rewards)
@@ -148,10 +155,13 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         axes: plt.Axes = sns.heatmap(df, cmap="viridis", center=0.0)
+        axes.set_title("Reward")
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')
 
-    def generate_thrust_image(self) -> None:
+        return axes.get_figure()
+
+    def generate_thrust_image(self) -> plt.Figure:
         thrust = self.data[ImageGraphName.Thrust]
 
         df: pd.DataFrame = self.generate_dataframe(thrust)
@@ -159,5 +169,8 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         axes: plt.Axes = sns.heatmap(df, cmap="viridis")
+        axes.set_title("Thrust")
         axes.invert_yaxis()
         axes.set_aspect('equal', adjustable='box')
+
+        return axes.get_figure()

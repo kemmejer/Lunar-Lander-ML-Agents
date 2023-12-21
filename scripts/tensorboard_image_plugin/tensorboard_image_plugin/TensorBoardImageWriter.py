@@ -1,20 +1,14 @@
 
 import io
-import itertools
-import os
-from datetime import datetime
 from typing import Dict, List
-from mlagents.trainers.settings import RunOptions
-from mlagents.trainers.stats import StatsWriter, StatsSummary
 
 import matplotlib.pyplot as plt
 import numpy as np
-from packaging import version
-from torch.utils.tensorboard import SummaryWriter
-from mlagents.trainers.stats import TensorboardWriter
+from mlagents.trainers.settings import RunOptions
+from mlagents.trainers.stats import (StatsSummary, StatsWriter,
+                                     TensorboardWriter)
+from PIL import Image
 
-
-import Constants
 from ImageVisualization import ImageGraphName, ImageVisualization
 
 
@@ -33,7 +27,26 @@ class TensorBoardImageWriter(TensorboardWriter):
                 continue
 
             graph_name: ImageGraphName = ImageGraphName[key]
-            self.image_visualization.add_data(graph_name, value.full_dist)
+            self.image_visualization.set_image_data(graph_name, value.full_dist)
+            image: plt.Figure = self.image_visualization.generate_image(graph_name)
+            if image is not None:
+                self.save_image(image, graph_name, category, step)
+                plt.clf()
+
+    def save_image(self, image: plt.Figure, graph_name: ImageGraphName, category: str, step: int) -> None:
+        img_byte_io = io.BytesIO()
+        image.savefig(img_byte_io, format="png", transparent=False)
+        img: Image.Image = Image.open(img_byte_io)
+
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        img_np = np.array(img)
+        self.summary_writers[category].add_image("Images/" + graph_name.name, img_np, step, dataformats="HWC")
+        self.summary_writers[category].flush()
+
+    def save_data(self) -> None:
+        pass
 
 
 def get_tensor_board_image_writer(run_options: RunOptions) -> List[StatsWriter]:
@@ -44,6 +57,7 @@ def get_tensor_board_image_writer(run_options: RunOptions) -> List[StatsWriter]:
 
     It must return a list of StatsWriters.
     """
-    print("Creating a new stats writer! This is so exciting!")
+
+    print("Creating a new TensorBoardImageWriter")
 
     return [TensorBoardImageWriter(run_options)]

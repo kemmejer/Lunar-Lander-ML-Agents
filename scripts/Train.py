@@ -104,7 +104,7 @@ def run_training(run_seed: int, options: RunOptions, num_areas: int) -> None:
 
         # Filter all image data from the TensorboardWriter
         tensorboard_writer: list[TensorboardWriter] = [writer for writer in stats_writers if isinstance(writer, TensorboardWriter)]
-        if (len(tensorboard_writer) == 1):
+        if (len(tensorboard_writer) > 0):
             image_graph_names = [graph.name for graph in ImageGraphName]
             tensorboard_writer[0].hidden_keys.extend(image_graph_names)
 

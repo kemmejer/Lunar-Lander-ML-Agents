@@ -1,3 +1,5 @@
+import gzip
+import os
 from enum import IntEnum
 from typing import List
 
@@ -37,11 +39,13 @@ class WorldBounds:
 
 class ImageVisualization:
 
-    def __init__(self) -> None:
-        self.data = [np.array(np.float) for _ in range(len(ImageGraphName))]
+    def __init__(self, data_dir: str) -> None:
+        self.data = [None] * len(ImageGraphName)
+        self.data_dir: str = data_dir
+        self.data_file_extension = ".npz"
 
-    def set_image_data(self, graph_name: ImageGraphName, data: List[float]) -> None:
-        self.data[int(graph_name)] = np.asarray(data)
+    def set_image_data(self, graph_name: ImageGraphName, data: np.ndarray[float]) -> None:
+        self.data[graph_name.value] = np.asarray(data)
         if graph_name == ImageGraphName.WorldBounds:
             self.bounds = WorldBounds(self.data[ImageGraphName.WorldBounds])
 
@@ -62,8 +66,24 @@ class ImageVisualization:
 
         return figure
 
+    def save_data(self, name: str, data: List[float]) -> None:
+        file_path = os.path.join(self.data_dir, name + self.data_file_extension)
+        if os.path.isfile(file_path):
+            existing_data = self.load_data(name)
+            combined_data = np.concatenate([existing_data, data])
+        else:
+            combined_data = data
+
+        with gzip.open(file_path, "wb") as file:
+            np.save(file, combined_data)
+
+    def load_data(self, name: str) -> np.ndarray[float]:
+        file_path = os.path.join(self.data_dir, name + self.data_file_extension)
+        with gzip.open(file_path, "rb") as file:
+            return np.load(file)
+
     def get_grid_positions(self) -> tuple[np.ndarray[float], np.ndarray[float]]:
-        positions = self.data[int(ImageGraphName.Position)]
+        positions = self.data[ImageGraphName.Position.value]
         positions = round_array(positions)
 
         # Fill the value and coordinate arrays with all possible positions. This ensures that there are no gaps / jumps in the dataframe
@@ -100,7 +120,7 @@ class ImageVisualization:
         return df
 
     def generate_position_image(self) -> plt.Figure:
-        positions = self.data[int(ImageGraphName.Position)]
+        positions = self.data[ImageGraphName.Position.value]
         values = np.ones(int(positions.size / 2))
 
         df: pd.DataFrame = self.generate_dataframe(values)
@@ -115,7 +135,7 @@ class ImageVisualization:
         return axes.get_figure()
 
     def generate_rotation_image(self) -> plt.Figure:
-        rotations = self.data[int(ImageGraphName.Rotation)]
+        rotations = self.data[ImageGraphName.Rotation.value]
         df: pd.DataFrame = self.generate_dataframe(rotations)
         df = df.groupby(["x", "y"], as_index=False).mean()
 
@@ -133,7 +153,7 @@ class ImageVisualization:
         return quiver.axes.get_figure()
 
     def generate_velocity_image(self) -> plt.Figure:
-        velocity = self.data[int(ImageGraphName.Velocity)]
+        velocity = self.data[ImageGraphName.Velocity.value]
         df: pd.DataFrame = self.generate_dataframe_2d(velocity)
         df = df.groupby(["x", "y"], as_index=False).mean()
 
@@ -148,7 +168,7 @@ class ImageVisualization:
         return quiver.axes.get_figure()
 
     def generate_reward_image(self) -> plt.Figure:
-        rewards = self.data[ImageGraphName.Reward]
+        rewards = self.data[ImageGraphName.Reward.value]
 
         df: pd.DataFrame = self.generate_dataframe(rewards)
         df = df.groupby(["x", "y"], as_index=False).mean()
@@ -162,7 +182,7 @@ class ImageVisualization:
         return axes.get_figure()
 
     def generate_thrust_image(self) -> plt.Figure:
-        thrust = self.data[ImageGraphName.Thrust]
+        thrust = self.data[ImageGraphName.Thrust.value]
 
         df: pd.DataFrame = self.generate_dataframe(thrust)
         df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)

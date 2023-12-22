@@ -41,7 +41,8 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _isRunning = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
 
-        StartCoroutine(StartTrainingServer());
+        //StartCoroutine(StartTrainingServer());
+        OnTrainingServerStarted();
     }
 
     public void StopTraining()

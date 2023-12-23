@@ -8,7 +8,7 @@ from mlagents.trainers.stats import (StatsSummary, StatsWriter,
                                      TensorboardWriter)
 from PIL import Image
 
-from ImageVisualization import ImageGraphName, ImageVisualization, WorldBounds
+from ImageVisualization import ImageGraphName, ImageVisualization
 
 
 class TensorBoardImageWriter(TensorboardWriter):
@@ -19,7 +19,7 @@ class TensorBoardImageWriter(TensorboardWriter):
         self.image_graph_names: list[str] = [graph.name for graph in ImageGraphName]
         self.image_visualization = ImageVisualization(self.base_dir)
         self.image_folder_name = "Images/"
-        self.image_generation_interval = 4
+        self.image_generation_interval = 1
         self.image_generation_interval_counter = 0
         self.data = [None] * len(ImageGraphName)
 
@@ -58,18 +58,18 @@ class TensorBoardImageWriter(TensorboardWriter):
     def generate_image(self, graph_name: ImageGraphName, category: str, step: int) -> None:
         if graph_name == ImageGraphName.WorldBounds:
             return
-        
+
         self.image_visualization.set_image_data(graph_name, self.data[graph_name.value])
         image: plt.Figure = self.image_visualization.generate_image(graph_name)
         if image is not None:
             self.save_image(image, graph_name, category, step)
             plt.clf()
-            
+
         self.data[graph_name.value] = None
 
     def save_image(self, image: plt.Figure, graph_name: ImageGraphName, category: str, step: int) -> None:
         img_byte_io = io.BytesIO()
-        image.savefig(img_byte_io, format="png", transparent=False)
+        image.savefig(img_byte_io, format="png", transparent=False, bbox_inches="tight")
         img: Image.Image = Image.open(img_byte_io)
 
         if img.mode != "RGB":

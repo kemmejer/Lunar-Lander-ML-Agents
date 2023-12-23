@@ -3,10 +3,10 @@ import os
 from enum import IntEnum
 from typing import List
 
+import matplotlib.colors as plt_colors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 POSITION_STEP_SIZE = 0.5
 
@@ -48,6 +48,14 @@ class ImageVisualization:
         self.data[graph_name.value] = np.asarray(data)
         if graph_name == ImageGraphName.WorldBounds:
             self.bounds = WorldBounds(self.data[ImageGraphName.WorldBounds])
+            self.calc_figure_size()
+
+    def calc_figure_size(self) -> None:
+        self.figure_extend: list[float] = [self.bounds.min_x, self.bounds.max_x, self.bounds.max_y, self.bounds.min_y]
+
+        figure_width: float = 10.0
+        aspect_ratio: float = self.bounds.width / self.bounds.height
+        self.figure_size: list[float] = [figure_width, figure_width / aspect_ratio]
 
     def generate_image(self, graph_name: ImageGraphName) -> plt.Figure | None:
         plt.figure(graph_name.value)
@@ -63,6 +71,12 @@ class ImageVisualization:
                 figure = self.generate_reward_image()
             case ImageGraphName.Thrust:
                 figure = self.generate_thrust_image()
+
+        axes: plt.Axes = figure.gca()
+        figure.set_size_inches(self.figure_size)
+        axes.set_aspect('equal', adjustable='box')
+        axes.set_xlabel("X Position")
+        axes.set_ylabel("Y Position")
 
         return figure
 
@@ -127,12 +141,16 @@ class ImageVisualization:
         df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes: plt.Axes = sns.heatmap(df, cmap="viridis")
-        axes.set_title("Position")
-        axes.invert_yaxis()
-        axes.set_aspect('equal', adjustable='box')
+        image: plt.AxesImage = plt.imshow(df, cmap="viridis", extent=self.figure_extend)
+        plt.title("Position")
+        image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
+        image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
+        image.axes.invert_yaxis()
 
-        return axes.get_figure()
+        colorbar: plt.Colorbar = plt.colorbar(image)
+        colorbar.set_label("Position Count")
+
+        return image.get_figure()
 
     def generate_rotation_image(self) -> plt.Figure:
         rotations = self.data[ImageGraphName.Rotation.value]
@@ -145,7 +163,8 @@ class ImageVisualization:
 
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
         plt.title("Rotation")
-        quiver.axes.set_aspect('equal', adjustable='box')
+        quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
+        quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
 
         colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label("Euler Angle")
@@ -158,9 +177,11 @@ class ImageVisualization:
         df = df.groupby(["x", "y"], as_index=False).mean()
 
         magnitudes = np.sqrt(df["u"] ** 2 + df["v"] ** 2)
+
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
         plt.title("Velocity")
-        quiver.axes.set_aspect('equal', adjustable='box')
+        quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
+        quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
 
         colorbar: plt.Colorbar = plt.colorbar(quiver)
         colorbar.set_label('Magnitude of Velocity')
@@ -172,14 +193,19 @@ class ImageVisualization:
 
         df: pd.DataFrame = self.generate_dataframe(rewards)
         df = df.groupby(["x", "y"], as_index=False).mean()
+        norm = plt_colors.TwoSlopeNorm(vcenter=0, vmin=min(df.z.min(), -1.0), vmax=max(df.z.max(), 1.0))
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes: plt.Axes = sns.heatmap(df, cmap="viridis", center=0.0)
-        axes.set_title("Reward")
-        axes.invert_yaxis()
-        axes.set_aspect('equal', adjustable='box')
+        image: plt.AxesImage = plt.imshow(df, cmap="viridis", norm=norm, extent=self.figure_extend)
+        plt.title("Reward")
+        image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
+        image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
+        image.axes.invert_yaxis()
 
-        return axes.get_figure()
+        colorbar: plt.Colorbar = plt.colorbar(image)
+        colorbar.set_label("Mean Reward")
+
+        return image.get_figure()
 
     def generate_thrust_image(self) -> plt.Figure:
         thrust = self.data[ImageGraphName.Thrust.value]
@@ -188,9 +214,13 @@ class ImageVisualization:
         df = df.groupby(["x", "y"], as_index=False).sum(min_count=1)
         df = df.pivot(index="y", columns="x", values="z")
 
-        axes: plt.Axes = sns.heatmap(df, cmap="viridis")
-        axes.set_title("Thrust")
-        axes.invert_yaxis()
-        axes.set_aspect('equal', adjustable='box')
+        image: plt.AxesImage = plt.imshow(df, cmap="viridis", extent=self.figure_extend)
+        plt.title("Thrust")
+        image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
+        image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
+        image.axes.invert_yaxis()
 
-        return axes.get_figure()
+        colorbar: plt.Colorbar = plt.colorbar(image)
+        colorbar.set_label("Thrust Count")
+
+        return image.get_figure()

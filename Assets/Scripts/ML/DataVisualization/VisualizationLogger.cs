@@ -1,5 +1,3 @@
-using ImGuiNET;
-using ImPlotNET;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,8 +9,6 @@ using UnityEngine;
 public static class VisualizationLogger
 {
     private static StatsRecorder _statsRecorder;
-    private static ImageVisualizationData[] _imageVisualizationData;
-    private const int ImageBufferSize = 32768;
 
     public enum GraphName
     {
@@ -33,16 +29,8 @@ public static class VisualizationLogger
     {
         _statsRecorder = Academy.Instance.StatsRecorder;
 
-        int imageGraphCount = Enum.GetNames(typeof(ImageGraphName)).Length;
-        _imageVisualizationData = new ImageVisualizationData[imageGraphCount];
-        for (int i = 0; i < imageGraphCount; i++)
-        {
-            _imageVisualizationData[i] = new ImageVisualizationData((ImageGraphName)i);
-        }
-
         SendImageWorldBounds();
     }
-
 
     public static void AddValue(ImageGraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
     {
@@ -63,9 +51,6 @@ public static class VisualizationLogger
     public static void SendImageWorldBounds()
     {
         var bounds = CameraHelper.GetScreenBounds();
-        var worldBoundsData = _imageVisualizationData[(int)ImageGraphName.WorldBounds];
-        worldBoundsData.Data.AddRange(new float[] { bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y });
-
         CollectImageValue(ImageGraphName.WorldBounds, bounds.min.x);
         CollectImageValue(ImageGraphName.WorldBounds, bounds.min.y);
         CollectImageValue(ImageGraphName.WorldBounds, bounds.max.x);

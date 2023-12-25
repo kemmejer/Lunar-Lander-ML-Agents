@@ -11,12 +11,15 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class TrainingManagerBehaviour : MonoBehaviour
 {
+    public bool IsTraining { get; private set; }
+    public bool IsStarting { get; private set; }
+    public bool IsStopping { get; private set; }
+
     private TrainingSO _trainingSO;
 
     private static TrainingManagerBehaviour _instance;
 
     private List<ShipAgent> _agents;
-    private bool _isRunning;
 
     private int _finishedShipCount;
 
@@ -35,28 +38,28 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     public void StartTraining()
     {
-        if (_isRunning)
+        if (IsTraining || IsStarting || IsStopping)
             return;
 
-        _isRunning = true;
+        IsStarting = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
 
-        //StartCoroutine(StartTrainingServer());
-        OnTrainingServerStarted();
+        StartCoroutine(StartTrainingServer());
     }
 
     public void StopTraining()
     {
-        if (!_isRunning)
+        if (!IsTraining || IsStarting || IsStopping)
             return;
 
-        _isRunning = false;
-        _trainingServerStarted = false;
+        IsStopping = true;
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
 
         _agents.Clear();
+
+        StartCoroutine(StopTrainingServer());
     }
 
     private void CreateAgents()
@@ -118,17 +121,38 @@ public class TrainingManagerBehaviour : MonoBehaviour
         OnTrainingServerStarted();
     }
 
+    private IEnumerator StopTrainingServer()
+    {
+        // Disposing the Academy results in the communicator to close.
+        // This sends a UnityCommunicatorStoppedException to the server, which results in the server shutting gracefully down
+        Academy.Instance.Dispose();
+
+        yield return new WaitUntil(() => !_trainingServerStarted);
+
+        _trainingServerProcess.WaitForExit();
+        OnTrainingServerStopped();
+    }
+
     private void TrainingServerOutputHandler(object sender, DataReceivedEventArgs e)
     {
         Logger.Log(e.Data);
         if (e.Data.Contains("Listening on port"))
             _trainingServerStarted = true;
+        else if (e.Data.Contains("Stopped Training Server"))
+            _trainingServerStarted = false;
     }
 
     private void OnTrainingServerStarted()
     {
         VisualizationLogger.Init();
-
         CreateAgents();
+        IsTraining = true;
+        IsStarting = false;
+    }
+
+    private void OnTrainingServerStopped()
+    {
+        IsTraining = false;
+        IsStopping = false;
     }
 }

@@ -25,6 +25,8 @@ public class ShipAgent : Agent
     private readonly Color _rewardPositiveColor = new Color(0.8f, 1.0f, 0.8f);
     private readonly Color _rewardNegativeColor = new Color(1.0f, 0.8f, 0.8f);
 
+    private bool _hasAgentModel;
+
     private const int ObservationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
@@ -166,6 +168,7 @@ public class ShipAgent : Agent
 
     public void SetAgentModel(in AgentModel model)
     {
+        _hasAgentModel = true;
         SetModel(Constants.AgentName, model.Model);
         ResetShip();
         _behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
@@ -264,6 +267,9 @@ public class ShipAgent : Agent
 
     private void CollectImageData()
     {
+        if (_hasAgentModel)
+            return;
+
         var position = _shipBehaviour.GetPosition();
         var rotation = _shipBehaviour.GetEulerRotation();
         var velocity = _shipBehaviour.GetVelocity();

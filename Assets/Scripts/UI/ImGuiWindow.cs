@@ -11,6 +11,7 @@ public class ImGuiWindow : MonoBehaviour
     private GroundGeneratorSO _groundGeneratorSO;
     private RayCasterSO _rayCasterSO;
     private TrainingSO _trainingSO;
+    private TrainingManagerBehaviour _trainingManager;
 
     private int _configIndex = 0;
     private string _modalConfigName = string.Empty;
@@ -37,6 +38,7 @@ public class ImGuiWindow : MonoBehaviour
         _groundGeneratorSO = GroundGeneratorSO.GetInstance();
         _rayCasterSO = RayCasterSO.GetInstance();
         _trainingSO = TrainingSO.GetInstance();
+        _trainingManager = TrainingManagerBehaviour.GetInstance();
         UpdateConfigNames();
         LoadConfig();
     }
@@ -92,12 +94,28 @@ public class ImGuiWindow : MonoBehaviour
 
             ImGui.Separator();
             ImGui.Text("Training");
-            if (ImGui.Button("Start Training"))
-                TrainingManagerBehaviour.GetInstance().StartTraining();
+            if (_trainingManager.IsTraining)
+            {
+                if (ImGui.Button("Stop Training"))
+                    _trainingManager.StopTraining();
+            }
+            else
+            {
+                if (ImGui.Button("Start Training"))
+                    _trainingManager.StartTraining();
+            }
 
-            ImGui.SameLine();
-            if (ImGui.Button("Stop Training"))
-                TrainingManagerBehaviour.GetInstance().StopTraining();
+            if(_trainingManager.IsStarting)
+            {
+                ImGui.SameLine();
+                ImGui.Text("Starting Training...");
+            }
+
+            if (_trainingManager.IsStopping)
+            {
+                ImGui.SameLine();
+                ImGui.Text("Stopping Training...");
+            }
 
             ImGui.Separator();
             ImGui.Text("Scene");

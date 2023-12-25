@@ -15,7 +15,9 @@
                 "../config/ShipAgent.yaml",
                 "--force",
                 "--run-id=Default",
-                "--results-dir=../results"
+                "--results-dir=../results",
+                "--max-lifetime-restarts=0",
+                "--debug"
             ]
         },
         {
@@ -24,13 +26,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "../config/ShipAgent.yaml",
-                "--force",
-                "--run-id=Default",
-                "--results-dir=../results"
-            ]
+            "justMyCode": true
         },
     ]
 }

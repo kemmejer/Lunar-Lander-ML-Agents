@@ -5,6 +5,7 @@ from typing import List
 
 import matplotlib.colors as plt_colors
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 import pandas as pd
 
@@ -74,7 +75,7 @@ class ImageVisualization:
 
         axes: plt.Axes = figure.gca()
         figure.set_size_inches(self.figure_size)
-        axes.set_aspect('equal', adjustable='box')
+        axes.set_aspect("equal", adjustable="box")
         axes.set_xlabel("X Position")
         axes.set_ylabel("Y Position")
 
@@ -106,9 +107,9 @@ class ImageVisualization:
 
         # Pad the coordinate arrays to the same length
         if self.bounds.width > self.bounds.height:
-            y_fill = np.pad(y_fill, (0, self.bounds.width_count - self.bounds.height_count), 'constant')
+            y_fill = np.pad(y_fill, (0, self.bounds.width_count - self.bounds.height_count), "constant")
         else:
-            x_fill = np.pad(x_fill, (0, self.bounds.height_count - self.bounds.width_count), 'constant')
+            x_fill = np.pad(x_fill, (0, self.bounds.height_count - self.bounds.width_count), "constant")
 
         # Retrieve the coordinate arrays
         x_coords = np.append(positions[0::2], x_fill)
@@ -161,7 +162,7 @@ class ImageVisualization:
         u_values = np.cos(radians)
         v_values = np.sin(radians)
 
-        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis")
+        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="RdYlGn", clim=[-90.0, 90.0])
         plt.title("Rotation")
         quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
@@ -184,7 +185,8 @@ class ImageVisualization:
         quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
 
         colorbar: plt.Colorbar = plt.colorbar(quiver)
-        colorbar.set_label('Magnitude of Velocity')
+        colorbar.set_label("Magnitude of Velocity")
+        colorbar.formatter = FormatStrFormatter("%.1f")
 
         return quiver.axes.get_figure()
 
@@ -193,10 +195,11 @@ class ImageVisualization:
 
         df: pd.DataFrame = self.generate_dataframe(rewards)
         df = df.groupby(["x", "y"], as_index=False).mean()
-        norm = plt_colors.TwoSlopeNorm(vcenter=0, vmin=min(df.z.min(), -1.0), vmax=max(df.z.max(), 1.0))
+        max_value = max(abs(df.z.min()), abs(df.z.max()))
+        norm = plt_colors.TwoSlopeNorm(vcenter=0, vmin=min(-max_value, -1.0), vmax=max(max_value, 1.0))
         df = df.pivot(index="y", columns="x", values="z")
 
-        image: plt.AxesImage = plt.imshow(df, cmap="viridis", norm=norm, extent=self.figure_extend)
+        image: plt.AxesImage = plt.imshow(df, cmap="RdYlGn", norm=norm, extent=self.figure_extend)
         plt.title("Reward")
         image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)

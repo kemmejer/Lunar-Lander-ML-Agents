@@ -24,7 +24,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     ""name"": ""InputActions"",
     ""maps"": [
         {
-            ""name"": ""_player"",
+            ""name"": ""Player"",
             ""id"": ""afeb4853-46ba-41ed-b628-5bda281bf8a3"",
             ""actions"": [
                 {
@@ -138,8 +138,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // _player
-        m_Player = asset.FindActionMap("_player", throwIfNotFound: true);
+        // Player
+        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Thrust = m_Player.FindAction("Thrust", throwIfNotFound: true);
         m_Player_RotateLeft = m_Player.FindAction("RotateLeft", throwIfNotFound: true);
         m_Player_RotateRight = m_Player.FindAction("RotateRight", throwIfNotFound: true);
@@ -201,7 +201,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // _player
+    // Player
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Thrust;

@@ -75,6 +75,11 @@ public static class ConfigManager
         Configs.RemoveAll(config => config.Name == name);
     }
 
+    public static void UnloadModel()
+    {
+        CurrentModel = null;
+    }
+
     private static void LoadConfigsFromDisk()
     {
         if (!Directory.Exists(Constants.ConfigPath))

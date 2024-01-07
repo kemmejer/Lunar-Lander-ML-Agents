@@ -44,6 +44,11 @@ public class TrainingManagerBehaviour : MonoBehaviour
         IsStarting = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
 
+        PlayerSpawnerBehaviour.GetInstance().DestroyShips();
+        TrailManager.GetInstance().DestoryTrails();
+
+        ConfigManager.UnloadModel();
+
         StartCoroutine(StartTrainingServer());
     }
 
@@ -154,5 +159,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         IsTraining = false;
         IsStopping = false;
+
+        // Reset the time scale to 1 because the training server adjusts the value while training
+        Time.timeScale = 1.0f;
+
+        ConfigManager.LoadConfig(ConfigManager.CurrentConfig.Name);
     }
 }

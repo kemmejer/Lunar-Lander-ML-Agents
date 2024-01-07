@@ -81,6 +81,8 @@ public class ImGuiWindow : MonoBehaviour
     {
         if (ImGui.CollapsingHeader("Controls", ImGuiTreeNodeFlags.DefaultOpen))
         {
+            _loadedModel = ConfigManager.CurrentModel != null;
+
             ImGui.Text("Ship");
             if (ImGui.Button("Spawn Player Ship"))
                 PlayerSpawnerBehaviour.GetInstance().InstantiateShip(PlayerSpawnerBehaviour.ShipType.Player);
@@ -226,21 +228,17 @@ public class ImGuiWindow : MonoBehaviour
         _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
         _configIndex = Array.IndexOf(_configs, ConfigManager.CurrentConfig.Name);
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
-        _loadedModel = ConfigManager.CurrentModel != null;
     }
-
 
     private void LoadConfig()
     {
         ConfigManager.LoadConfig(CurrentConfigName);
-        _loadedModel = ConfigManager.CurrentModel != null;
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
     }
 
     private void SaveConfig()
     {
         ConfigManager.SaveConfig(CurrentConfigName);
-        _loadedModel = ConfigManager.CurrentModel != null;
     }
 
     private void CreateConfigModal()
@@ -265,7 +263,6 @@ public class ImGuiWindow : MonoBehaviour
 
             ImGui.EndPopup();
         }
-
     }
 
     private void DeleteConfigModal()

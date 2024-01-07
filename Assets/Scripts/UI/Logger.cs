@@ -18,7 +18,7 @@ public static class Logger
 
     public static void Draw()
     {
-        if (ImGui.CollapsingHeader("Log"))
+        if (ImGui.CollapsingHeader("Log", ImGuiTreeNodeFlags.DefaultOpen))
         {
             float logHeight = Mathf.Max(ImGui.GetContentRegionAvail().y, ImGui.GetTextLineHeight() * 10);
             ImGui.BeginChild("LogScrollRegion", new Vector2(0, logHeight), false, ImGuiWindowFlags.HorizontalScrollbar);

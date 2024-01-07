@@ -197,6 +197,8 @@ public class ShipAgent : Agent
     private void RewardSuccessfulLanding(in LandingData landingData)
     {
         SetReward(50.0f);
+
+        VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 1.0f, StatAggregationMethod.Average);
     }
 
     private void RewardCrash(in LandingData landingData)
@@ -219,6 +221,8 @@ public class ShipAgent : Agent
             reward -= ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude * penaltyFactor * 2;
 
         SetReward(reward);
+
+        VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 0.0f, StatAggregationMethod.Average);
     }
 
     private void EndTraining()

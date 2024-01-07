@@ -9,6 +9,7 @@ using UnityEngine;
 public static class VisualizationLogger
 {
     private static StatsRecorder _statsRecorder;
+    private static readonly Dictionary<GraphName, string> GraphNameStrings = new Dictionary<GraphName, string> { { GraphName.SuccessRate, "Environment/Landing Success Rate" } };
 
     public enum GraphName
     {
@@ -32,9 +33,10 @@ public static class VisualizationLogger
         SendImageWorldBounds();
     }
 
-    public static void AddValue(ImageGraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
+    public static void AddValue(GraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
     {
-        _statsRecorder.Add(name.ToString(), value, method);
+        var graphName = GraphNameStrings[name];
+        _statsRecorder.Add(graphName, value, method);
     }
 
     public static void AddImageValue(ImageGraphName name, float value)

@@ -19,13 +19,14 @@ class TensorBoardImageWriter(TensorboardWriter):
         self.image_graph_names: list[str] = [graph.name for graph in ImageGraphName]
         self.image_visualization = ImageVisualization(self.base_dir)
         self.image_folder_name = "Images/"
-        self.image_generation_interval = 1
+        self.image_generation_interval = 4
         self.image_generation_interval_counter = 0
         self.data = [None] * len(ImageGraphName)
 
     def write_stats(self, category: str, values: Dict[str, StatsSummary], step: int) -> None:
         self._maybe_create_summary_writer(category)
-        self.image_visualization.save_data("step", [step])
+        self.image_visualization.save_data("Step", [step])
+        
         for key, value in values.items():
             if key not in self.image_graph_names:
                 continue

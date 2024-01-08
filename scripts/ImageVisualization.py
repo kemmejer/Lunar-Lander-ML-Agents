@@ -5,9 +5,10 @@ from typing import List
 
 import matplotlib.colors as plt_colors
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import FormatStrFormatter
+from npy_append_array import NpyAppendArray
 
 POSITION_STEP_SIZE = 0.5
 
@@ -43,7 +44,7 @@ class ImageVisualization:
     def __init__(self, data_dir: str) -> None:
         self.data = [None] * len(ImageGraphName)
         self.data_dir: str = data_dir
-        self.data_file_extension = ".npz"
+        self.data_file_extension = ".npy"
 
     def set_image_data(self, graph_name: ImageGraphName, data: np.ndarray[float]) -> None:
         self.data[graph_name.value] = np.asarray(data)
@@ -83,14 +84,9 @@ class ImageVisualization:
 
     def save_data(self, name: str, data: List[float]) -> None:
         file_path = os.path.join(self.data_dir, name + self.data_file_extension)
-        if os.path.isfile(file_path):
-            existing_data = self.load_data(name)
-            combined_data = np.concatenate([existing_data, data])
-        else:
-            combined_data = data
-
-        with gzip.open(file_path, "wb") as file:
-            np.save(file, combined_data)
+        
+        with NpyAppendArray(file_path) as npaa:
+            npaa.append(np.asarray(data))
 
     def load_data(self, name: str) -> np.ndarray[float]:
         file_path = os.path.join(self.data_dir, name + self.data_file_extension)

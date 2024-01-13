@@ -88,11 +88,6 @@ class ImageVisualization:
         with NpyAppendArray(file_path) as npaa:
             npaa.append(np.asarray(data))
 
-    def load_data(self, name: str) -> np.ndarray[float]:
-        file_path = os.path.join(self.data_dir, name + self.data_file_extension)
-        with gzip.open(file_path, "rb") as file:
-            return np.load(file)
-
     def get_grid_positions(self) -> tuple[np.ndarray[float], np.ndarray[float]]:
         positions = self.data[ImageGraphName.Position.value]
         positions = round_array(positions)
@@ -139,7 +134,7 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         image: plt.AxesImage = plt.imshow(df, cmap="viridis", extent=self.figure_extend)
-        plt.title("Position")
+        image.axes.set_title("Position")
         image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
         image.axes.invert_yaxis()
@@ -159,7 +154,7 @@ class ImageVisualization:
         v_values = np.sin(radians)
 
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="RdYlGn", clim=[-90.0, 90.0])
-        plt.title("Rotation")
+        quiver.axes.set_title("Rotation")
         quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
 
@@ -176,7 +171,7 @@ class ImageVisualization:
         magnitudes = np.sqrt(df["u"] ** 2 + df["v"] ** 2)
 
         quiver: plt.Quiver = plt.quiver(df["x"], df["y"], df["u"], df["v"], magnitudes, cmap="viridis")
-        plt.title("Velocity")
+        quiver.axes.set_title("Velocity")
         quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)
 
@@ -196,7 +191,7 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         image: plt.AxesImage = plt.imshow(df, cmap="RdYlGn", norm=norm, extent=self.figure_extend)
-        plt.title("Reward")
+        image.axes.set_title("Reward")
         image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
         image.axes.invert_yaxis()
@@ -214,7 +209,7 @@ class ImageVisualization:
         df = df.pivot(index="y", columns="x", values="z")
 
         image: plt.AxesImage = plt.imshow(df, cmap="viridis", extent=self.figure_extend)
-        plt.title("Thrust")
+        image.axes.set_title("Thrust")
         image.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         image.axes.set_ylim(self.bounds.max_y, self.bounds.min_y)
         image.axes.invert_yaxis()

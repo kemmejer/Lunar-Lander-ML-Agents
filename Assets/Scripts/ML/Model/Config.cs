@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 public class Config
 {
-    public string Name {  get; private set; }
+    public string Name { get; private set; }
 
     private string ConfigBasePath => Path.Combine(Constants.ConfigPath, Name);
 

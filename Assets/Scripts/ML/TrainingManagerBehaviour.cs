@@ -1,13 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using Unity.MLAgents;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class TrainingManagerBehaviour : MonoBehaviour
 {

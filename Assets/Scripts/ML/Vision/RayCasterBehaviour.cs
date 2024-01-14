@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class RayCasterBehaviour : MonoBehaviour
 {
@@ -56,7 +52,7 @@ public class RayCasterBehaviour : MonoBehaviour
         float angleStep = rayAngle / (rayCount - 1);
 
         var shipWidth = gameObject.transform.parent.GetComponent<BoxCollider2D>().size.x * _rayCasterSO.horizontalRayDistribution;
-        var rayTranslation = rayCount  == 1 ? 0.0f : -shipWidth / 2.0f;
+        var rayTranslation = rayCount == 1 ? 0.0f : -shipWidth / 2.0f;
         var rayTranslationStep = rayCount == 1 ? 0.0f : shipWidth / (rayCount - 1);
 
         for (int i = 0; i < rayCount; i++)

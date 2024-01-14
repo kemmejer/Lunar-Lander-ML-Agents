@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.MLAgents;
-using Unity.VisualScripting;
-using UnityEngine;
 
 public class ShipDecisionRequester : DecisionRequester
 {

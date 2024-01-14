@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
-using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
-using Unity.VisualScripting;
+using Unity.MLAgents.Sensors;
+using UnityEngine;
 using static IOnShipLandedEvent;
 using ImageGraphName = VisualizationLogger.ImageGraphName;
-using TMPro;
 
 public class ShipAgent : Agent
 {

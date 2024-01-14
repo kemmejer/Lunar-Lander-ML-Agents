@@ -1,9 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class GroundGeneratorBehaviour : MonoBehaviour
@@ -36,7 +31,7 @@ public class GroundGeneratorBehaviour : MonoBehaviour
 
     public void GenerateGround(bool generateNewRandom = true)
     {
-        if(generateNewRandom)
+        if (generateNewRandom)
             IRandomValue.GenerateValuesForAllFields(_groundGeneratorSO);
 
         _vertices = new List<Vector3>();
@@ -54,7 +49,7 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         var screenBounds = CameraHelper.GetScreenBounds();
         float baseY = screenBounds.min.y + _groundGeneratorSO.baseHeight.value;
 
-        if(_groundGeneratorSO.noiseHeight.value == 0)
+        if (_groundGeneratorSO.noiseHeight.value == 0)
         {
             _collider.Add(screenBounds.min);
             _collider.Add(new Vector2(screenBounds.min.x, baseY));

@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.MLAgents.Policies;
 using UnityEngine;
 
 public class PlayerSpawnerBehaviour : MonoBehaviour

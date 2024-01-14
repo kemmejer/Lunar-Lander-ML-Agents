@@ -1,7 +1,4 @@
 ﻿using ImGuiNET;
-using System;
-using System.Linq;
-using UImGui;
 using UnityEngine;
 
 public static class Logger

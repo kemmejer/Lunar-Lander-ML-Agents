@@ -19,7 +19,7 @@ public interface IRandomValue
         }
 
         var structs = obj.GetType().GetFields().Where(field => field.FieldType.IsValueType && !field.FieldType.IsPrimitive);
-        foreach(var structField in structs)
+        foreach (var structField in structs)
         {
             var field = structField.GetValue(obj);
             GenerateValuesForAllFields(field);

@@ -107,7 +107,7 @@ public class ImGuiWindow : MonoBehaviour
                     _trainingManager.StartTraining();
             }
 
-            if(_trainingManager.IsStarting)
+            if (_trainingManager.IsStarting)
             {
                 ImGui.SameLine();
                 ImGui.Text("Starting Training...");

@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Unity.Barracuda;
-using Unity.Barracuda.Editor;
 using Unity.Barracuda.ONNX;
 using UnityEngine;
 
@@ -54,7 +51,7 @@ public class AgentModel
     private string GetModelPath()
     {
         var modelFolderPath = Path.Combine(Constants.ModelPath, Name, Constants.AgentName);
-        if (!Directory.Exists(modelFolderPath)) 
+        if (!Directory.Exists(modelFolderPath))
             return null;
 
         var files = Directory.GetFiles(modelFolderPath, "*" + ModelFileExtension);

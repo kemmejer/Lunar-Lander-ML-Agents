@@ -21,6 +21,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
     private bool _trainingServerStarted;
     private Process _trainingServerProcess;
 
+    private bool _autoStartTrainingInApplication = true;
+    private bool _loadConfigInMainThread = false;
+
     void Awake()
     {
         _instance = GetComponent<TrainingManagerBehaviour>();
@@ -29,6 +32,26 @@ public class TrainingManagerBehaviour : MonoBehaviour
     public static TrainingManagerBehaviour GetInstance()
     {
         return _instance;
+    }
+
+    private void FixedUpdate()
+    {
+        if (_autoStartTrainingInApplication)
+        {
+            _autoStartTrainingInApplication = false;
+
+            if (CommandLineHelper.IsTrainingApplicationInstance)
+            {
+                ConfigManager.LoadConfig(CommandLineHelper.SelectedConfig);
+                _instance.StartTraining();
+            }
+        }
+
+        if (_loadConfigInMainThread)
+        {
+            _loadConfigInMainThread = false;
+            ConfigManager.LoadConfig(ConfigManager.CurrentConfig.Name);
+        }
     }
 
     public void StartTraining()
@@ -57,7 +80,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
 
-        _agents.Clear();
+        _agents?.Clear();
 
         StartCoroutine(StopTrainingServer());
     }
@@ -101,9 +124,21 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
     private IEnumerator StartTrainingServer()
     {
+        if (CommandLineHelper.IsTrainingApplicationInstance)
+        {
+            OnTrainingServerStarted();
+            yield break;
+        }
+
+        string arguments = ConfigManager.CurrentConfig.Name;
+        if (Application.isEditor)
+            arguments += " true";
+        else
+            arguments += " false";
+
         _trainingServerProcess = new Process();
         _trainingServerProcess.StartInfo.FileName = Constants.TrainingBatPath;
-        _trainingServerProcess.StartInfo.Arguments = ConfigManager.CurrentConfig.Name;
+        _trainingServerProcess.StartInfo.Arguments = arguments;
         //_trainingServerProcess.StartInfo.CreateNoWindow = true;
         _trainingServerProcess.StartInfo.UseShellExecute = false;
         _trainingServerProcess.StartInfo.RedirectStandardOutput = true;
@@ -116,9 +151,17 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _trainingServerProcess.BeginOutputReadLine();
         _trainingServerProcess.BeginErrorReadLine();
 
-        yield return new WaitUntil(() => _trainingServerStarted);
-
-        OnTrainingServerStarted();
+        if (CommandLineHelper.IsTrainingApplicationHost)
+        {
+            _trainingServerStarted = true;
+            IsTraining = true;
+            IsStarting = false;
+        }
+        else
+        {
+            yield return new WaitUntil(() => _trainingServerStarted);
+            OnTrainingServerStarted();
+        }
     }
 
     private IEnumerator StopTrainingServer()
@@ -129,7 +172,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         yield return new WaitUntil(() => !_trainingServerStarted);
 
-        _trainingServerProcess.WaitForExit();
+        _trainingServerProcess?.WaitForExit();
         OnTrainingServerStopped();
     }
 
@@ -137,9 +180,15 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         Logger.Log(e.Data);
         if (e.Data.Contains("Listening on port"))
+        {
             _trainingServerStarted = true;
+        }
         else if (e.Data.Contains("Stopped Training Server"))
+        {
             _trainingServerStarted = false;
+            if (!IsStopping)
+                OnTrainingServerStopped();
+        }
     }
 
     private void OnTrainingServerStarted()
@@ -156,8 +205,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
         IsStopping = false;
 
         // Reset the time scale to 1 because the training server adjusts the value while training
-        Time.timeScale = 1.0f;
+        if (!CommandLineHelper.IsTrainingApplicationHost)
+            Time.timeScale = 1.0f;
 
-        ConfigManager.LoadConfig(ConfigManager.CurrentConfig.Name);
+        _loadConfigInMainThread = true;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 public class Config
@@ -13,11 +14,17 @@ public class Config
 
     public void Load()
     {
-        TrainingSO.Load(ConfigBasePath);
-        RayCasterSO.Load(ConfigBasePath);
-        PlayerSpawnerSO.Load(ConfigBasePath);
-        ShipParameterSO.Load(ConfigBasePath);
-        GroundGeneratorSO.Load(ConfigBasePath);
+        try
+        {
+            TrainingSO.Load(ConfigBasePath);
+            RayCasterSO.Load(ConfigBasePath);
+            PlayerSpawnerSO.Load(ConfigBasePath);
+            ShipParameterSO.Load(ConfigBasePath);
+            GroundGeneratorSO.Load(ConfigBasePath);
+        }
+        catch (Exception)
+        {
+        }
     }
 
     public void Save()

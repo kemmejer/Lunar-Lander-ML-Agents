@@ -1,5 +1,6 @@
 using ImGuiNET;
 using System;
+using System.IO;
 using System.Linq;
 using UImGui;
 using UnityEngine;
@@ -47,17 +48,26 @@ public class ImGuiWindow : MonoBehaviour
     // Your code belongs here! Like ImGui.Begin... etc.
     private void OnLayout(UImGui.UImGui uimgui)
     {
+        if (CommandLineHelper.IsTrainingApplicationInstance)
+        {
+            TrainingApplicationWindow();
+            return;
+        }
+
         if (ImGui.Begin("Settings"))
         {
-            ControlHeader();
-            ShipParameterHeader();
-            GroundGeneratorHeader();
-            MachineLearningHeader();
+            if (!_trainingManager.IsTraining || !CommandLineHelper.IsTrainingApplicationHost)
+            {
+                ControlHeader();
+                ShipParameterHeader();
+                GroundGeneratorHeader();
+                MachineLearningHeader();
+            }
+
             Logger.Draw();
 
             ImGui.End();
         }
-
     }
 
     // runs after UImGui.OnEnable();
@@ -127,6 +137,10 @@ public class ImGuiWindow : MonoBehaviour
             ImGui.SameLine();
             if (ImGui.Button("Delete Trails"))
                 TrailManager.GetInstance().DestoryTrails();
+
+            ImGui.SameLine();
+            if (ImGui.Button("Exit Application"))
+                Application.Quit();
 
             ImGui.Separator();
             ImGui.Text("Config");
@@ -223,6 +237,20 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    private void TrainingApplicationWindow()
+    {
+        if (ImGui.Begin("Training instance"))
+        {
+            if (ImGui.Button("Stop Training"))
+            {
+                _trainingManager.StopTraining();
+                Application.Quit();
+            }
+
+            ImGui.End();
+        }
+    }
+
     private void UpdateConfigNames()
     {
         _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
@@ -251,6 +279,9 @@ public class ImGuiWindow : MonoBehaviour
 
             if (ImGui.Button("Create"))
             {
+                _modalConfigName.Replace(' ', '_');
+                _modalConfigName = string.Join("_", _modalConfigName.Split(Path.GetInvalidFileNameChars()));
+
                 ConfigManager.SaveConfig(_modalConfigName);
                 ConfigManager.LoadConfig(_modalConfigName);
                 UpdateConfigNames();

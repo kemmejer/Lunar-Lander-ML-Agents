@@ -1,3 +1,5 @@
+@cd /D "%~dp0"
+
 start "" "http://localhost:6006/"
 cd scripts
 .venv\Scripts\activate && ^

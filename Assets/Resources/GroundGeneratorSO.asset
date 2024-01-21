@@ -27,3 +27,7 @@ MonoBehaviour:
   resolution:
     value: 0
     parameter: 3200000000000000
+  regenerateInterval:
+    value: 0
+    parameter: 1e0000000a000000
+  regenerateGroundWhileTraining: 0

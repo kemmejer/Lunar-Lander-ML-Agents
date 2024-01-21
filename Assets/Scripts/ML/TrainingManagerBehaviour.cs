@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class TrainingManagerBehaviour : MonoBehaviour
 {
+    public uint TrainingIteration { get; private set; }
     public bool IsTraining { get; private set; }
     public bool IsStarting { get; private set; }
     public bool IsStopping { get; private set; }
@@ -73,6 +74,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         ConfigManager.UnloadModel();
 
         _regenerateGroundInterval = _groundGeneratorSO.regenerateInterval.RndValue;
+        TrainingIteration = 0;
 
         StartCoroutine(StartTrainingServer());
     }
@@ -111,9 +113,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
     private void StartBatch()
     {
         _finishedShipCount = 0;
+        TrainingIteration++;
         TrailManager.GetInstance().DestoryTrails();
 
-        if(_groundGeneratorSO.regenerateGroundWhileTraining)
+        if (_groundGeneratorSO.regenerateGroundWhileTraining)
         {
             if (_regenerateGroundInterval == 0)
             {

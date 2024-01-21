@@ -110,6 +110,12 @@ public class ImGuiWindow : MonoBehaviour
             {
                 if (ImGui.Button("Stop Training"))
                     _trainingManager.StopTraining();
+
+                if(!_trainingManager.IsStopping)
+                {
+                    ImGui.SameLine();
+                    ImGui.Text(string.Format("Training Iteration: {0}", _trainingManager.TrainingIteration));
+                }
             }
             else
             {
@@ -213,13 +219,13 @@ public class ImGuiWindow : MonoBehaviour
 
             ImGui.Separator();
             ImGui.DragFloat2("Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat2("Base noiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
+            ImGui.DragFloat2("Base NoiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Noise Scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
             ImGui.DragInt2("Resolution", ref _groundGeneratorSO.resolution.parameter[0], 1, 2, 100);
             ImGui.DragInt2("Seed", ref _groundGeneratorSO.seed.parameter[0], 1, 0, int.MaxValue);
 
             ImGui.Separator();
-            ImGui.Checkbox("Regenerate Ground", ref _groundGeneratorSO.regenerateGroundWhileTraining);
+            ImGui.Checkbox("Regenerate Ground while Training", ref _groundGeneratorSO.regenerateGroundWhileTraining);
             ImGui.DragInt2("Regenerate Interval", ref _groundGeneratorSO.regenerateInterval.parameter[0], 1, 0, 250);
         }
     }
@@ -230,7 +236,7 @@ public class ImGuiWindow : MonoBehaviour
         {
             ImGui.Text("Ray Cast");
             ImGui.Checkbox("Draw Rays", ref RayCasterSO.drawRays);
-            ImGui.DragInt("Rays per direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);
+            ImGui.DragInt("Rays per Direction", ref _rayCasterSO.raysPerDirection, 1, 0, 5);
             ImGui.DragFloat("Angle", ref _rayCasterSO.angle, 1.0f, 0.0f, 120.0f);
             ImGui.DragFloat("Horizontal Distribution", ref _rayCasterSO.horizontalRayDistribution, 0.1f, 0.0f, 1.0f);
             ImGui.Separator();
@@ -243,13 +249,15 @@ public class ImGuiWindow : MonoBehaviour
 
     private void TrainingApplicationWindow()
     {
-        if (ImGui.Begin("Training instance"))
+        if (ImGui.Begin("Training Instance"))
         {
             if (ImGui.Button("Stop Training"))
             {
                 _trainingManager.StopTraining();
                 Application.Quit();
             }
+
+            ImGui.Text(string.Format("Training Iteration: {0}", _trainingManager.TrainingIteration));
 
             ImGui.End();
         }

@@ -11,12 +11,15 @@ public class TrainingManagerBehaviour : MonoBehaviour
     public bool IsStopping { get; private set; }
 
     private TrainingSO _trainingSO;
+    private GroundGeneratorSO _groundGeneratorSO;
+    private GroundGeneratorBehaviour _groundGeneratorBehaviour;
 
     private static TrainingManagerBehaviour _instance;
 
     private List<ShipAgent> _agents;
 
     private int _finishedShipCount;
+    private int _regenerateGroundInterval;
 
     private bool _trainingServerStarted;
     private Process _trainingServerProcess;
@@ -61,11 +64,15 @@ public class TrainingManagerBehaviour : MonoBehaviour
 
         IsStarting = true;
         _trainingSO = TrainingSO.GetInstanceCopy();
+        _groundGeneratorSO = GroundGeneratorSO.GetInstance();
+        _groundGeneratorBehaviour = GroundGeneratorBehaviour.GetInstance();
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
         TrailManager.GetInstance().DestoryTrails();
 
         ConfigManager.UnloadModel();
+
+        _regenerateGroundInterval = _groundGeneratorSO.regenerateInterval.RndValue;
 
         StartCoroutine(StartTrainingServer());
     }
@@ -105,6 +112,19 @@ public class TrainingManagerBehaviour : MonoBehaviour
     {
         _finishedShipCount = 0;
         TrailManager.GetInstance().DestoryTrails();
+
+        if(_groundGeneratorSO.regenerateGroundWhileTraining)
+        {
+            if (_regenerateGroundInterval == 0)
+            {
+                _groundGeneratorBehaviour.GenerateGround();
+                _regenerateGroundInterval = _groundGeneratorSO.regenerateInterval.RndValue;
+            }
+            else
+            {
+                _regenerateGroundInterval--;
+            }
+        }
 
         foreach (var agent in _agents)
         {

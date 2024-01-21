@@ -8,4 +8,6 @@ public class GroundGeneratorSO : ConfigScriptableObject<GroundGeneratorSO>
     public RandomFloat noiseScale;
     public RandomInt seed;
     public RandomInt resolution;
+    public RandomInt regenerateInterval;
+    public bool regenerateGroundWhileTraining;
 }

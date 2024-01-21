@@ -217,6 +217,10 @@ public class ImGuiWindow : MonoBehaviour
             ImGui.DragFloat2("Noise scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
             ImGui.DragInt2("Resolution", ref _groundGeneratorSO.resolution.parameter[0], 1, 2, 100);
             ImGui.DragInt2("Seed", ref _groundGeneratorSO.seed.parameter[0], 1, 0, int.MaxValue);
+
+            ImGui.Separator();
+            ImGui.Checkbox("Regenerate Ground", ref _groundGeneratorSO.regenerateGroundWhileTraining);
+            ImGui.DragInt2("Regenerate Interval", ref _groundGeneratorSO.regenerateInterval.parameter[0], 1, 0, 250);
         }
     }
 

@@ -12,6 +12,9 @@ public class Config
         Name = name;
     }
 
+    /// <summary>
+    /// Loads all configurations
+    /// </summary>
     public void Load()
     {
         try
@@ -27,6 +30,9 @@ public class Config
         }
     }
 
+    /// <summary>
+    /// Saves all configurations
+    /// </summary>
     public void Save()
     {
         TrainingSO.Save(ConfigBasePath);

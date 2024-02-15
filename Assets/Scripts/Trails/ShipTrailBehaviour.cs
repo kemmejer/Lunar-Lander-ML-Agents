@@ -4,6 +4,10 @@ public class ShipTrailBehaviour : MonoBehaviour
 {
     private TrailRenderer _trailRenderer;
 
+    /// <summary>
+    /// Sets the color of the ships trail
+    /// </summary>
+    /// <param name="color">Color of the trail</param>
     public void SetColor(Color color)
     {
         if (!_trailRenderer)

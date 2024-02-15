@@ -29,6 +29,10 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         GenerateGround();
     }
 
+    /// <summary>
+    /// Generates a ground using the ground parameter
+    /// </summary>
+    /// <param name="generateNewRandom">Whether to use a new random values for generating the ground</param>
     public void GenerateGround(bool generateNewRandom = true)
     {
         if (generateNewRandom)
@@ -44,6 +48,9 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         UpdateMesh();
     }
 
+    /// <summary>
+    /// Generates the top vertices of the ground
+    /// </summary>
     private void GenerateTop()
     {
         var screenBounds = CameraHelper.GetScreenBounds();
@@ -97,6 +104,9 @@ public class GroundGeneratorBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Generates the base vertices of the ground
+    /// </summary>
     private void GenerateBase()
     {
         var screenBounds = CameraHelper.GetScreenBounds();
@@ -117,6 +127,9 @@ public class GroundGeneratorBehaviour : MonoBehaviour
             triangleIndex + 2, triangleIndex + 1, triangleIndex + 3 });
     }
 
+    /// <summary>
+    /// Updates the mesh, its vertices and the collider
+    /// </summary>
     private void UpdateMesh()
     {
         _mesh.Clear();

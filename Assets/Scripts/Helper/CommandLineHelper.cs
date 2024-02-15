@@ -7,6 +7,9 @@ public static class CommandLineHelper
     public static bool IsTrainingApplicationInstance;
     public static bool IsTrainingApplicationHost;
 
+    /// <summary>
+    /// Reads the command line arguments on startup and applies the specified configuration
+    /// </summary>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void ReadCommandLineArgs()
     {

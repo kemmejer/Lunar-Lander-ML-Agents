@@ -22,6 +22,9 @@ public class SceneScaler : MonoBehaviour
         ScaleScene();
     }
 
+    /// <summary>
+    /// Scales the scene elements to fit the screen
+    /// </summary>
     public void ScaleScene()
     {
         _screenWidth = Screen.width;

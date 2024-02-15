@@ -53,6 +53,10 @@ public class ShipAgent : Agent
 
     }
 
+    /// <summary>
+    /// Called every time when an episode starts.
+    /// Resets the ship to its default state and position
+    /// </summary>
     public override void OnEpisodeBegin()
     {
         base.OnEpisodeBegin();
@@ -61,6 +65,11 @@ public class ShipAgent : Agent
         ResetShip();
     }
 
+    /// <summary>
+    /// Called every time when the model makes a decision.
+    /// Handles the behaviour of the ship.
+    /// </summary>
+    /// <param name="actions">Actions containing the decisions of the model</param>
     public override void OnActionReceived(ActionBuffers actions)
     {
         int thrustAction = actions.DiscreteActions[0];
@@ -83,6 +92,10 @@ public class ShipAgent : Agent
         }
     }
 
+    /// <summary>
+    /// Sends the observations to the model to make a decision
+    /// </summary>
+    /// <param name="sensor">Sensor to add the observations to</param>
     public override void CollectObservations(VectorSensor sensor)
     {
         // Position
@@ -153,16 +166,26 @@ public class ShipAgent : Agent
         UpdateRewardText();
     }
 
+    /// <summary>
+    /// Enables the agent and its training behaviour
+    /// </summary>
     public void EnableAgent()
     {
         _shipDecisionRequester.Enabled = true;
     }
 
+    /// <summary>
+    /// Disables the agent and its training behaviour
+    /// </summary>
     public void DisableAgent()
     {
         _shipDecisionRequester.Enabled = false;
     }
 
+    /// <summary>
+    /// Applies a trained model to the ship
+    /// </summary>
+    /// <param name="model"></param>
     public void SetAgentModel(in AgentModel model)
     {
         _hasAgentModel = true;
@@ -172,6 +195,10 @@ public class ShipAgent : Agent
         EnableAgent();
     }
 
+    /// <summary>
+    /// Called, when the ship has landed or crashed
+    /// </summary>
+    /// <param name="landingData">Information about the landing</param>
     private void OnShipLanded(in LandingData landingData)
     {
         var trail = gameObject.transform.Find(TrailManager.TrailName).gameObject;
@@ -181,6 +208,10 @@ public class ShipAgent : Agent
         EndTraining();
     }
 
+    /// <summary>
+    /// Rewards the landing depending on the success of the landing
+    /// </summary>
+    /// <param name="landingData">Information about the landing</param>
     private void RewardLanding(in LandingData landingData)
     {
         switch (landingData.type)
@@ -191,6 +222,10 @@ public class ShipAgent : Agent
         }
     }
 
+    /// <summary>
+    /// Rewards a successful landing on the ground
+    /// </summary>
+    /// <param name="landingData">Information about the landing</param>
     private void RewardSuccessfulLanding(in LandingData landingData)
     {
         SetReward(50.0f);
@@ -198,6 +233,10 @@ public class ShipAgent : Agent
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 1.0f, StatAggregationMethod.Average);
     }
 
+    /// <summary>
+    /// Rewards a failed landing on the ground
+    /// </summary>
+    /// <param name="landingData">Information about the landing</param>
     private void RewardCrash(in LandingData landingData)
     {
         const float penaltyFactor = 2.0f;
@@ -222,6 +261,9 @@ public class ShipAgent : Agent
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 0.0f, StatAggregationMethod.Average);
     }
 
+    /// <summary>
+    /// Ends the current training iteration of the ship 
+    /// </summary>
     private void EndTraining()
     {
         _hasEpisodeEnded = true;
@@ -232,6 +274,9 @@ public class ShipAgent : Agent
         UpdateRewardText();
     }
 
+    /// <summary>
+    /// Resets the ship to begin a new training iteration
+    /// </summary>
     private void ResetShip()
     {
         if (!_shipBehaviour.IsInitialized)
@@ -246,6 +291,9 @@ public class ShipAgent : Agent
         trail.Clear();
     }
 
+    /// <summary>
+    /// Sets the text above the ship to the current agent reward
+    /// </summary>
     private void UpdateRewardText()
     {
         float cumulativeReward = GetCumulativeReward();
@@ -253,6 +301,9 @@ public class ShipAgent : Agent
         _rewardText.color = cumulativeReward >= 0 ? _rewardPositiveColor : _rewardNegativeColor;
     }
 
+    /// <summary>
+    /// Sets the trail and ray cast color of the ship to a random color
+    /// </summary>
     private void SetRandomComponentColor()
     {
         var hue = Random.value;
@@ -266,6 +317,9 @@ public class ShipAgent : Agent
         rayCaster.SetColor(rayColor);
     }
 
+    /// <summary>
+    /// Collects data about the ships state for image analysis using tensorboard
+    /// </summary>
     private void CollectImageData()
     {
         if (_hasAgentModel)

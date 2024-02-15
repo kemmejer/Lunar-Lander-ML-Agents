@@ -9,10 +9,10 @@ public interface IOnShipLandedEvent
 
     struct LandingData
     {
-        public LandingType type;
-        public Vector2 position;
-        public Vector2 velocity;
-        public float groundDeltaAngle;
+        public LandingType type; // Landing type
+        public Vector2 position; // Position of the landing
+        public Vector2 velocity; // Velocity of the landing
+        public float groundDeltaAngle; // Angle between the ground and the ship rotation
     }
 
     public event OnShipLandedDelegate OnShipLandedEvent;

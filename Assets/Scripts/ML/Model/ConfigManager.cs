@@ -9,6 +9,9 @@ public static class ConfigManager
     public static Config CurrentConfig { get; private set; }
     public static AgentModel CurrentModel { get; private set; }
 
+    /// <summary>
+    /// Initializes the config manager and tries to load the default config
+    /// </summary>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Init()
     {
@@ -24,6 +27,10 @@ public static class ConfigManager
         LoadConfigsFromDisk();
     }
 
+    /// <summary>
+    /// Tries to load the specified config by name from the config folder
+    /// </summary>
+    /// <param name="name">Name of the config to load</param>
     public static void LoadConfig(string name)
     {
         var config = Configs.Find(conf => conf.Name == name);
@@ -43,6 +50,10 @@ public static class ConfigManager
         CurrentModel = model.Load() ? model : null;
     }
 
+    /// <summary>
+    /// Save the current config in the config folder
+    /// </summary>
+    /// <param name="name">Name of the config to save</param>
     public static void SaveConfig(string name)
     {
         if (name == Constants.DefaultConfigName)
@@ -59,6 +70,10 @@ public static class ConfigManager
         config.Save();
     }
 
+    /// <summary>
+    /// Deletes the config using the provided name
+    /// </summary>
+    /// <param name="name">Name of the config to delete</param>
     public static void DeleteConfig(string name)
     {
         if (name == Constants.DefaultConfigName)
@@ -71,11 +86,17 @@ public static class ConfigManager
         Configs.RemoveAll(config => config.Name == name);
     }
 
+    /// <summary>
+    /// Unloads the currently loaded model
+    /// </summary>
     public static void UnloadModel()
     {
         CurrentModel = null;
     }
 
+    /// <summary>
+    /// Loads the current model from the config folder
+    /// </summary>
     private static void LoadConfigsFromDisk()
     {
         if (!Directory.Exists(Constants.ConfigPath))

@@ -18,6 +18,10 @@ public class AgentModel
         Name = name;
     }
 
+    /// <summary>
+    /// Loads the newest model in from the models folder
+    /// </summary>
+    /// <returns></returns>
     public bool Load()
     {
         UnityEngine.Object.Destroy(Model);
@@ -48,6 +52,10 @@ public class AgentModel
         return true;
     }
 
+    /// <summary>
+    /// Returns the path to the newest model in the models folder
+    /// </summary>
+    /// <returns>Path to the newest model</returns>
     private string GetModelPath()
     {
         var modelFolderPath = Path.Combine(Constants.ModelPath, Name, Constants.AgentName);

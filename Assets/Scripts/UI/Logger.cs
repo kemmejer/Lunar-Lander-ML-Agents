@@ -7,12 +7,19 @@ public static class Logger
     private static readonly string[] _logs = new string[MaxLogs];
     private static int _logIndex;
 
+    /// <summary>
+    /// Adds an entry to the log
+    /// </summary>
+    /// <param name="log">Message to write to the log</param>
     public static void Log(string log)
     {
         _logs[_logIndex] = log;
         _logIndex = (_logIndex + 1) % MaxLogs;
     }
 
+    /// <summary>
+    /// Draws the log header
+    /// </summary>
     public static void Draw()
     {
         if (ImGui.CollapsingHeader("Log", ImGuiTreeNodeFlags.DefaultOpen))

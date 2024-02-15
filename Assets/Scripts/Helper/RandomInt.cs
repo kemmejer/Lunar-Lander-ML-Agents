@@ -20,7 +20,7 @@ public class RandomInt : IRandomValue
     public int[] parameter = new int[2];
 
     /// <summary>
-    /// Returns a random value each time is is beeing accessed
+    /// Returns a random value each time is is being accessed
     /// </summary>
     public int RndValue
     {

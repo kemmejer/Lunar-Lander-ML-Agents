@@ -20,7 +20,7 @@ public class RandomFloat : IRandomValue
     public Vector2 parameter;
 
     /// <summary>
-    /// Returns a random value each time is is beeing accessed
+    /// Returns a random value each time is is being accessed
     /// </summary>
     public float RndValue
     {

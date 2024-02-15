@@ -33,6 +33,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _instance = GetComponent<TrainingManagerBehaviour>();
     }
 
+    /// <summary>
+    /// Returns the current instance of the training manager
+    /// </summary>
+    /// <returns>Current instance of the training manager</returns>
     public static TrainingManagerBehaviour GetInstance()
     {
         return _instance;
@@ -58,6 +62,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts the training by initializing the ships and starting the training server
+    /// </summary>
     public void StartTraining()
     {
         if (IsTraining || IsStarting || IsStopping)
@@ -69,7 +76,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _groundGeneratorBehaviour = GroundGeneratorBehaviour.GetInstance();
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
-        TrailManager.GetInstance().DestoryTrails();
+        TrailManager.GetInstance().DestroyTrails();
 
         ConfigManager.UnloadModel();
 
@@ -79,6 +86,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
         StartCoroutine(StartTrainingServer());
     }
 
+    /// <summary>
+    /// Stops the training by destroying the ships, stopping the server and saving the model
+    /// </summary>
     public void StopTraining()
     {
         if (!IsTraining || IsStarting || IsStopping)
@@ -87,13 +97,16 @@ public class TrainingManagerBehaviour : MonoBehaviour
         IsStopping = true;
 
         PlayerSpawnerBehaviour.GetInstance().DestroyShips();
-        TrailManager.GetInstance().DestoryTrails();
+        TrailManager.GetInstance().DestroyTrails();
 
         _agents?.Clear();
 
         StartCoroutine(StopTrainingServer());
     }
 
+    /// <summary>
+    /// Spawns the ship agents for training
+    /// </summary>
     private void CreateAgents()
     {
         _agents = new List<ShipAgent>();
@@ -110,11 +123,14 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts a training batch by resetting all ships and enabling the agents
+    /// </summary>
     private void StartBatch()
     {
         _finishedShipCount = 0;
         TrainingIteration++;
-        TrailManager.GetInstance().DestoryTrails();
+        TrailManager.GetInstance().DestroyTrails();
 
         if (_groundGeneratorSO.regenerateGroundWhileTraining)
         {
@@ -137,6 +153,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Is called when a ship has ended its training episode
+    /// </summary>
+    /// <param name="shipAgent"></param>
     private void OnShipEpisodeEnded(ShipAgent shipAgent)
     {
         _finishedShipCount++;
@@ -145,6 +165,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
             StartBatch();
     }
 
+    /// <summary>
+    /// Starts the training server asynchronously
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StartTrainingServer()
     {
         if (CommandLineHelper.IsTrainingApplicationInstance)
@@ -187,6 +211,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Stops the training server asynchronously
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StopTrainingServer()
     {
         // Disposing the Academy results in the communicator to close.
@@ -199,6 +227,11 @@ public class TrainingManagerBehaviour : MonoBehaviour
         OnTrainingServerStopped();
     }
 
+    /// <summary>
+    /// Listens to the training server output messages and handles them
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e">Output messages</param>
     private void TrainingServerOutputHandler(object sender, DataReceivedEventArgs e)
     {
         Logger.Log(e.Data);
@@ -214,6 +247,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Is called, when the training server has started.
+    /// Finishes the training startup
+    /// </summary>
     private void OnTrainingServerStarted()
     {
         VisualizationLogger.Init();
@@ -222,6 +259,10 @@ public class TrainingManagerBehaviour : MonoBehaviour
         IsStarting = false;
     }
 
+    /// <summary>
+    /// Is called, when the training server has stopped.
+    /// Finished the stopping of the training
+    /// </summary>
     private void OnTrainingServerStopped()
     {
         IsTraining = false;

@@ -47,6 +47,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         }
     }
 
+    /// <summary>
+    /// Initializes the ships parameter
+    /// </summary>
     public void InitShip()
     {
         ShipParameterSO = ShipParameterSO.GetInstanceCopy();
@@ -57,6 +60,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         IsInitialized = true;
     }
 
+    /// <summary>
+    /// Rotates the ship to the right
+    /// </summary>
     public void RotateRight()
     {
         gameObject.transform.Rotate(0.0f, 0.0f, -ShipParameterSO.controlParameter.rotationSpeed.value);
@@ -68,6 +74,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         }
     }
 
+    /// <summary>
+    /// Rotates the ship to the left
+    /// </summary>
     public void RotateLeft()
     {
         gameObject.transform.Rotate(0.0f, 0.0f, ShipParameterSO.controlParameter.rotationSpeed.value);
@@ -79,6 +88,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         }
     }
 
+    /// <summary>
+    /// Enables the thrust of the ship
+    /// </summary>
     public void Thrust()
     {
         if (ShipParameterSO.fuel.remainingFuel.value == 0)
@@ -94,48 +106,86 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         UseFuel();
     }
 
+    /// <summary>
+    /// Stops the thrust of the ship
+    /// </summary>
     public void StopThrust()
     {
         _isThrusting = false;
         _shipThruster.SetActive(false);
     }
 
+    /// <summary>
+    /// Returns the position of the ship
+    /// </summary>
+    /// <returns>Position of the ship</returns>
     public Vector2 GetPosition()
     {
         return gameObject.transform.position;
     }
 
+    /// <summary>
+    /// Rotation the rotation of the ship in euler angles
+    /// </summary>
+    /// <returns>Rotation in euler angles</returns>
     public float GetEulerRotation()
     {
         var eulerAngle = gameObject.transform.eulerAngles.z;
         return eulerAngle > 180.0f ? eulerAngle - 360.0f : eulerAngle;
     }
 
+    /// <summary>
+    /// Returns the up facing normal of the ship depending on the rotation of the ship
+    /// </summary>
+    /// <returns></returns>
     public Vector2 GetUpFacingShipNormal()
     {
         return gameObject.transform.rotation * Vector2.up;
     }
 
+    /// <summary>
+    /// Returns the velocity of the ship
+    /// </summary>
+    /// <returns>Velocity of the ship</returns>
     public Vector2 GetVelocity()
     {
         return _rigidBody.velocity;
     }
 
+    /// <summary>
+    /// Returns whether the ships speed exceeds the max velocity threshold or not
+    /// </summary>
+    /// <returns>True if the ship is too fast</returns>
     public bool IsShipTooFast()
     {
         return GetVelocity().magnitude >= ShipParameterSO.landing.maxVelocity.value;
     }
 
+    /// <summary>
+    /// Returns whether the ship is thrusting or not
+    /// </summary>
+    /// <returns>True if the ship is thrusting</returns>
     public bool IsShipThrusting()
     {
         return _isThrusting;
     }
 
+    /// <summary>
+    /// Enables or disables the ship gameobject
+    /// </summary>
+    /// <param name="active"></param>
     public void SetShipActive(bool active)
     {
         gameObject.SetActive(active);
     }
 
+    /// <summary>
+    /// Called when the ship has landed.
+    /// Handles the landing of the ship and invokes the OnShipLandedEvent
+    /// </summary>
+    /// <param name="landingType">Type of the landing</param>
+    /// <param name="landingDeltaAngle">Angle between the ground and the ship</param>
+    /// <param name="landingVelocity">Velocity of the landing</param>
     private void OnShipLanded(LandingType landingType, float landingDeltaAngle, in Vector2 landingVelocity)
     {
         if (landingType == LandingType.Crash)
@@ -158,6 +208,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         OnShipLandedEvent?.Invoke(landingData);
     }
 
+    /// <summary>
+    /// Updates the ridigbody physics of the ship
+    /// </summary>
     private void UpdateShipPhysics()
     {
         var shipPhysics = ShipParameterSO.physics;
@@ -168,6 +221,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _rigidBody.freezeRotation = true;
     }
 
+    /// <summary>
+    /// Reduces the fuel of the ship
+    /// </summary>
     private void UseFuel()
     {
         ShipParameterSO.fuel.UseFuel();
@@ -177,6 +233,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _fuelBar.transform.localScale = new Vector3(xScale, scale.y, scale.z);
     }
 
+    /// <summary>
+    /// Updates the indicator whether the ship is too fast
+    /// </summary>
     private void UpdateVelocityIndicator()
     {
         bool isShipTooFast = IsShipTooFast();
@@ -187,6 +246,9 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
             _velocityIndicator.GetComponent<Renderer>().material.color = Color.green;
     }
 
+    /// <summary>
+    /// Resets the fuel of the ship
+    /// </summary>
     private void ResetFuel()
     {
         ShipParameterSO.fuel.remainingFuel.value = ShipParameterSO.fuel.maxFuel.value;
@@ -195,6 +257,12 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _fuelBar.transform.localScale = new Vector3(1.0f, scale.y, scale.z);
     }
 
+    /// <summary>
+    /// Checks whether the landing angle is small enough for a save landing
+    /// </summary>
+    /// <param name="collision">Collision information of the 2d collision between the ship and the ground</param>
+    /// <param name="landingDeltaAngle">[out] Angle between the ground and the ship on landing</param>
+    /// <returns>True if the landing angle is small enough</returns>
     private bool IsCollisionAngleSmallEnough(Collision2D collision, out float landingDeltaAngle)
     {
         var surfaceNormal = collision.GetContact(0).normal;
@@ -204,6 +272,12 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         return Mathf.Abs(landingDeltaAngle) < ShipParameterSO.landing.maxAngle.value;
     }
 
+    /// <summary>
+    /// Checks whether the landing velocity is small enough for a save landing
+    /// </summary>
+    /// <param name="collision">Collision information of the 2d collision between the ship and the ground</param>
+    /// <param name="landingVelocity">[out] Velocity of the landing</param>
+    /// <returns>True of the landing velocity is small enough</returns>
     private bool IsCollisionVelocitySmallEnough(Collision2D collision, out Vector2 landingVelocity)
     {
         landingVelocity = collision.GetContact(0).relativeVelocity;

@@ -26,11 +26,20 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         DestroyShips();
     }
 
+    /// <summary>
+    /// Returns the current instance of the player spawner
+    /// </summary>
+    /// <returns>Instance of the current player spawner</returns>
     public static PlayerSpawnerBehaviour GetInstance()
     {
         return _playerSpawnerBehaviour;
     }
 
+    /// <summary>
+    /// Create a player ship, a pretrained ship or a training agent
+    /// </summary>
+    /// <param name="shipType">Type of ship to create</param>
+    /// <returns></returns>
     public GameObject InstantiateShip(ShipType shipType)
     {
         Func<GameObject, GameObject> CreateShip = shipPrefab =>
@@ -64,6 +73,10 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         return ship;
     }
 
+    /// <summary>
+    /// Resets the ship parameter, position, velocity and rotation
+    /// </summary>
+    /// <param name="ship">Ship to reset</param>
     public void ResetShip(GameObject ship)
     {
         // Ship parameter
@@ -84,6 +97,9 @@ public class PlayerSpawnerBehaviour : MonoBehaviour
         rigidBody.AddForce(startingVelocity * _playerSpawnerSO.horizontalStartingVelocity.RndValue);
     }
 
+    /// <summary>
+    /// Destroys all current ships
+    /// </summary>
     public void DestroyShips()
     {
         foreach (var ship in _spaceShips)

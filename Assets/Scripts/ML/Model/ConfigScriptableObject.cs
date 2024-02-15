@@ -1,12 +1,16 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-
+///
 [Serializable]
 public class ConfigScriptableObject<T> : ScriptableObject where T : ScriptableObject
 {
     private static T _instance;
 
+    /// <summary>
+    /// Loads a single config object from the specified folder and randomly initializes the object
+    /// </summary>
+    /// <param name="folderPath">Path of the config folder</param>
     public static void Load(string folderPath)
     {
         InitInstance();
@@ -27,6 +31,10 @@ public class ConfigScriptableObject<T> : ScriptableObject where T : ScriptableOb
         GenerateRandomValues();
     }
 
+    /// <summary>
+    /// Saves the config object in the specified folder
+    /// </summary>
+    /// <param name="folderPath">Folder to save the config in</param>
     public static void Save(string folderPath)
     {
         var filePath = Path.Combine(folderPath, typeof(T).Name + ".json");
@@ -37,11 +45,19 @@ public class ConfigScriptableObject<T> : ScriptableObject where T : ScriptableOb
         outputFile.Write(data);
     }
 
+    /// <summary>
+    /// Returns the current instance of the config
+    /// </summary>
+    /// <returns>Instance of the current config</returns>
     public static T GetInstance()
     {
         return _instance;
     }
 
+    /// <summary>
+    /// Creates a copy of the current instance of the config and returns the copy
+    /// </summary>
+    /// <returns>Copy of the instance of the current config</returns>
     public static T GetInstanceCopy()
     {
         var instance = Instantiate(_instance);
@@ -50,11 +66,17 @@ public class ConfigScriptableObject<T> : ScriptableObject where T : ScriptableOb
         return instance;
     }
 
+    /// <summary>
+    /// Generates random values for all IRandomValue fields in the config
+    /// </summary>
     public static void GenerateRandomValues()
     {
         IRandomValue.GenerateValuesForAllFields(_instance);
     }
 
+    /// <summary>
+    /// Initializes the instance of the config scriptable object
+    /// </summary>
     private static void InitInstance()
     {
         if (_instance)

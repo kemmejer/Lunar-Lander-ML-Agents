@@ -22,6 +22,11 @@ public class TrailManager : MonoBehaviour
         return _instance;
     }
 
+    /// <summary>
+    /// Moves the trails gameobject from the ships gameobject to the trail manager object.
+    /// This ensures that the trail stays visible even when the ship becomes invisible
+    /// </summary>
+    /// <param name="trail">Trail of the ship to move to the trail manager</param>
     public void MoveTrailToTrailManager(GameObject trail)
     {
         // Add a new trail to the trails parent object
@@ -32,7 +37,10 @@ public class TrailManager : MonoBehaviour
         _trails.Add(trail);
     }
 
-    public void DestoryTrails()
+    /// <summary>
+    /// Destroys all trails managed by the trail manager
+    /// </summary>
+    public void DestroyTrails()
     {
         foreach (var trail in _trails)
         {
@@ -42,6 +50,10 @@ public class TrailManager : MonoBehaviour
         _trails.Clear();
     }
 
+    /// <summary>
+    /// Adds trail to the specified object
+    /// </summary>
+    /// <param name="target">Target to add the trail to</param>
     private void AddTrailToObject(Transform target)
     {
         var trail = Instantiate(_trailPrefab, target);

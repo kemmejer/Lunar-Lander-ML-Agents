@@ -3,6 +3,10 @@
 
 public static class CameraHelper
 {
+    /// <summary>
+    /// Returns the screen bounds in world coordinates
+    /// </summary>
+    /// <returns>Screen bounds in world coordinates</returns>
     public static Bounds GetScreenBounds()
     {
         var lowerLeft = Camera.main.ViewportToWorldPoint(new Vector3(0.0f, 0.0f, 0.0f));

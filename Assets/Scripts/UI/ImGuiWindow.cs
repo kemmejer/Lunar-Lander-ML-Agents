@@ -87,6 +87,9 @@ public class ImGuiWindow : MonoBehaviour
         UImGuiUtility.OnDeinitialize -= OnDeinitialize;
     }
 
+    /// <summary>
+    /// Header containing controls for training / playing
+    /// </summary>
     private void ControlHeader()
     {
         if (ImGui.CollapsingHeader("Controls", ImGuiTreeNodeFlags.DefaultOpen))
@@ -111,7 +114,7 @@ public class ImGuiWindow : MonoBehaviour
                 if (ImGui.Button("Stop Training"))
                     _trainingManager.StopTraining();
 
-                if(!_trainingManager.IsStopping)
+                if (!_trainingManager.IsStopping)
                 {
                     ImGui.SameLine();
                     ImGui.Text(string.Format("Training Iteration: {0}", _trainingManager.TrainingIteration));
@@ -142,7 +145,7 @@ public class ImGuiWindow : MonoBehaviour
 
             ImGui.SameLine();
             if (ImGui.Button("Delete Trails"))
-                TrailManager.GetInstance().DestoryTrails();
+                TrailManager.GetInstance().DestroyTrails();
 
             ImGui.SameLine();
             if (ImGui.Button("Exit Application"))
@@ -180,6 +183,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Header containing configuration settings for the training
+    /// </summary>
     private void ShipParameterHeader()
     {
         if (ImGui.CollapsingHeader("Ship Parameter"))
@@ -210,6 +216,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Header containing settings for the ground generation
+    /// </summary>
     private void GroundGeneratorHeader()
     {
         if (ImGui.CollapsingHeader("Ground Generator"))
@@ -230,6 +239,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Header containing settings for the machine learning
+    /// </summary>
     private void MachineLearningHeader()
     {
         if (ImGui.CollapsingHeader("Machine Learning"))
@@ -247,6 +259,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Small window visible when training in the standalone application
+    /// </summary>
     private void TrainingApplicationWindow()
     {
         if (ImGui.Begin("Training Instance"))
@@ -263,6 +278,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the list of available configs
+    /// </summary>
     private void UpdateConfigNames()
     {
         _configs = ConfigManager.Configs.Select(config => config.Name).ToArray();
@@ -270,17 +288,26 @@ public class ImGuiWindow : MonoBehaviour
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
     }
 
+    /// <summary>
+    /// Loads the currently selected config
+    /// </summary>
     private void LoadConfig()
     {
         ConfigManager.LoadConfig(CurrentConfigName);
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
     }
 
+    /// <summary>
+    /// Saves the currently selected config
+    /// </summary>
     private void SaveConfig()
     {
         ConfigManager.SaveConfig(CurrentConfigName);
     }
 
+    /// <summary>
+    /// Modal for creating a new config
+    /// </summary>
     private void CreateConfigModal()
     {
         _createConfigModalOpenable = true;
@@ -308,6 +335,9 @@ public class ImGuiWindow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Modal for deleting a selected config
+    /// </summary>
     private void DeleteConfigModal()
     {
         _deleteConfigModalOpenable = true;

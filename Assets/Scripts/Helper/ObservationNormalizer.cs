@@ -8,6 +8,9 @@ public static class ObservationNormalizer
 
     private const float MaxVelocity = 6.0f;
 
+    /// <summary>
+    /// Initializes the screen bounds for normalization
+    /// </summary>
     public static void Init()
     {
         var screenBounds = CameraHelper.GetScreenBounds();

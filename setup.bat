@@ -14,4 +14,5 @@ pip install npy-append-array~=0.9.16 && ^
 pip install -e "../Dependencies/ml-agents-envs" && ^
 pip install -e "../Dependencies/ml-agents" && ^
 pip install -e "tensorboard_image_plugin" && ^
-deactivate
+deactivate && ^
+echo The setup has finished. You may now close this window.

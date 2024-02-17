@@ -14,7 +14,7 @@ public class SceneScaler : MonoBehaviour
         ScaleScene();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_screenWidth == Screen.width && _screenHeight == Screen.height)
             return;

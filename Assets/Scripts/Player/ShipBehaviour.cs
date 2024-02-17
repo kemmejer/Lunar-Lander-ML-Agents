@@ -21,7 +21,7 @@ public class ShipBehaviour : MonoBehaviour, IOnShipLandedEvent
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         UpdateVelocityIndicator();
     }

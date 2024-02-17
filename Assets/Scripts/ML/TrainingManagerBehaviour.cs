@@ -42,7 +42,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         return _instance;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_autoStartTrainingInApplication)
         {

@@ -124,9 +124,9 @@ public class TrainingManagerBehaviour : MonoBehaviour
     }
 
     /// <summary>
-    /// Starts a training batch by resetting all ships and enabling the agents
+    /// Restarts a training batch by resetting all ships and enabling the agents
     /// </summary>
-    private void StartBatch()
+    private void RestartBatch()
     {
         _finishedShipCount = 0;
         TrainingIteration++;
@@ -162,7 +162,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _finishedShipCount++;
 
         if (_finishedShipCount == _agents.Count)
-            StartBatch();
+            RestartBatch();
     }
 
     /// <summary>

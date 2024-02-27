@@ -57,3 +57,73 @@ Open the **Build** folder inside the project folder and launch the **Lunar Lande
 > You must have downloaded the release build of this project in order to have an included standalone application.
 
 # Usage
+
+## Manual play
+
+To spawn a user controllable ship, use the button "Spawn Player Ship" in the controls header.
+
+### Controls
+| Action       | Shortcut                                          |
+|--------------|---------------------------------------------------|
+| Thrust       | <kbd>&uarr;</kbd>, <kbd>W</kbd>, <kbd>Space</kbd> |
+| Rotate left  | <kbd>&larr;</kbd>, <kbd>A</kbd>                   |
+| Rotate right | <kbd>&rarr;</kbd>, <kbd>D</kbd>                   |
+
+
+## Starting the training
+
+To start the training of the agents, use the "Start Training" button in the controls header.
+
+## Configuration
+
+When you start the training, the currently selected config in the controls header will be used.<br/>
+
+The ship and training parameters can be adjusted and randomized.
+Every randomizable parameter has two values:<br/>
+The first value is the base value. The second value is the random deviation applied to the base value.<br/>
+The values are calculated as follows:
+```
+value = max(BaseValue +- Deviation, 0)
+```
+
+## Parameter
+
+### Ship Parameter
+
+| Parameter           | Explanation                                                          |
+|---------------------|----------------------------------------------------------------------|
+| Max Fuel            | The starting fuel amount of the ship                                 |
+| Fuel Consumption    | The fuel consumption per thrust                                      |
+| Rotation Speed      | Angle in degrees to rotate the ship per rotation                     |
+| Thrust Amount       | Amount of force to be applied to the ship while thrusting            |
+| Max Velocity        | The maximum allowed velocity on landing                              |
+| Max Angle           | The maximum allowed angle between the ground and the ship on landing |
+| Mass                | The mass of the ship for physics simulation                          |
+| Drag                | The drag of the ship for physics simulation                          |
+| Gravity Scale       | The gravity of the environment for physics simulation                |
+| Horizontal Velocity | The horizontal spawning velocity of the ship                         |
+
+
+### Ground Generator
+
+| Parameter                        | Explanation                                                                           |
+|----------------------------------|---------------------------------------------------------------------------------------|
+| Noise Height                     | Height modifier for the hilly top of the ground                                       |
+| Base Height                      | Base height of the ground                                                             |
+| Noise Scale                      | Scale of the hilly top of the ground. Higher values result in more peaks and valleys  |
+| Resolution                       | The amount of subdivisions of the ground. Higher values result in smoother landscapes |
+| Seed                             | The seed used for random generation                                                   |
+| Regenerate Ground while Training | Controls whether the ground should be regenerated every nth iteration while training  |
+| Regenerate Interval              | Adjusts the interval in which the ground should be regenerated                        |
+
+### Machine Learning
+
+| Parameter    | Explanation                                                                           |
+|--------------|---------------------------------------------------------------------------------------|
+| Draw Rays    | Toggles whether the raycasts should be visualized                                     |
+| Noise Height | Height modifier for the hilly top of the ground                                       |
+| Base Height  | Base height of the ground                                                             |
+| Noise Scale  | Scale of the hilly top of the ground. Higher values result in more peaks and valleys  |
+| Resolution   | The amount of subdivisions of the ground. Higher values result in smoother landscapes |
+| Seed         | The seed used for random generation                                                   |
+

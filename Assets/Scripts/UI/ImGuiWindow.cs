@@ -227,8 +227,8 @@ public class ImGuiWindow : MonoBehaviour
                 GroundGeneratorBehaviour.GetInstance().GenerateGround();
 
             ImGui.Separator();
-            ImGui.DragFloat2("Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
-            ImGui.DragFloat2("Base NoiseHeight", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Noise Height", ref _groundGeneratorSO.noiseHeight.parameter, 0.1f, 0.0f, 10.0f);
+            ImGui.DragFloat2("Base Height", ref _groundGeneratorSO.baseHeight.parameter, 0.1f, 0.0f, 10.0f);
             ImGui.DragFloat2("Noise Scale", ref _groundGeneratorSO.noiseScale.parameter, 0.01f, 0.0f, 1.0f);
             ImGui.DragInt2("Resolution", ref _groundGeneratorSO.resolution.parameter[0], 1, 2, 100);
             ImGui.DragInt2("Seed", ref _groundGeneratorSO.seed.parameter[0], 1, 0, int.MaxValue);

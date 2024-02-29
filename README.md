@@ -118,12 +118,11 @@ value = max(BaseValue +- Deviation, 0)
 
 ### Machine Learning
 
-| Parameter    | Explanation                                                                           |
-|--------------|---------------------------------------------------------------------------------------|
-| Draw Rays    | Toggles whether the raycasts should be visualized                                     |
-| Noise Height | Height modifier for the hilly top of the ground                                       |
-| Base Height  | Base height of the ground                                                             |
-| Noise Scale  | Scale of the hilly top of the ground. Higher values result in more peaks and valleys  |
-| Resolution   | The amount of subdivisions of the ground. Higher values result in smoother landscapes |
-| Seed         | The seed used for random generation                                                   |
-
+| Parameter               | Explanation                                                                                                                                        |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Draw Rays               | Toggles whether the raycasts should be visualized                                                                                                  |
+| Rays per Direction      | The amount of raycasts in each direction. If the value is 2, the agents send two rays angled to the right, one down and two angled to the left     |
+| Angle                   | Angle of the down facing cone in which the rays are be evenly distributed in                                                                       |
+| Horizontal Distribution | Horizontal distribution of the starting point of the raycast. A value of zero results in all rays starting from a single point underneath the ship |
+| Ship Count              | The amount of agents used for parallel training                                                                                                    |
+| Decision Interval       | The amount of steps a agent can move until the next decision is requested from the model                                                           |

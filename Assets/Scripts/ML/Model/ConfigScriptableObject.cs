@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-///
-[Serializable]
+
 public class ConfigScriptableObject<T> : ScriptableObject where T : ScriptableObject
 {
     private static T _instance;

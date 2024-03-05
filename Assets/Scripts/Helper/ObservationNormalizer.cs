@@ -46,11 +46,6 @@ public static class ObservationNormalizer
     /// <returns>Normalized angle in a [-1,1] range </returns>
     public static float NormalizeEulerAngle(float angle)
     {
-        if(Mathf.Abs(angle) > 90.0f)
-        {
-            Debug.Log(angle);
-            int a = 0;
-        }
         return angle / Constants.MaxShipAngle;
     }
 

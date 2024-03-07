@@ -41,7 +41,7 @@ public static class VisualizationLogger
     public static void AddValue(GraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
     {
         var graphName = GraphNameStrings[name];
-        _statsRecorder.Add(graphName, value, method);
+        _statsRecorder?.Add(graphName, value, method);
     }
 
     /// <summary>
@@ -85,6 +85,6 @@ public static class VisualizationLogger
     /// <param name="method">Aggregation method for the values</param>
     private static void CollectImageValue(ImageGraphName name, float value, StatAggregationMethod method = StatAggregationMethod.Average)
     {
-        _statsRecorder.Add(name.ToString(), value, method);
+        _statsRecorder?.Add(name.ToString(), value, method);
     }
 }

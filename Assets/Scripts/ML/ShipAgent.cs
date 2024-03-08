@@ -75,9 +75,6 @@ public class ShipAgent : Agent
         int thrustAction = actions.DiscreteActions[0];
         int rotateAction = actions.DiscreteActions[1];
 
-        if (_hasEpisodeEnded)
-            Debug.LogError("WHAT?");
-
         switch (rotateAction)
         {
             case 0: break;

@@ -35,7 +35,7 @@ public class RandomInt : IRandomValue
     public int Deviation => parameter[1];
 
     public int Max => Mean + Deviation;
-    public int Min => Math.Max(Mean - Deviation, 0);
+    public int Min => Mathf.Max(Mean - Deviation, 0);
 
     /// <summary>
     /// Generates a random value around the mean value using: mean +- deviation

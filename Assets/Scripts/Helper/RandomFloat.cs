@@ -35,7 +35,7 @@ public class RandomFloat : IRandomValue
     public float Deviation => parameter.y;
 
     public float Max => Mean + Deviation;
-    public float Min => Math.Max(Mean - Deviation, 0.0f);
+    public float Min => Mathf.Max(Mean - Deviation, 0.0f);
 
     /// <summary>
     /// Generates a random value around the mean value using: mean +- deviation
@@ -43,7 +43,7 @@ public class RandomFloat : IRandomValue
     /// </summary>
     public void GenerateRandomValue()
     {
-        value = Math.Max(UnityEngine.Random.Range(Min, Max), 0.0f);
+        value = Mathf.Max(UnityEngine.Random.Range(Min, Max), 0.0f);
     }
 
 }

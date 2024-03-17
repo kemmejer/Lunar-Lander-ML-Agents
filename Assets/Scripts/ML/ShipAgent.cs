@@ -210,7 +210,7 @@ public class ShipAgent : Agent
         reward += 1.0f - ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle);
 
         // Velocity
-        reward += 1.0f - System.Math.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
+        reward += 1.0f - Mathf.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
 
         // Fuel
         reward += _shipBehaviour.ShipParameterSO.fuel.remainingFuel.value / _shipBehaviour.ShipParameterSO.fuel.maxFuel.value;
@@ -236,7 +236,7 @@ public class ShipAgent : Agent
         reward -= ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle);
 
         // Velocity
-        reward -= System.Math.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
+        reward -= Mathf.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
 
         reward /= 2.0f;
 

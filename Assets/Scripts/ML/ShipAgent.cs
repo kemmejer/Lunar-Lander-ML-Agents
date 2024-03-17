@@ -126,36 +126,14 @@ public class ShipAgent : Agent
         if (_hasEpisodeEnded)
             return; // Don't reward an already landed ship
 
-        float groundDistance = ObservationNormalizer.NormalizeRayCastDistance(rayHits[rayHits.Length / 2].distance);
         bool isShipMovingDown = normalizedVelocity.y < 0.0f;
-        bool isShipThrusting = _shipBehaviour.IsShipThrusting();
-        bool isShipTooFast = _shipBehaviour.IsShipTooFast();
 
         float reward = 0.0f;
-        if (groundDistance < 0.2)
-        {
-            if (isShipTooFast)
-            {
-                if (isShipThrusting)
-                    reward += 0.02f;
-                else
-                    reward -= 0.05f;
-            }
-            else if (isShipMovingDown)
-            {
-                reward += 0.1f;
-            }
-        }
 
-        float shipRotation = Mathf.Abs(_shipBehaviour.GetEulerRotation());
-        if (shipRotation > Constants.MaxShipAngle / 2.0f)
-            reward -= 0.02f;
-
-        float groundDistanceFactor = Mathf.Max(1 - groundDistance, 0.0f) * 0.05f;
         if (isShipMovingDown)
-            reward += groundDistanceFactor;
+            reward += 0.001f;
         else
-            reward -= 0.1f;
+            reward -= 0.005f;
 
         SetReward(reward);
 
@@ -225,7 +203,21 @@ public class ShipAgent : Agent
     /// <param name="landingData">Information about the landing</param>
     private void RewardSuccessfulLanding(in LandingData landingData)
     {
-        SetReward(50.0f);
+        float reward = 0.0f;
+
+        // Angle
+        float groundDeltaAngle = Mathf.Abs(landingData.groundDeltaAngle);
+        reward += 1.0f - ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle);
+
+        // Velocity
+        reward += 1.0f - System.Math.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
+
+        // Fuel
+        reward += _shipBehaviour.ShipParameterSO.fuel.remainingFuel.value / _shipBehaviour.ShipParameterSO.fuel.maxFuel.value;
+
+        reward /= 3.0f;
+
+        SetReward(reward);
 
         VisualizationLogger.AddSuccessfulLanding();
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 1.0f, StatAggregationMethod.Average);
@@ -237,22 +229,16 @@ public class ShipAgent : Agent
     /// <param name="landingData">Information about the landing</param>
     private void RewardCrash(in LandingData landingData)
     {
-        const float penaltyFactor = 2.0f;
-        const float successReward = 2.0f;
         float reward = 0.0f;
 
         // Angle
         float groundDeltaAngle = Mathf.Abs(landingData.groundDeltaAngle);
-        if (groundDeltaAngle < _shipBehaviour.ShipParameterSO.landing.maxAngle.value)
-            reward += successReward;
-        else
-            reward -= ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle) * penaltyFactor;
+        reward -= ObservationNormalizer.NormalizeEulerAngle(groundDeltaAngle);
 
         // Velocity
-        if (landingData.velocity.magnitude < _shipBehaviour.ShipParameterSO.landing.maxVelocity.value)
-            reward += successReward;
-        else
-            reward -= ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude * penaltyFactor * 2;
+        reward -= System.Math.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
+
+        reward /= 2.0f;
 
         SetReward(reward);
 
@@ -266,7 +252,7 @@ public class ShipAgent : Agent
     /// <param name="landingData">Information about the landing</param>
     private void RewardOutOfBounds(in LandingData landingData)
     {
-        SetReward(-10.0f);
+        SetReward(-1.0f);
 
         VisualizationLogger.AddFailedLanding();
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 0.0f, StatAggregationMethod.Average);

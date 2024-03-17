@@ -215,7 +215,7 @@ public class ShipAgent : Agent
         {
             case LandingType.Success: RewardSuccessfulLanding(landingData); break;
             case LandingType.Crash: RewardCrash(landingData); break;
-            case LandingType.OutOfBounds: SetReward(-10.0f); break;
+            case LandingType.OutOfBounds: RewardOutOfBounds(landingData); break;
         }
     }
 
@@ -227,6 +227,7 @@ public class ShipAgent : Agent
     {
         SetReward(50.0f);
 
+        VisualizationLogger.AddSuccessfulLanding();
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 1.0f, StatAggregationMethod.Average);
     }
 
@@ -255,6 +256,19 @@ public class ShipAgent : Agent
 
         SetReward(reward);
 
+        VisualizationLogger.AddFailedLanding();
+        VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 0.0f, StatAggregationMethod.Average);
+    }
+
+    /// <summary>
+    /// Rewards a out of bounds failed landing
+    /// </summary>
+    /// <param name="landingData">Information about the landing</param>
+    private void RewardOutOfBounds(in LandingData landingData)
+    {
+        SetReward(-10.0f);
+
+        VisualizationLogger.AddFailedLanding();
         VisualizationLogger.AddValue(VisualizationLogger.GraphName.SuccessRate, 0.0f, StatAggregationMethod.Average);
     }
 

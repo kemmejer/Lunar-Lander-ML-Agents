@@ -1,15 +1,23 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 
 public static class VisualizationLogger
 {
+    private static int _successfulLandings;
+    private static int _failedLandings;
     private static StatsRecorder _statsRecorder;
-    private static readonly Dictionary<GraphName, string> GraphNameStrings = new Dictionary<GraphName, string> { { GraphName.SuccessRate, "Environment/Landing Success Rate" } };
+    private static readonly Dictionary<GraphName, string> GraphNameStrings = new Dictionary<GraphName, string> {
+        { GraphName.SuccessRate, "Environment/Landing Success Rate" },
+        { GraphName.SuccessfulLandings, "Environment/Successful Landings" },
+        { GraphName.FailedLandings, "Environment/Failed Landings" }};
 
     public enum GraphName
     {
         SuccessRate,
+        SuccessfulLandings,
+        FailedLandings
     }
 
     public enum ImageGraphName
@@ -30,6 +38,36 @@ public static class VisualizationLogger
         _statsRecorder = Academy.Instance.StatsRecorder;
 
         SendImageWorldBounds();
+        ResetLandingCounters();
+    }
+
+    /// <summary>
+    /// Resets the success and fail landing counters
+    /// </summary>
+    public static void ResetLandingCounters()
+    {
+        _successfulLandings = 0;
+        _failedLandings = 0;
+    }
+
+    /// <summary>
+    /// Adds a successful landing
+    /// </summary>
+    public static void AddSuccessfulLanding()
+    {
+        _successfulLandings++;
+
+        AddValue(GraphName.SuccessfulLandings, _successfulLandings, StatAggregationMethod.MostRecent);
+    }
+
+    /// <summary>
+    /// Adds a failed landing
+    /// </summary>
+    public static void AddFailedLanding()
+    {
+        _failedLandings++;
+
+        AddValue(GraphName.FailedLandings, _failedLandings, StatAggregationMethod.MostRecent);
     }
 
     /// <summary>

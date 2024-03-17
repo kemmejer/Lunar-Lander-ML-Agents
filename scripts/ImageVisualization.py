@@ -153,7 +153,7 @@ class ImageVisualization:
         u_values = np.cos(radians)
         v_values = np.sin(radians)
 
-        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="RdYlGn", clim=[-90.0, 90.0])
+        quiver: plt.Quiver = plt.quiver(df["x"], df["y"], u_values, v_values, df["z"], pivot="mid", cmap="viridis", clim=[-90.0, 90.0])
         quiver.axes.set_title("Rotation")
         quiver.axes.set_xlim(self.bounds.min_x, self.bounds.max_x)
         quiver.axes.set_ylim(self.bounds.min_y, self.bounds.max_y)

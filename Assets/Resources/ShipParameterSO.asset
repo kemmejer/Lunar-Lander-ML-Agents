@@ -19,9 +19,6 @@ MonoBehaviour:
     drag:
       value: 0
       parameter: {x: 0, y: 0}
-    angularDrag:
-      value: 0
-      parameter: {x: 0, y: 0}
     gravityScale:
       value: 0
       parameter: {x: 0.03, y: 0}
@@ -48,4 +45,4 @@ MonoBehaviour:
       parameter: {x: 0.8, y: 0}
     maxAngle:
       value: 0
-      parameter: {x: 5, y: 0}
+      parameter: {x: 8, y: 0}

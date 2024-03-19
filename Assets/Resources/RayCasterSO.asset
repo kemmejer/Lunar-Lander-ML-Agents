@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RayCasterSO
   m_EditorClassIdentifier: 
   angle: 90
-  raysPerDirection: 2
+  raysPerDirection: 3
   horizontalRayDistribution: 0.9

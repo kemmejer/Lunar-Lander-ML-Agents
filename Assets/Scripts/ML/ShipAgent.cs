@@ -24,6 +24,8 @@ public class ShipAgent : Agent
 
     private bool _hasAgentModel;
 
+    private Vector2 _previousPosition;
+
     private const int ObservationParameterCount = 2 + 2 + 1; // Position + Velocity + Rotation
 
     private void Awake()
@@ -63,6 +65,8 @@ public class ShipAgent : Agent
         _hasEpisodeEnded = false;
 
         ResetShip();
+
+        _previousPosition = ObservationNormalizer.NormalizeScreenPosition(_shipBehaviour.GetPosition());
     }
 
     /// <summary>
@@ -128,10 +132,13 @@ public class ShipAgent : Agent
 
         bool isShipMovingDown = normalizedVelocity.y < 0.0f;
 
+        float _normalizedHeightDelta = _previousPosition.y - normalizedPosition.y;
+        _previousPosition = normalizedPosition;
+
         float reward = 0.0f;
 
         if (isShipMovingDown)
-            reward += 0.001f;
+            reward += _normalizedHeightDelta / 5.0f;
         else
             reward -= 0.005f;
 
@@ -238,7 +245,8 @@ public class ShipAgent : Agent
         // Velocity
         reward -= Mathf.Min(ObservationNormalizer.NormalizeVelocity(landingData.velocity).magnitude, 1.0f);
 
-        reward /= 2.0f;
+        // Fuel
+        reward -= 1.0f - _shipBehaviour.ShipParameterSO.fuel.remainingFuel.value / _shipBehaviour.ShipParameterSO.fuel.maxFuel.value;
 
         SetReward(reward);
 
@@ -266,9 +274,10 @@ public class ShipAgent : Agent
         _hasEpisodeEnded = true;
         DisableAgent();
 
-        OnEndEpisode?.Invoke(this);
-
+        CollectImageData();
         UpdateRewardText();
+
+        OnEndEpisode?.Invoke(this);
     }
 
     /// <summary>

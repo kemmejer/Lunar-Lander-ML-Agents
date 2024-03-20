@@ -23,8 +23,8 @@ Download and install [Git (64-Bit)](https://git-scm.com/download/win).
 
 ### Download the project
 
-#### Without Git (includes the standalone application)
-TODO
+#### Without Git (includes the standalone application and a pretrained model)
+Download and unpack the application from the [Release Page](https://github.com/kemmejer/Lunar-Lander-ML-Agents/releases).
 
 #### Using Git (for development)
 Open a command line in your desired target directory and execute the following line:
@@ -37,6 +37,8 @@ git clone https://github.com/kemmejer/Lunar-Lander-ML-Agents.git
 Execute the file **setup.bat** and wait until the installation has finished.<br/>
 > [!NOTE] 
 > The setup of the Python virtual environment and the installation of the dependencies may take a while.
+> If the installation has finished, the window will either automatically close or show the following message:
+> "The setup has finished. You may now close this window."
 
 ## Running the application
 

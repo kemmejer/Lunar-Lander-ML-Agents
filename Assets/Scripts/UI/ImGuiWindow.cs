@@ -295,6 +295,8 @@ public class ImGuiWindow : MonoBehaviour
     {
         ConfigManager.LoadConfig(CurrentConfigName);
         _configSaveAndDeleteActive = !(CurrentConfigName == Constants.DefaultConfigName);
+
+        GroundGeneratorBehaviour.GetInstance().GenerateGround();
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class SceneScaler : MonoBehaviour
@@ -37,5 +38,12 @@ public class SceneScaler : MonoBehaviour
 
         _playerSpawner.transform.position = new Vector3(_playerSpawner.transform.position.x, screenBounds.max.y, _playerSpawner.transform.position.z);
         _playerSpawner.transform.localScale = new Vector3(screenBounds.extents.x * 2, 1.0f, 1.0f);
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void EnableFullscreen()
+    {
+        Screen.fullScreen = true;
+        Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, FullScreenMode.FullScreenWindow);
     }
 }

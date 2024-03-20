@@ -186,7 +186,7 @@ public class TrainingManagerBehaviour : MonoBehaviour
         _trainingServerProcess = new Process();
         _trainingServerProcess.StartInfo.FileName = Constants.TrainingBatPath;
         _trainingServerProcess.StartInfo.Arguments = arguments;
-        //_trainingServerProcess.StartInfo.CreateNoWindow = true;
+        _trainingServerProcess.StartInfo.CreateNoWindow = true;
         _trainingServerProcess.StartInfo.UseShellExecute = false;
         _trainingServerProcess.StartInfo.RedirectStandardOutput = true;
         _trainingServerProcess.StartInfo.RedirectStandardError = true;
@@ -257,6 +257,8 @@ public class TrainingManagerBehaviour : MonoBehaviour
         CreateAgents();
         IsTraining = true;
         IsStarting = false;
+
+        SceneScaler.EnableFullscreen();
     }
 
     /// <summary>

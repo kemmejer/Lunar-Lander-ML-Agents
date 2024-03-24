@@ -10,6 +10,8 @@ This application was developed and tested on Windows.
 
 ### Python
 Download and install [Python 3.10.11 (64-bit)](https://www.python.org/downloads/release/python-31011/). [Direct download](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
+> [!NOTE]
+> Please make sure that python is added to your system path.
 
 ### Unity (optional)
 Only necessary if you want to develop or run the game in the Unity editor.<br/>
